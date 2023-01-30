@@ -55,7 +55,11 @@
                 con : "aaa",
                 conTo :"bbb"
             }
-            sendMessage(msg);
+            const xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                console.log("XMLHttpRequest returned");
+            }
+            xhttp.open("POST", "https://cconnect0.editorx.io/lego1/_functions/myFunction?connectedTo=aaa&connection=bbb");
         }
         
         window.onmessage = (event) => {
