@@ -52,7 +52,7 @@
         function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove");
 
-            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { connection : 49, connectedTo : 23 })
+            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { connection : "aaa", connectedTo : "bbb" })
                 .then((data) => {
                     console.log(data); // JSON data parsed by `data.json()` call
                 })
