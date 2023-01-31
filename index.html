@@ -55,7 +55,7 @@
                 con: "aaa",
                 conTo: "bbb"
             }
-            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { connection : 42, connectTo : 23 })
+            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection" : "42", "connectTo" : "23" })
                 .then((data) => {
                     console.log(data); // JSON data parsed by `data.json()` call
                 });
