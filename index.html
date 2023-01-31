@@ -52,18 +52,44 @@
         function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove");
             let msg = {
-                con : "aaa",
-                conTo :"bbb"
+                con: "aaa",
+                conTo: "bbb"
             }
+            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { connection : 42, connectTo : 23 })
+                .then((data) => {
+                    console.log(data); // JSON data parsed by `data.json()` call
+                });
+            /*
             const xhttp = new XMLHttpRequest();
             xhttp.onload = function() {
                 console.log("XMLHttpRequest returned");
             }
             xhttp.open("POST", "https://cconnect0.editorx.io/lego1/_functions/myFunction?connectedTo=aaa&connection=bbb");
             xhttp.send();
+            */
             console.log("reportWrongMove 23");
         }
-        
+
+
+        async function postData(url = '', data = {}) {
+            // Default options are marked with *
+            const response = await fetch(url, {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+
         window.onmessage = (event) => {
             if (event.data) {
                 console.log(`HTML Component received a message: ${event.data}`);
@@ -84,13 +110,13 @@
         let modelsArray = [];
         let currentModel;
         /////////////////// GAME FUNCTIONS //////////////////////////
-        function createModel()  {
+        function createModel() {
             model = meshBlock(scene, 1);
             model.position.x = -20;
             model.metadata = {
-            inModel: true,
-            blockNum : 0,
-            numOfBlocks : 0
+                inModel: true,
+                blockNum: 0,
+                numOfBlocks: 0
             };
             modelsArray.push(model);
             return model;
@@ -103,16 +129,16 @@
             model.metadata.selectedConnection = selectedConnectionSphere;
         }
 
-        function setSelectedConnectionColor(r,g,b) {
-            sendMessage({"R":r});
-            if (selectedConnection){
+        function setSelectedConnectionColor(r, g, b) {
+            sendMessage({ "R": r });
+            if (selectedConnection) {
                 selectedConnection.parent.material.diffuseColor = new BABYLON.Color3(r, g, b);
             }
         }
         function colorBlue() {
-            setSelectedConnectionColor(0,0,1);          
+            setSelectedConnectionColor(0, 0, 1);
         }
-       function colorRed() {
+        function colorRed() {
             setSelectedConnectionColor(1, 0, 0);
         }
         function colorBlack() {
@@ -182,7 +208,7 @@
                 //console.log("name: " + currentModel.name)//
            }
            */
-         }
+        }
 
         function flipZ() {
             if (selectedConnection) {
@@ -233,8 +259,8 @@
                 m.diffuseColor = selectedColor;
             }
         }
-        
- 
+
+
 
         ///defign and highlite the conection sphere in the model (called from doClickConnection)
         function doModelConnection(connectionSphere) {
@@ -383,11 +409,11 @@
             startRenderLoop(engine, canvas);
             window.scene = createScene();
         };
-       
+
         initFunction().then(() => {
             sceneToRender = scene
         });
-        
+
         // Resize
         window.addEventListener("resize", function () {
             engine.resize();
