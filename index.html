@@ -51,14 +51,12 @@
 
         function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove");
-            let msg = {
-                con: "aaa",
-                conTo: "bbb"
-            }
-            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { connection : 49, connectTo : 23 })
+
+            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { connection : 49, connectedTo : 23 })
                 .then((data) => {
                     console.log(data); // JSON data parsed by `data.json()` call
-                });
+                })
+                .catch(response => console.log("Erorr: " + response));
             /*
             const xhttp = new XMLHttpRequest();
             xhttp.onload = function() {
