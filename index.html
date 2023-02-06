@@ -51,9 +51,11 @@
             ///for each mode write the model/ write user time and error / create next automtic stage
         }
 
+        
+
         function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove");
-
+            //setVisibleMeshChilds(elementsMenu, false);//////
             postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection" : "aaa", "connectedTo" : "bbb" })
                 .then((data) => {
                     console.log(data); // JSON data parsed by `data.json()` call
@@ -131,17 +133,23 @@
             const light2 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0));
             light1.intensity = 0.75;
             light2.intensity = 0.5;
+            elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
 
             const b1X5 = meshBlock(scene, 5);
+            b1X5.setParent(elementsMenu);
             const b1X3 = meshBlock(scene, 3);
             b1X3.position.y = 3;
+            b1X3.setParent(elementsMenu);
             const b1X2 = meshBlock(scene, 2);
             b1X2.position.y = -3;
+            b1X2.setParent(elementsMenu);
             const c1 = meshWheel(scene, 1);
             c1.position.y = 6;
+            c1.setParent(elementsMenu);
+            
             currentModel = createModel();
             // GUI
-            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+            buttensPanel = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
             createButton(0, "/", flipY);
             createButton(50, "---", flipX);
             createButton(100, "|", flipZ);
@@ -150,7 +158,7 @@
             createButton(-100, " ", colorBlue).background = "blue";
             createButton(-150, " ", colorRed).background = "red";
             createButton(-200, " ", colorBlack).background = "black";
-
+            
             function createButton(position, name, func) {
                 let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", name);
                 button1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
@@ -161,7 +169,7 @@
                 button1.cornerRadius = 20;
                 button1.background = "gray";
                 button1.onPointerUpObservable.add(func);
-                advancedTexture.addControl(button1);
+                buttensPanel.addControl(button1);
                 return button1;
             }
             return scene;

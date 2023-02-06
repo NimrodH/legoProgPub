@@ -5,7 +5,18 @@ let selectedConnection;///the sphere that was clicked on one of the elements out
 //let modelSelectedConnection;///the sphere that was clicked on one of the elements in the model
 let modelsArray = [];
 let currentModel;
+let elementsMenu;///the parent of the blocks that user can select
+let buttensPanel;
 /////////////////// GAME FUNCTIONS //////////////////////////
+function setVisibleMeshChilds(theMesh, isItVisible) {
+    theMesh.isVisible = isItVisible;
+    let childs = theMesh.getChildMeshes(false);
+    for (let index = 0; index < childs.length; index++) {
+        const element = childs[index];
+        element.isVisible = isItVisible;
+    }
+}
+
 function createModel() {
     model = meshBlock(scene, 1);
     model.position.x = -20;
