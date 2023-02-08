@@ -8,12 +8,12 @@ let currentModel;
 let elementsMenu;///the parent of the blocks that user can select
 let buttensPanel;
 /////////////////// GAME FUNCTIONS //////////////////////////
-function setVisibleMeshChilds(theMesh, isItVisible) {
-    theMesh.isVisible = isItVisible;
+function setVisibleMeshChilds(theMesh, setItVisible) {
+    theMesh.isVisible = setItVisible;
     let childs = theMesh.getChildMeshes(false);
     for (let index = 0; index < childs.length; index++) {
         const element = childs[index];
-        element.isVisible = isItVisible;
+        element.isVisible = setItVisible;
     }
 }
 
