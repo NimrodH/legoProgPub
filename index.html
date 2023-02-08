@@ -79,8 +79,8 @@
         function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove");
             //setVisibleMeshChilds(elementsMenu, false);//////
-            let data = { "connection": "ccc", "connectedTo": "ddd" };
-            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', data)
+            let data1 = {"json" : { "connection": "ccc", "connectedTo": "ddd" } };
+            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', data1)
                 .then((data) => {
                     console.log(data); // JSON data parsed by `data.json()` call
                 })
