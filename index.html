@@ -79,20 +79,21 @@
         function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove");
             //setVisibleMeshChilds(elementsMenu, false);//////
+            /*
             let data1 = {"json" : { "connection": "ccc", "connectedTo": "ddd" } };
             postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', data1)
                 .then((data) => {
                     console.log(data); // JSON data parsed by `data.json()` call
                 })
                 .catch(response => console.log("Erorr in then: " + response));
-                
-               /*
+             */   
+               
             getData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection": "aaa" })
                 .then((data) => {
                     console.log(data); // JSON data parsed by `data.json()` call
                 })
                 .catch(response => console.log("Erorr in then: " + response));
-                */
+                
             console.log("reportWrongMove 23");
         }
 
@@ -112,7 +113,8 @@
                 },
                 redirect: 'follow', // manual, *follow, error
                 referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(data) // body data type must match "Content-Type" header
+                //body: JSON.stringify(data) // body data type must match "Content-Type" header
+                path: JSON.stringify(data)
             });
 
             // console.log("response.json: " + response.json());
@@ -133,7 +135,8 @@
                 },
                 redirect: 'follow', // manual, *follow, error
                 referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(data) // body data type must match "Content-Type" header
+                //body: JSON.stringify(data) // body data type must match "Content-Type" header
+                path: JSON.stringify(data)
             });
 
             // console.log("response.json: " + response.json());
