@@ -94,7 +94,7 @@
                 })
                 .catch(response => console.log("Erorr in then: " + response));
                 
-            console.log("reportWrongMove 23");
+            console.log("reportWrongMove getdata");
         }
 
         
@@ -117,7 +117,7 @@
                 path: JSON.stringify(data)
             });
 
-            // console.log("response.json: " + response.json());
+            console.log("post response.json: " + response.json());
             return response.json(); // parses JSON response into native JavaScript objects
         }
 
@@ -139,7 +139,7 @@
                 path: JSON.stringify(data)
             });
 
-            // console.log("response.json: " + response.json());
+            console.log("get response.json: " + response.json());
             return response.json(); // parses JSON response into native JavaScript objects
         }
 
