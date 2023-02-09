@@ -88,10 +88,10 @@
                 .catch(response => console.log("Erorr in then: " + response));
             */  
                
-            //getData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection": "aaa" });
-            getData('https://lb0am646p5.execute-api.us-east-1.amazonaws.com/dev/lego', { "connection": "aa" });
+            getData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection": "aaa" });
+            //getData('https://lb0am646p5.execute-api.us-east-1.amazonaws.com/dev/lego', { "connection": "aa" });
                 
-            console.log("reportWrongMove getdata 9 ");
+            console.log("reportWrongMove getdata 10 ");
         }
 
         
@@ -125,8 +125,7 @@
                 cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 credentials: 'omit', // include, *same-origin, omit
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': "*"
+                    'Content-Type': 'application/json'
                     // 'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 redirect: 'follow', // manual, *follow, error
