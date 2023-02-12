@@ -133,7 +133,7 @@
                 //body: JSON.stringify(data) // body data type must match "Content-Type" header
                 path: JSON.stringify(data)
             })
-            .then((data1) => console.log(data1.json()));
+            .then((data1) => console.log(data1.json().message));
             
 
             //console.log("get response.json: " + response.json());
