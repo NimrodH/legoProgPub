@@ -60,20 +60,33 @@ function connect() {
     }
     ///create element to place in the model
     newElement = selectedConnection.parent.clone(selectedConnection.parent.name);
+    let newColor = selectedConnection.parent.material.diffuseColor;
+    let selectedConnectionMame = selectedConnection.name;
+    doConnect(newElement, newColor, selectedConnectionMame);
+}
+
+function doConnect(newElement, newColor, selectedConnectionMame) {  
+    let newElementConnection;
     ///set any of its childrens with its own matirial and action
     let children = newElement.getChildren();
     for (let index = 0; index < children.length; index++) {
         const element = children[index];
         initMeshContactSphere(element);
+        let elementPrivateName = element.name.split(".")[1];
+        ///element.name is like b33.p-1 while selectedConnectionMame is like p-1 without prefix
+        if (elementPrivateName == selectedConnectionMame) {
+            newElementConnection = element;
+        }
     }
+    
 
     newElement.material = new BABYLON.StandardMaterial("myMaterial", scene);
-    newElement.material.diffuseColor = selectedConnection.parent.material.diffuseColor;
+    newElement.material.diffuseColor = newColor;
 
 
-    ///calculate the vector between the selected spheres in the element and in the model
-    const matrix_sc = selectedConnection.parent.computeWorldMatrix(true);
-    var global_pos_sc = BABYLON.Vector3.TransformCoordinates(selectedConnection.position, matrix_sc);
+    ///calculate the vector between the selected spheres in the new element and in the model
+     const matrix_sc = newElementConnection.parent.computeWorldMatrix(true);
+    var global_pos_sc = BABYLON.Vector3.TransformCoordinates(newElementConnection.position, matrix_sc);
     //console.log("global_pos_sc : " + global_pos_sc);
     const matrix_m = getModelSelectedConnection(currentModel).parent.computeWorldMatrix(true);
     var global_pos_m = BABYLON.Vector3.TransformCoordinates(getModelSelectedConnection(currentModel).position, matrix_m);
@@ -87,7 +100,7 @@ function connect() {
     newElement.metadata = {
         inModel: true,
         blockNum: currentModel.metadata.numOfBlocks + 1,
-        connection: selectedConnection,
+        connection: newElementConnection, //selectedConnection,
         connectedTo: getModelSelectedConnection(currentModel)
     };
     currentModel.metadata.numOfBlocks = currentModel.metadata.numOfBlocks + 1;
