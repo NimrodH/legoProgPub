@@ -1,3 +1,4 @@
+"use strict" 
 /////////////////// GAME GLOBAL VERIABLES //////////////////////////
 const notSelectedColor = new BABYLON.Color3(1, 0, 1);//pink
 const selectedColor = new BABYLON.Color3(1, 1, 0);//yellow
@@ -18,7 +19,7 @@ function setVisibleMeshChilds(theMesh, setItVisible) {
 }
 
 function createModel() {
-    model = meshBlock(scene, 1);
+    let model = meshBlock(scene, 1);
     model.position.x = -20;
     model.metadata = {
         inModel: true,
@@ -59,10 +60,179 @@ function connect() {
         return;
     }
     ///create element to place in the model
-    newElement = selectedConnection.parent.clone(selectedConnection.parent.name);
+    let newElement = selectedConnection.parent.clone(selectedConnection.parent.name);
     let newColor = selectedConnection.parent.material.diffuseColor;
     let selectedConnectionMame = selectedConnection.name;
     doConnect(newElement, newColor, selectedConnectionMame);
+}
+
+function reBuildModel(modelData) {
+    for (let index = 0; index < array.modelData; index++) {
+        const element = modelData[index];
+        const inDataBlockName = element.type;
+        let blockName;
+        const inDataConnectionName = element.srcPoint;
+        let connectionName;
+        const inDataColor = element.color;
+        let blockColor;
+        const inDatasDestBlock = element.destBlock;
+        let destBlock;
+        const inDatasDestPoint = element.inDatasDestPoint;
+        let destConnection
+        switch (inDataBlockName) {
+            case "b1x5":
+                blockName = "b5";
+                switch (inDataConnectionName) {
+                    case "A":
+                        connectionName = "p-2";
+                        break;
+                    case "B":
+                        connectionName = "p-1";
+                        break;
+                    case "C":
+                        connectionName = "p2";
+                        break;
+                    case "D":
+                        connectionName = "p1";
+                        break;
+                    case "E":
+                        connectionName = "p0";
+                        break;
+                    default:
+                        connectionName = inDataConnectionName;
+                        break;
+                }
+        
+                break;
+            case "b1x3":
+                blockName = "b3";
+                switch (inDataConnectionName) {
+                    case "A":
+                        connectionName = "p-1";
+                        break;
+                    case "B":
+                        connectionName = "0";
+                        break;
+                    case "C":
+                        connectionName = "p1";
+                        break;
+                    default:
+                        connectionName = inDataConnectionName;
+                        break;
+                }
+                break;
+            case "b1x2":
+                blockName = "b2";
+                if (inDataConnectionName == "A") {
+                    connectionName = "p-0.5";
+                } else {
+                    connectionName = "p0.5";
+                }
+                break;
+            case "c2x2":
+                blockName = "c1";
+                connectionName = "p0";
+                break;
+            default:
+                blockName = inDataBlockName;
+                connectionName = inDataConnectionName;
+                break;
+        }
+        
+    }
+}
+
+function destSphereByOldData(blockNumber, destPoint) {
+    ///find block object by number and then find שמג RETURN  sphere object by the block name
+
+    let modelBlocks = currentModel.getChildren();
+
+    //console.log(modelBlocks.metadata.blockNum);
+    let destBlock = modelBlocks.filter(byBlockNum)[0];
+    let destBlockName = destBlock.name;
+    console.log(destBlockName);
+    let sphereName = getDestPointFullNameOnModel(destBlockName, destPoint);
+    console.log("sphereName: " + sphereName);
+    let sphers = destBlock.getChildren();
+    let selectedSphere = sphers.filter(bySphereName)[0];
+    
+
+    function getDestPointFullNameOnModel(blockType, inDataConnectionName) {
+        switch (blockType) {
+            case "b5":
+                switch (inDataConnectionName) {
+                    case "A":
+                        return "b5.p-2";
+                        break;
+                    case "B":
+                        return "b5.p-1";
+                        break;
+                    case "C":
+                        return "b5.p2";
+                        break;
+                    case "D":
+                        return "b5.p1";
+                        break;
+                    case "E":
+                        return "b5.p0";
+                        break;
+                    default:
+                        return inDataConnectionName;
+                        break;
+                }
+        
+                break;
+            case "b3":
+                switch (inDataConnectionName) {
+                    case "A":
+                        return "b3.p-1";
+                        break;
+                    case "B":
+                        return "b3.0";
+                        break;
+                    case "C":
+                        return "b3.p1";
+                        break;
+                    default:
+                        return inDataConnectionName;
+                        break;
+                }
+                break;
+            case "b2":
+                if (inDataConnectionName == "A") {
+                    return "b2.p-0.5";
+                } else {
+                    return "b2.p0.5";
+                }
+                break;
+            case "c1":
+                return "c1.p0";
+                break;
+            default:
+                return inDataConnectionName;
+                break;
+        }
+                
+    }
+
+    function byBlockNum(e) {
+        if (e.metadata) {
+            return e.metadata.blockNum == blockNumber;
+        } else {
+            return false;
+        }
+        
+    }
+
+    function bySphereName(e) {
+        if (e.name) {
+            return e.name == sphereName;
+        } else {
+            return false;
+        }
+        
+    }
+    return selectedSphere;
 }
 
 function doConnect(newElement, newColor, selectedConnectionMame) {  
@@ -72,7 +242,10 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
     for (let index = 0; index < children.length; index++) {
         const element = children[index];
         initMeshContactSphere(element);
-        let elementPrivateName = element.name.split(".")[1];
+        //let elementPrivateName = element.name.split(".")[1];
+        let firstDot = element.name.indexOf(".") + 1;
+        let elementPrivateName = element.name.substr(firstDot);
+        console.log("elementPrivateName: " + elementPrivateName);
         ///element.name is like b33.p-1 while selectedConnectionMame is like p-1 without prefix
         if (elementPrivateName == selectedConnectionMame) {
             newElementConnection = element;
@@ -157,8 +330,10 @@ function flipY() {
 }
 ///defign and highlite the conection sphere
 function doClickConnection(event) {
+    
     if (event.source.parent.metadata && event.source.parent.metadata.inModel) {
         doModelConnection(event.source);
+        //console.log(event.source.parent.metadata.blockNum);
         return;
     } else {
         doElementConnection(event.source);
@@ -171,7 +346,7 @@ function doElementConnection(connectionSphere) {
     }
     selectedConnection = connectionSphere;
 
-    m = selectedConnection.material;
+    let m = selectedConnection.material;
     if (m.diffuseColor == selectedColor) {
         m.diffuseColor = notSelectedColor;
         selectedConnection = null;
@@ -190,7 +365,7 @@ function doModelConnection(connectionSphere) {
     }
     setModelSelectedConnection(currentModel, connectionSphere);
 
-    m = getModelSelectedConnection(currentModel).material;
+    let m = getModelSelectedConnection(currentModel).material;
     if (m.diffuseColor == selectedColor) {
         m.diffuseColor = notSelectedColor;
         setModelSelectedConnection(currentModel, null);
@@ -236,7 +411,7 @@ function meshBlock(scene, blockWidth) {
     myMaterial.diffuseColor = new BABYLON.Color3(0.54, 0.13, 0.54);
     box.material = myMaterial;
     //box.position.x = 2;
-    blockWidthFloor = Math.floor(blockWidth / 2);
+    const blockWidthFloor = Math.floor(blockWidth / 2);
     if (blockWidthFloor == blockWidth / 2) { //זוגי
         for (let index = 0; index < blockWidthFloor; index++) {
             addMeshContactSphere(box, index - 0.5)

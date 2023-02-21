@@ -87,15 +87,24 @@
                 })
                 .catch(response => console.log("Erorr in then: " + response));
             */  
-               
+             ////////// working get data for specific item  
             //getData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection": "aaa" });
-            let tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
-            //console.log(await getData(tableURL, {'myStep':'ALL'}));
-            var modelData = await getData(tableURL, {'myStep':'ALL'});
-            console.log(modelData.Items);
-            console.log("reportWrongMove getdata 20 ");
-        }
 
+            /////////////////////////working get all data from data base///////////////////////
+            let tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
+            //var modelData = await getData(tableURL, {'myStep':'ALL'});
+            //console.log(modelData.Items);
+            ///////////////////////////////////////////////////////////////////////////////////
+
+
+        /*/////////////////working test to select the destinatio on model folowing the database////////////////////////////
+            console.log("reportWrongMove getdata 20 ");
+            let s = destSphereByOldData("2", "A");
+            console.log("s.name: " + s.name)
+            setModelSelectedConnection(currentModel, s);
+       */////////////////////////////////////////
+        }
+ 
         function  getData(url = '', data = {}) {    
             fullURL = url + '?' + new URLSearchParams(data)
             return fetch(fullURL)
@@ -157,7 +166,7 @@
         }
 
         function sendMessage(msg) {
-            window.parent.postMessage(msg, "https://cconnect0.editorx.io/lego1");
+            //window.parent.postMessage(msg, "https://cconnect0.editorx.io/lego1");
         }
 
 
