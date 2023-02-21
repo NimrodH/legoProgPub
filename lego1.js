@@ -70,15 +70,27 @@ function reBuildModel(modelData) {
     for (let index = 0; index < array.modelData; index++) {
         const element = modelData[index];
         const inDataBlockName = element.type;
-        let blockName;
         const inDataConnectionName = element.srcPoint;
-        let connectionName;
+        let converted = convertBlockAndsphereNames(inDataBlockName, inDataConnectionName);///helper function
+        let srcBlockName = converted.newBlockName;
+        let srcConnection = converted.newSphereName;
+        //TODO: use converted block name to create new element (will be sent to doConnect)
         const inDataColor = element.color;
+        //TODO: create color following the data (will be sent to doConnect)
         let blockColor;
+        //TODO: set oriantation of the new element
+        
+        ///set the selected connection on model (global variable)
         const inDatasDestBlock = element.destBlock;
-        let destBlock;
         const inDatasDestPoint = element.inDatasDestPoint;
-        let destConnection
+        let s = destSphereByOldData(inDatasDestBlock, inDatasDestPoint);
+        //console.log("s.name: " + s.name)
+        setModelSelectedConnection(currentModel, s);
+
+        ////doConnect(newElement, newColor, selectedConnectionMame)
+     }
+
+    function convertBlockAndsphereNames() {
         switch (inDataBlockName) {
             case "b1x5":
                 blockName = "b5";
@@ -138,7 +150,7 @@ function reBuildModel(modelData) {
                 connectionName = inDataConnectionName;
                 break;
         }
-        
+        return { newBlockName: blockName, newSphereName: connectionName }  
     }
 }
 
