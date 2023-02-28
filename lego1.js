@@ -1,7 +1,12 @@
-"use strict" 
+"use strict"
 /////////////////// GAME GLOBAL VERIABLES //////////////////////////
 const notSelectedColor = new BABYLON.Color3(1, 0, 1);//pink
 const selectedColor = new BABYLON.Color3(1, 1, 0);//yellow
+const blueColor = new BABYLON.Color3(0, 0, 1);
+const redColor = new BABYLON.Color3(1, 0, 0);
+const blackColor = new BABYLON.Color3(0, 0, 0);
+const greenColor = new BABYLON.Color3(0, 1, 0);
+const tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
 let selectedConnection;///the sphere that was clicked on one of the elements outside the model
 //let modelSelectedConnection;///the sphere that was clicked on one of the elements in the model
 let modelsArray = [];
@@ -37,20 +42,23 @@ function setModelSelectedConnection(model, selectedConnectionSphere) {
     model.metadata.selectedConnection = selectedConnectionSphere;
 }
 
-function setSelectedConnectionColor(r, g, b) {
-    sendMessage({ "R": r });
+function setSelectedConnectionColor(theColor) {
+    //sendMessage({ "R": r });
     if (selectedConnection) {
-        selectedConnection.parent.material.diffuseColor = new BABYLON.Color3(r, g, b);
+        selectedConnection.parent.material.diffuseColor = theColor;
     }
 }
 function colorBlue() {
-    setSelectedConnectionColor(0, 0, 1);
+    setSelectedConnectionColor(blueColor);
 }
 function colorRed() {
-    setSelectedConnectionColor(1, 0, 0);
+    setSelectedConnectionColor(redColor);
 }
 function colorBlack() {
-    setSelectedConnectionColor(0, 0, 0);
+    setSelectedConnectionColor(blackColor);
+}
+function colorGreen() {
+    setSelectedConnectionColor(greenColor);
 }
 
 function connect() {
@@ -62,35 +70,114 @@ function connect() {
     ///create element to place in the model
     let newElement = selectedConnection.parent.clone(selectedConnection.parent.name);
     let newColor = selectedConnection.parent.material.diffuseColor;
-    let selectedConnectionMame = selectedConnection.name;
-    doConnect(newElement, newColor, selectedConnectionMame);
+    let selectedConnectionName = selectedConnection.name;
+    doConnect(newElement, newColor, selectedConnectionName);
+}
+
+async function saveModel() {
+    let childs = currentModel.getChildMeshes(true);
+    for (let index = 0; index < childs.length; index++) {
+        const element = childs[index];
+        console.log("index: " + index);
+        if (element.metadata) {
+            console.log("blockNum (step): " + element.metadata.blockNum);
+            console.log("connection (srcPoint): " + element.metadata.connection);
+            console.log("connectedTo(destPoint): " + element.metadata.connectedTo);
+            console.log("destBlock: " + element.metadata.destBlock);//element.metadata.connectedTo.parent.metadata.blockNum);
+            console.log("type: " + element.name);//element.metadata.connection.parent.name);
+            console.log("rotation: " + element.rotation);//element.metadata.connection.parent.rotation);
+            console.log("color: " + element.material.diffuseColor);//element.metadata.connection.parent.material.diffuseColor);
+
+
+            let bodyData = {
+                'step': element.metadata.blockNum,
+                'color': element.material.diffuseColor,
+                'destBlock': element.metadata.destBlock,
+                'destPoint': element.metadata.connectedTo,
+                'rotation': element.rotation,
+                'srcPoint': element.metadata.connection,
+                'type': element.name
+            }
+            var result = await postData(tableURL, bodyData);
+        }
+        //console.log(index + " : " + JSON.stringify(element.metadata));
+
+    }
 }
 
 function reBuildModel(modelData) {
-    for (let index = 0; index < array.modelData; index++) {
-        const element = modelData[index];
+    //for (let index = 1; index < modelData.length; index++) {
+    for (let index = 1; index < 26; index++) {
+        console.log("index: " + index);
+        const element = modelData.filter(el => el.step == index)[0];
+        //console.log("element: " + JSON.stringify(element));
         const inDataBlockName = element.type;
         const inDataConnectionName = element.srcPoint;
         let converted = convertBlockAndsphereNames(inDataBlockName, inDataConnectionName);///helper function
         let srcBlockName = converted.newBlockName;
         let srcConnection = converted.newSphereName;
-        //TODO: use converted block name to create new element (will be sent to doConnect)
-        const inDataColor = element.color;
-        //TODO: create color following the data (will be sent to doConnect)
-        let blockColor;
+        /// use converted block name to create new element (will be sent to doConnect)
+        let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == srcBlockName)[0];
+        let newElement = menuBlock.clone(menuBlock.name);
         //TODO: set oriantation of the new element
-        
+        let inDataRotatoion = element.localRotation;
+        let newRotation;
+        switch (inDataRotatoion) {
+            case "x0,0,0":
+                console.log("rotation x")
+                newElement.rotation.x = Math.PI / 2;
+                newElement.rotation.y = 0;
+                newElement.rotation.z = 0;
+                break;
+            case "X0,0,90":
+                console.log("rotation z");
+                newElement.rotation.x = 0;
+                newElement.rotation.y = 0;
+                newElement.rotation.z = Math.PI / 2;
+                break;
+            case "X0,90,0":
+                console.log("rotation y")
+                newElement.rotation.x = 0;
+                newElement.rotation.y = Math.PI / 2;
+                newElement.rotation.z = 0;
+                break;
+            default:
+                console.log("wrong rotation: " + inDataRotatoion);
+                break;
+        }
+
+        /// create color following the data (will be sent to doConnect)
+        const inDataColor = element.color;
+        let newColor;
+        switch (inDataColor) {
+            case "1,0,0":
+                newColor = redColor;
+                break;
+            case "0,0,1":
+                newColor = blueColor;
+                break;
+            case "0,0,0":
+                newColor = blackColor;
+                break;
+            default:
+                newColor = notSelectedColor;
+                break;
+        }
+        let blockColor;
+
         ///set the selected connection on model (global variable)
         const inDatasDestBlock = element.destBlock;
-        const inDatasDestPoint = element.inDatasDestPoint;
+        const inDatasDestPoint = element.destPoint;
         let s = destSphereByOldData(inDatasDestBlock, inDatasDestPoint);
         //console.log("s.name: " + s.name)
         setModelSelectedConnection(currentModel, s);
 
-        ////doConnect(newElement, newColor, selectedConnectionMame)
-     }
+        doConnect(newElement, newColor, srcConnection)
+    }
 
-    function convertBlockAndsphereNames() {
+    function convertBlockAndsphereNames(inDataBlockName, inDataConnectionName) {
+        let blockName;
+        let connectionName;
         switch (inDataBlockName) {
             case "b1x5":
                 blockName = "b5";
@@ -114,7 +201,7 @@ function reBuildModel(modelData) {
                         connectionName = inDataConnectionName;
                         break;
                 }
-        
+
                 break;
             case "b1x3":
                 blockName = "b3";
@@ -150,24 +237,27 @@ function reBuildModel(modelData) {
                 connectionName = inDataConnectionName;
                 break;
         }
-        return { newBlockName: blockName, newSphereName: connectionName }  
+        return { newBlockName: blockName, newSphereName: connectionName }
     }
 }
 
 function destSphereByOldData(blockNumber, destPoint) {
     ///find block object by number and then find שמג RETURN  sphere object by the block name
+    if (blockNumber == "0") {
+        //let sphereName = "p0";
+        return currentModel.getChildMeshes(false)[0];
+    }
+    let modelBlocks = currentModel.getChildMeshes(false);
 
-    let modelBlocks = currentModel.getChildren();
-
-    //console.log(modelBlocks.metadata.blockNum);
+    //console.log(modelBlocks);
     let destBlock = modelBlocks.filter(byBlockNum)[0];
     let destBlockName = destBlock.name;
-    console.log(destBlockName);
+    //console.log(destBlockName);
     let sphereName = getDestPointFullNameOnModel(destBlockName, destPoint);
-    console.log("sphereName: " + sphereName);
-    let sphers = destBlock.getChildren();
+    //console.log("sphereName: " + sphereName);
+    let sphers = destBlock.getChildMeshes(false);
     let selectedSphere = sphers.filter(bySphereName)[0];
-    
+
 
     function getDestPointFullNameOnModel(blockType, inDataConnectionName) {
         switch (blockType) {
@@ -192,7 +282,7 @@ function destSphereByOldData(blockNumber, destPoint) {
                         return inDataConnectionName;
                         break;
                 }
-        
+
                 break;
             case "b3":
                 switch (inDataConnectionName) {
@@ -224,16 +314,18 @@ function destSphereByOldData(blockNumber, destPoint) {
                 return inDataConnectionName;
                 break;
         }
-                
+
     }
 
     function byBlockNum(e) {
+        console.log(e);
         if (e.metadata) {
+            //console.log ("blockNumber: " + blockNumber + "  e.metadata.blockNum: "+ e.metadata.blockNum);
             return e.metadata.blockNum == blockNumber;
         } else {
             return false;
         }
-        
+
     }
 
     function bySphereName(e) {
@@ -242,12 +334,12 @@ function destSphereByOldData(blockNumber, destPoint) {
         } else {
             return false;
         }
-        
+
     }
     return selectedSphere;
 }
 
-function doConnect(newElement, newColor, selectedConnectionMame) {  
+function doConnect(newElement, newColor, selectedConnectionMame) {
     let newElementConnection;
     ///set any of its childrens with its own matirial and action
     let children = newElement.getChildren();
@@ -257,20 +349,20 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
         //let elementPrivateName = element.name.split(".")[1];
         let firstDot = element.name.indexOf(".") + 1;
         let elementPrivateName = element.name.substr(firstDot);
-        console.log("elementPrivateName: " + elementPrivateName);
+        //console.log("elementPrivateName: " + elementPrivateName);
         ///element.name is like b33.p-1 while selectedConnectionMame is like p-1 without prefix
         if (elementPrivateName == selectedConnectionMame) {
             newElementConnection = element;
         }
     }
-    
+
 
     newElement.material = new BABYLON.StandardMaterial("myMaterial", scene);
     newElement.material.diffuseColor = newColor;
 
 
     ///calculate the vector between the selected spheres in the new element and in the model
-     const matrix_sc = newElementConnection.parent.computeWorldMatrix(true);
+    const matrix_sc = newElementConnection.parent.computeWorldMatrix(true);
     var global_pos_sc = BABYLON.Vector3.TransformCoordinates(newElementConnection.position, matrix_sc);
     //console.log("global_pos_sc : " + global_pos_sc);
     const matrix_m = getModelSelectedConnection(currentModel).parent.computeWorldMatrix(true);
@@ -285,8 +377,9 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
     newElement.metadata = {
         inModel: true,
         blockNum: currentModel.metadata.numOfBlocks + 1,
-        connection: newElementConnection, //selectedConnection,
-        connectedTo: getModelSelectedConnection(currentModel)
+        connection: newElementConnection.name, //selectedConnection,
+        connectedTo: getModelSelectedConnection(currentModel).name,
+        destBlock: getModelSelectedConnection(currentModel).parent.metadata.blockNum
     };
     currentModel.metadata.numOfBlocks = currentModel.metadata.numOfBlocks + 1;
     getModelSelectedConnection(currentModel).scaling = new BABYLON.Vector3(0.9, 0.9, 0.9);
@@ -342,7 +435,7 @@ function flipY() {
 }
 ///defign and highlite the conection sphere
 function doClickConnection(event) {
-    
+
     if (event.source.parent.metadata && event.source.parent.metadata.inModel) {
         doModelConnection(event.source);
         //console.log(event.source.parent.metadata.blockNum);

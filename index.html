@@ -77,7 +77,8 @@
         }
 
         async function reportWrongMove(wrongConnection, wrongModelConnection) {
-            console.log("reportWrongMove");
+            console.log("reportWrongMove: ");
+            saveModel();
             //setVisibleMeshChilds(elementsMenu, false);//////
             /*
             let data1 = {"json" : { "connection": "92", "connectedTo": "2023" } };
@@ -86,35 +87,59 @@
                     console.log(data); // JSON data parsed by `data.json()` call
                 })
                 .catch(response => console.log("Erorr in then: " + response));
-            */  
-             ////////// working get data for specific item  
+            */
+            ////////// working get data for specific item  
             //getData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection": "aaa" });
 
             /////////////////////////working get all data from data base///////////////////////
-            let tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
-            //var modelData = await getData(tableURL, {'myStep':'ALL'});
+            //let tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
+            ////var modelData = await getData(tableURL, {'myStep':'ALL'});///working
             //console.log(modelData.Items);
+            ////reBuildModel(modelData.Items);///working
+            //console.log(modelData.Items);
+
             ///////////////////////////////////////////////////////////////////////////////////
-
-
-        /*/////////////////working test to select the destinatio on model folowing the database////////////////////////////
-            console.log("reportWrongMove getdata 20 ");
-            let s = destSphereByOldData("2", "A");
-            console.log("s.name: " + s.name)
-            setModelSelectedConnection(currentModel, s);
-       */////////////////////////////////////////
+            let bodyData = {
+                'step': '2',
+                'color': 'try',
+                'destBlock': '1',
+                'destPoint': 'p0',
+                'rotation': '90',
+                'srcPoint': 'p3',
+                'type': 'b5'
+            }
+            ///var result = await postData(tableURL, bodyData);
+            /*/////////////////working test to select the destinatio on model folowing the database////////////////////////////
+                console.log("reportWrongMove getdata 20 ");
+                let s = destSphereByOldData("2", "A");
+                console.log("s.name: " + s.name)
+                setModelSelectedConnection(currentModel, s);
+           */////////////////////////////////////////
         }
- 
-        function  getData(url = '', data = {}) {    
+
+        function getData(url = '', data = {}) {
             fullURL = url + '?' + new URLSearchParams(data)
             return fetch(fullURL)
-            .then((data1) => {return data1.json()});////console.log(data1.json()));
+                .then((data1) => { return data1.json() });////console.log(data1.json()));
         }
-       
+
 
         async function postData(url = '', data = {}) {
+            console.log(JSON.stringify(data))
+            fullURL = url + '?' + new URLSearchParams(data)
+            fetch(fullURL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data2 => console.log(data2))
+                .catch(error => console.error(error));
             // Default options are marked with *
             //console.log("postData: ") + JSON.stringify(data);
+            /*
             const response = await fetch(url, {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -132,6 +157,7 @@
 
             //console.log("post response.json: " + response.json());
             return response.json(); // parses JSON response into native JavaScript objects
+            */
         }
 
         /*
@@ -221,6 +247,7 @@
             createButton(-100, " ", colorBlue).background = "blue";
             createButton(-150, " ", colorRed).background = "red";
             createButton(-200, " ", colorBlack).background = "black";
+            createButton(-250, " ", colorGreen).background = "green";
 
             function createButton(position, name, func) {
                 let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", name);
