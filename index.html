@@ -78,43 +78,6 @@
 
         async function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove: ");
-            //saveModel();
-            //setVisibleMeshChilds(elementsMenu, false);//////
-            /*
-            let data1 = {"json" : { "connection": "92", "connectedTo": "2023" } };
-            postData('https://cconnect0.editorx.io/lego1/_functions/myFunction', data1)
-                .then((data) => {
-                    console.log(data); // JSON data parsed by `data.json()` call
-                })
-                .catch(response => console.log("Erorr in then: " + response));
-            */
-            ////////// working get data for specific item  
-            //getData('https://cconnect0.editorx.io/lego1/_functions/myFunction', { "connection": "aaa" });
-
-            /////////////////////////working get all data from data base///////////////////////
-            //let tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
-            ////var modelData = await getData(tableURL, {'myStep':'ALL'});///working
-            //console.log(modelData.Items);
-            ////reBuildModel(modelData.Items);///working
-            //console.log(modelData.Items);
-
-            ///////////////////////////////////////////////////////////////////////////////////
-            let bodyData = {
-                'step': '2',
-                'color': 'try',
-                'destBlock': '1',
-                'destPoint': 'p0',
-                'rotation': '90',
-                'srcPoint': 'p3',
-                'type': 'b5'
-            }
-            ///var result = await postData(tableURL, bodyData);
-            /*/////////////////working test to select the destinatio on model folowing the database////////////////////////////
-                console.log("reportWrongMove getdata 20 ");
-                let s = destSphereByOldData("2", "A");
-                console.log("s.name: " + s.name)
-                setModelSelectedConnection(currentModel, s);
-           */////////////////////////////////////////
         }
 
         function getData(url = '', data = {}) {
@@ -137,53 +100,9 @@
                 .then(response => response.json())
                 .then(data2 => console.log(data2))
                 .catch(error => console.error(error));
-            // Default options are marked with *
-            //console.log("postData: ") + JSON.stringify(data);
-            /*
-            const response = await fetch(url, {
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'omit', // include, *same-origin, omit
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                //body: JSON.stringify(data) // body data type must match "Content-Type" header
-                body: JSON.stringify(data)
-            });
 
-            //console.log("post response.json: " + response.json());
-            return response.json(); // parses JSON response into native JavaScript objects
-            */
         }
-
-        /*
-        function getData(url = '', data = {}) {
-               fetch(url, {
-                method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'omit', // include, *same-origin, omit
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                //body: JSON.stringify(data) // body data type must match "Content-Type" header
-                //path: JSON.stringify(data)
-            })
-            .then((data1) => console.log(data1.json()));
-            
-
-            //console.log("get response.json: " + response.json());
-            //return response; // parses JSON response into native JavaScript objects
-        }
-*/
-
+/*
         window.onmessage = (event) => {
             if (event.data) {
                 console.log(`HTML Component received a message: ${event.data}`);
@@ -195,8 +114,7 @@
             //window.parent.postMessage(msg, "https://cconnect0.editorx.io/lego1");
         }
 
-
-
+*/
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
