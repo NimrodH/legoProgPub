@@ -7,6 +7,7 @@ const blueColor = new BABYLON.Color3(0, 0, 1);
 const redColor = new BABYLON.Color3(1, 0, 0);
 const blackColor = new BABYLON.Color3(0, 0, 0);
 const greenColor = new BABYLON.Color3(0, 1, 0);
+const rotationO = new BABYLON.Vector3(0, 0, 0);//only for model
 const rotationX = new BABYLON.Vector3(1.5708, 0, 0);
 const rotationY = new BABYLON.Vector3(0, 1.5708, 0);
 const rotationZ = new BABYLON.Vector3(0, 0, 1.5708);//Math.PI / 2 get diferent value in its last digit here and when called from mesh
@@ -23,7 +24,8 @@ const colorsObj = [
 function rotationVector2Name(vector) {
     if (vector.y > 0) { return "Y" };
     if (vector.z > 0) { return "Z" };
-    return "X";
+    if (vector.x > 0) { return "X" };
+    return "O";
 }
 
 function rotationName2Vector(theName) {
@@ -38,6 +40,7 @@ function rotationName2Vector(theName) {
             return rotationZ
             break;
         default:
+            return rotationO
             break;
     }
 }
@@ -59,7 +62,7 @@ function fullName2Private(theFullName) {
 const tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
 let selectedConnection;///the sphere that was clicked on one of the elements outside the model
 let modelsArray = [];
-let currentModel;
+let currentModel;///returned by createModel that push it into modelsArray
 let elementsMenu;///the parent of the blocks that user can select
 let buttensPanel;
 /////////////////// GAME FUNCTIONS //////////////////////////
@@ -124,6 +127,7 @@ function connect() {
 }
 
 async function saveModel() {
+    return;///temporary to avoid some one from removing my model
     let childs = currentModel.getChildMeshes(true);
     for (let index = 0; index < childs.length; index++) {
         const element = childs[index];
@@ -250,6 +254,9 @@ function flipModel() {
             currentModel.rotation = rotationName2Vector("Z");
             break;
         case "Z":
+            currentModel.rotation = rotationName2Vector("O");
+            break;
+        case "O":
             currentModel.rotation = rotationName2Vector("X");
             break;
         default:
