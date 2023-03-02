@@ -1,11 +1,68 @@
 "use strict"
 /////////////////// GAME GLOBAL VERIABLES //////////////////////////
+const baseColor = new BABYLON.Color3(0.54, 0.13, 0.54)
 const notSelectedColor = new BABYLON.Color3(1, 0, 1);//pink
 const selectedColor = new BABYLON.Color3(1, 1, 0);//yellow
 const blueColor = new BABYLON.Color3(0, 0, 1);
 const redColor = new BABYLON.Color3(1, 0, 0);
 const blackColor = new BABYLON.Color3(0, 0, 0);
 const greenColor = new BABYLON.Color3(0, 1, 0);
+const rotationX = new BABYLON.Vector3(0, 0, 0);
+const rotationY = new BABYLON.Vector3(0, 1.5708, 0);
+const rotationZ = new BABYLON.Vector3(0, 0, 1.5708);//Math.PI / 2 get diferent value in its last digit here and when called from mesh
+const colorsObj = [
+    { "colorName": "blue", "colorVector": blueColor },
+    { "colorName": "base", "colorVector": baseColor },
+    { "colorName": "red", "colorVector": redColor },
+    { "colorName": "green", "colorVector": greenColor },
+    { "colorName": "black", "colorVector": blackColor },
+    { "colorName": "selected", "colorVector": selectedColor },
+    { "colorName": "notSelected", "colorVector": notSelectedColor }
+];
+//{"rotationMame": "X", x: Math.PI / 2, y:0, z:0},
+/*
+const rotationsObj = [
+    { "rotationMame": "X", "rotationVector": rotationX },
+    { "rotationMame": "Y", "rotationVector": rotationY },
+    { "rotationMame": "Z", "rotationVector": rotationZ }
+];
+*/
+function rotationVector2Name(vector) {
+    if (vector.y > 0) { return "Y" };
+    if (vector.z > 0) { return "Z" };
+    return "X";
+}
+
+function rotationName2Vector(theName) {
+    switch (theName) {
+        case "X":
+            return rotationX
+            break;
+        case "Y":
+            return rotationY
+            break;
+        case "Z":
+            return rotationZ
+            break;
+        default:
+            break;
+    }
+}
+function colorName2Vector(theColorName) {
+    return colorsObj.filter(c=>c.colorName == theColorName)[0].colorVector;
+}
+
+function colorVector2Name(theColorVector) {
+    console.log ("color: "+theColorVector)
+    return colorsObj.filter(c=>c.colorVector == theColorVector)[0].colorName;
+}
+
+///we can't use split(".") because we have: b2.p-0.5
+function fullName2Private(theFullName) {
+    let firstDot = theFullName.indexOf(".") + 1;
+    return theFullName.substr(firstDot);
+}
+
 const tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
 let selectedConnection;///the sphere that was clicked on one of the elements outside the model
 //let modelSelectedConnection;///the sphere that was clicked on one of the elements in the model
@@ -44,21 +101,25 @@ function setModelSelectedConnection(model, selectedConnectionSphere) {
 
 function setSelectedConnectionColor(theColor) {
     //sendMessage({ "R": r });
+    //let vectorColor = colorsObj.filter(c => c.colorName == theColor)[0].colorVector
+    let vectorColor = colorName2Vector(theColor);
     if (selectedConnection) {
-        selectedConnection.parent.material.diffuseColor = theColor;
+        selectedConnection.parent.material.diffuseColor = vectorColor;
     }
 }
 function colorBlue() {
-    setSelectedConnectionColor(blueColor);
+    setSelectedConnectionColor("blue");
+    //setSelectedConnectionColor(colorsObj.filter(c=>c.colorName = "blue")[0].colorVector);
 }
 function colorRed() {
-    setSelectedConnectionColor(redColor);
+    setSelectedConnectionColor("red");
+    //setSelectedConnectionColor(redColor);
 }
 function colorBlack() {
-    setSelectedConnectionColor(blackColor);
+    setSelectedConnectionColor("black");
 }
 function colorGreen() {
-    setSelectedConnectionColor(greenColor);
+    setSelectedConnectionColor("green");
 }
 
 function connect() {
@@ -80,6 +141,8 @@ async function saveModel() {
         const element = childs[index];
         console.log("index: " + index);
         if (element.metadata) {
+
+            /*
             console.log("blockNum (step): " + element.metadata.blockNum);
             console.log("connection (srcPoint): " + element.metadata.connection);
             console.log("connectedTo(destPoint): " + element.metadata.connectedTo);
@@ -87,14 +150,19 @@ async function saveModel() {
             console.log("type: " + element.name);//element.metadata.connection.parent.name);
             console.log("rotation: " + element.rotation);//element.metadata.connection.parent.rotation);
             console.log("color: " + element.material.diffuseColor);//element.metadata.connection.parent.material.diffuseColor);
+            */
+            //let vectorColor = colorsObj.filter(c=>c.colorName == theColor)[0].colorVector
+            let theColor = element.material.diffuseColor;
+            //let theColorName = colorsObj.filter(c => c.colorVector == theColor)[0].colorName;
 
-
+            ///we dont use for now "table" parameter. the lambda function dont work when we set table name as parameter
             let bodyData = {
+                'table': "recordedModel",
                 'step': element.metadata.blockNum,
-                'color': element.material.diffuseColor,
+                'color': colorVector2Name(theColor),
                 'destBlock': element.metadata.destBlock,
                 'destPoint': element.metadata.connectedTo,
-                'rotation': element.rotation,
+                'rotation': rotationVector2Name(element.rotation),
                 'srcPoint': element.metadata.connection,
                 'type': element.name
             }
@@ -105,66 +173,39 @@ async function saveModel() {
     }
 }
 
-function reBuildModel(modelData) {
-    //for (let index = 1; index < modelData.length; index++) {
-    for (let index = 1; index < 26; index++) {
+async function reBuildModel() {
+    var modelDataObj = await getData(tableURL, { 'myStep': 'ALL' });///working
+    //console.log(modelDataObj.Items);
+    let modelData = modelDataObj.Items;///working
+    //let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == "b5")[0];
+    //console.log(menuBlock.rotation == rotationsObj[0]);
+    //menuBlock.diffuseColor = //{R: 1 G:0 B:0};
+    
+    for (let index = 1; index < modelData.length+1; index++) {    
+    //for (let index = 1; index < 26; index++) {
         console.log("index: " + index);
         const element = modelData.filter(el => el.step == index)[0];
+
         //console.log("element: " + JSON.stringify(element));
-        const inDataBlockName = element.type;
-        const inDataConnectionName = element.srcPoint;
-        let converted = convertBlockAndsphereNames(inDataBlockName, inDataConnectionName);///helper function
-        let srcBlockName = converted.newBlockName;
-        let srcConnection = converted.newSphereName;
+        //const inDataBlockName = element.type;
+        //const inDataConnectionName = element.srcPoint;
+        //let converted = convertBlockAndsphereNames(inDataBlockName, inDataConnectionName);///helper function
+        //let srcBlockName = converted.newBlockName;
+        //let srcConnection = converted.newSphereName;
+        let srcBlockName = element.type;
+        let srcConnectionName = fullName2Private(element.srcPoint);
+        //let srcConnectionName = element.srcPoint.split(".")[1]
         /// use converted block name to create new element (will be sent to doConnect)
         let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == srcBlockName)[0];
         let newElement = menuBlock.clone(menuBlock.name);
         //TODO: set oriantation of the new element
-        let inDataRotatoion = element.localRotation;
-        let newRotation;
-        switch (inDataRotatoion) {
-            case "x0,0,0":
-                console.log("rotation x")
-                newElement.rotation.x = Math.PI / 2;
-                newElement.rotation.y = 0;
-                newElement.rotation.z = 0;
-                break;
-            case "X0,0,90":
-                console.log("rotation z");
-                newElement.rotation.x = 0;
-                newElement.rotation.y = 0;
-                newElement.rotation.z = Math.PI / 2;
-                break;
-            case "X0,90,0":
-                console.log("rotation y")
-                newElement.rotation.x = 0;
-                newElement.rotation.y = Math.PI / 2;
-                newElement.rotation.z = 0;
-                break;
-            default:
-                console.log("wrong rotation: " + inDataRotatoion);
-                break;
-        }
-
+        //let inDataRotatoion = element.rotation;
+        let newRotation = rotationName2Vector(element.rotation);
+        newElement.rotation = newRotation;
         /// create color following the data (will be sent to doConnect)
-        const inDataColor = element.color;
-        let newColor;
-        switch (inDataColor) {
-            case "1,0,0":
-                newColor = redColor;
-                break;
-            case "0,0,1":
-                newColor = blueColor;
-                break;
-            case "0,0,0":
-                newColor = blackColor;
-                break;
-            default:
-                newColor = notSelectedColor;
-                break;
-        }
-        let blockColor;
-
+        //const inDataColor = element.color;
+        let newColor = colorName2Vector(element.color);
+        
         ///set the selected connection on model (global variable)
         const inDatasDestBlock = element.destBlock;
         const inDatasDestPoint = element.destPoint;
@@ -172,9 +213,10 @@ function reBuildModel(modelData) {
         //console.log("s.name: " + s.name)
         setModelSelectedConnection(currentModel, s);
 
-        doConnect(newElement, newColor, srcConnection)
+        doConnect(newElement, newColor, srcConnectionName)
+        
     }
-
+/*
     function convertBlockAndsphereNames(inDataBlockName, inDataConnectionName) {
         let blockName;
         let connectionName;
@@ -239,6 +281,7 @@ function reBuildModel(modelData) {
         }
         return { newBlockName: blockName, newSphereName: connectionName }
     }
+    */
 }
 
 function destSphereByOldData(blockNumber, destPoint) {
@@ -251,14 +294,15 @@ function destSphereByOldData(blockNumber, destPoint) {
 
     //console.log(modelBlocks);
     let destBlock = modelBlocks.filter(byBlockNum)[0];
-    let destBlockName = destBlock.name;
+    //let destBlockName = destBlock.name;
     //console.log(destBlockName);
-    let sphereName = getDestPointFullNameOnModel(destBlockName, destPoint);
+    //let sphereName = getDestPointFullNameOnModel(destBlockName, destPoint);
+    //let sphereName = destPoint
     //console.log("sphereName: " + sphereName);
     let sphers = destBlock.getChildMeshes(false);
     let selectedSphere = sphers.filter(bySphereName)[0];
 
-
+/*
     function getDestPointFullNameOnModel(blockType, inDataConnectionName) {
         switch (blockType) {
             case "b5":
@@ -316,7 +360,7 @@ function destSphereByOldData(blockNumber, destPoint) {
         }
 
     }
-
+*/
     function byBlockNum(e) {
         console.log(e);
         if (e.metadata) {
@@ -330,7 +374,7 @@ function destSphereByOldData(blockNumber, destPoint) {
 
     function bySphereName(e) {
         if (e.name) {
-            return e.name == sphereName;
+            return e.name == destPoint;
         } else {
             return false;
         }
@@ -347,11 +391,11 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
         const element = children[index];
         initMeshContactSphere(element);
         //let elementPrivateName = element.name.split(".")[1];
-        let firstDot = element.name.indexOf(".") + 1;
-        let elementPrivateName = element.name.substr(firstDot);
+        //let firstDot = element.name.indexOf(".") + 1;
+        //let elementPrivateName = element.name.substr(firstDot);
         //console.log("elementPrivateName: " + elementPrivateName);
         ///element.name is like b33.p-1 while selectedConnectionMame is like p-1 without prefix
-        if (elementPrivateName == selectedConnectionMame) {
+        if (fullName2Private(element.name) == selectedConnectionMame) {
             newElementConnection = element;
         }
     }
@@ -389,47 +433,45 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
 }
 ///turn the elemets
 function flipModel() {
+    currentModel.rotation = rotationZ
+    /*
     currentModel.rotation.x = 0;
     currentModel.rotation.y = 0;
     currentModel.rotation.z = Math.PI / 2;
-    /*
-    let array = currentModel.getChildren()
-    for (let index = 0; index < array.length; index++) {
-        const element = array[index];
-        if (element.metadata){
-            console.log("connection id: " + element.metadata.connection.parent.id)//////////////////////
-            console.log("connectedTo id: " + element.metadata.connectedTo.id)//////////////////////
-            console.log("connection name: " + element.metadata.connection.parent.name)//////////////////////
-            console.log("connectedTo name: " + element.metadata.connectedTo.name)//////////////////////
-            console.log("name: " + element.name)///
-        }
-        //console.log("name: " + currentModel.name)//
-   }
-   */
+    */
 }
 
 function flipZ() {
     if (selectedConnection) {
+        selectedConnection.parent.rotation = rotationX;
+        /*
         selectedConnection.parent.rotation.x = 0
         selectedConnection.parent.rotation.y = 0
         selectedConnection.parent.rotation.z = Math.PI / 2;
+        */
     }
 
 }
 function flipX() {
     if (selectedConnection) {
-        selectedConnection.parent.rotation.z = 0
-        selectedConnection.parent.rotation.y = 0
-        selectedConnection.parent.rotation.x = Math.PI / 2;
+        selectedConnection.parent.rotation = rotationY;
+        /*
+        selectedConnection.parent.rotation.z = rotationsObj[0].z;//0
+        selectedConnection.parent.rotation.y = rotationsObj[0].y;//0
+        selectedConnection.parent.rotation.x = rotationsObj[0].x;//Math.PI / 2;
         //selectedConnection.parent.rotation.x = 0;///not work for sphere
+        */
     }
 
 }
 function flipY() {
     if (selectedConnection) {
+        selectedConnection.parent.rotation = rotationZ;
+        /*
         selectedConnection.parent.rotation.z = 0
         selectedConnection.parent.rotation.x = 0
         selectedConnection.parent.rotation.y = Math.PI / 2;
+        */
     }
 
 }
@@ -502,7 +544,7 @@ function initMeshContactSphere(tempSphere) {
 function meshWheel(scene, wheelWidth) {
     const wheel = BABYLON.MeshBuilder.CreateCylinder("c" + wheelWidth, { height: 1, diameter: 2 });
     const myMaterial = new BABYLON.StandardMaterial("myMaterial", scene);
-    myMaterial.diffuseColor = new BABYLON.Color3(0.54, 0.13, 0.54);
+    myMaterial.diffuseColor = baseColor;//new BABYLON.Color3(0.54, 0.13, 0.54);
     wheel.material = myMaterial;
     wheel.rotation.x = Math.PI / 2;
     addMeshContactSphere(wheel, 0);
@@ -513,7 +555,7 @@ function meshWheel(scene, wheelWidth) {
 function meshBlock(scene, blockWidth) {
     const box = BABYLON.MeshBuilder.CreateBox("b" + blockWidth, { width: blockWidth, height: 1 });
     const myMaterial = new BABYLON.StandardMaterial("myMaterial", scene);
-    myMaterial.diffuseColor = new BABYLON.Color3(0.54, 0.13, 0.54);
+    myMaterial.diffuseColor = baseColor;//new BABYLON.Color3(0.54, 0.13, 0.54);
     box.material = myMaterial;
     //box.position.x = 2;
     const blockWidthFloor = Math.floor(blockWidth / 2);

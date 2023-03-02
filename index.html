@@ -78,7 +78,7 @@
 
         async function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove: ");
-            saveModel();
+            //saveModel();
             //setVisibleMeshChilds(elementsMenu, false);//////
             /*
             let data1 = {"json" : { "connection": "92", "connectedTo": "2023" } };
@@ -239,16 +239,17 @@
             currentModel = createModel();
             // GUI
             buttensPanel = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-            createButton(0, "/", flipY);
-            createButton(50, "---", flipX);
-            createButton(100, "|", flipZ);
+            createButton(0, "/", flipX);
+            createButton(50, "---", flipZ);//X
+            createButton(100, "|", flipY);
             createButton(200, "< <", connect);
             createButton(300, "turn model", flipModel);
             createButton(-100, " ", colorBlue).background = "blue";
             createButton(-150, " ", colorRed).background = "red";
             createButton(-200, " ", colorBlack).background = "black";
             createButton(-250, " ", colorGreen).background = "green";
-
+            createButton(400, "Save", saveModel);
+            createButton(450, "reBuild", reBuildModel);
             function createButton(position, name, func) {
                 let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", name);
                 button1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
