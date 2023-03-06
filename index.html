@@ -130,7 +130,7 @@
         var sceneToRender = null;
         var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
         /////////// CREATE SCENE ///////////////////////////
-        const createScene = () => {
+        const createScene = async () => {
             const scene = new BABYLON.Scene(engine);
 
             const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 4, 10, BABYLON.Vector3.Zero());
@@ -181,7 +181,12 @@
                 buttensPanel.addControl(button1);
                 return button1;
             }
-           // const xr = await scene.createDefaultXRExperienceAsync();
+            const env = scene.createDefaultEnvironment();
+
+            const xr = await scene.createDefaultXRExperienceAsync({
+                floorMeshes: [env.ground]
+            });
+
             //wellcomeBox();
             /*
             scene.debugLayer.show({
