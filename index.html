@@ -183,7 +183,30 @@
                 buttensPanel.addControl(button1);
                 return button1;
             }
-            ///////////////////////////#D Panel////////////////
+            /////////////////////near menu//////////////
+
+const manager = new BABYLON.GUI.GUI3DManager(scene);
+
+// Let's add a slate
+const near = new BABYLON.GUI.NearMenu("near");
+manager.addControl(near);
+
+const button0 = new BABYLON.GUI.TouchHolographicButton("button0");
+button0.imageUrl = "./textures/IconFollowMe.png";
+button0.text = "Button 0";
+near.addButton(button0);
+
+const button1 = new BABYLON.GUI.TouchHolographicButton("button1");
+button1.imageUrl = "./textures/IconClose.png";
+button1.text = "Button 1";
+button1.onPointerUpObservable.add(connect);
+near.addButton(button1);
+
+const button2 = new BABYLON.GUI.TouchHolographicButton("button2");
+button2.imageUrl = "./textures/IconFollowMe.png";
+button2.text = "Button 2";
+near.addButton(button2);
+            /*//////////////////////////3D Panel////////////////
             var anchor = new BABYLON.TransformNode("");
 
             camera.wheelDeltaPercentage = 0.01;
@@ -197,7 +220,7 @@
             panel.columns = 4;
             manager.addControl(panel);
             panel.linkToTransformNode(anchor);
-            panel.position.z = -10;
+            panel.position.z = -20;
             //panel.position.y = -20;
             panel.position.x = 10;
             // Let's add some buttons!
@@ -226,7 +249,7 @@
             addButton("reBuild", reBuildModel);
 
             panel.blockLayout = false;
-            ////////////////////////////end 3D panel///////////////////
+            *////////////////////////////end 3D panel///////////////////
             const env = scene.createDefaultEnvironment();
 
             const xr = await scene.createDefaultXRExperienceAsync({
