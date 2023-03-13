@@ -190,14 +190,15 @@
 const manager = new BABYLON.GUI.GUI3DManager(scene);
 
 // Let's add a slate
-const near = new BABYLON.GUI.NearMenu("near");
+let near = new BABYLON.GUI.NearMenu("near");
+manager.addControl(near);
 let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
     follower.defaultDistance = 10;
     follower.minimumDistance = 5;
     follower.maximumDistance = 35;
 
 
-manager.addControl(near);
+
 
 const button0 = new BABYLON.GUI.TouchHolographicButton("button0");
 //button0.imageUrl = "./textures/IconFollowMe.png";
@@ -258,7 +259,7 @@ near.addButton(button2);
 
             panel.blockLayout = false;
             *////////////////////////////end 3D panel///////////////////
-            const env = scene.createDefaultEnvironment();
+            //const env = scene.createDefaultEnvironment();
 
             const xr = await scene.createDefaultXRExperienceAsync({
                 floorMeshes: [env.ground]
