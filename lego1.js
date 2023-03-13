@@ -71,7 +71,7 @@ function animate(box, oldPos, newPos, scene) {
 
     const xSlide = new BABYLON.Animation("xSlide", "position", frameRate,BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
-    const keyFrames = []; 
+    const keyFrames = [];  
 
     keyFrames.push({
         frame: 0,
