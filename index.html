@@ -161,7 +161,7 @@
             c1.setParent(elementsMenu);
 
             currentModel = createModel();
-            /// GUI
+            /*// 2D GUI
             buttensPanel = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
             createButton(0, "/", flipX);
             createButton(50, "---", flipZ);//X
@@ -188,7 +188,8 @@
                 buttensPanel.addControl(button1);
                 return button1;
             }
-            /////////////////////near menu//////////////
+            */
+           ////////////////////near menu//////////////
 
 const manager = new BABYLON.GUI.GUI3DManager(scene);
 
@@ -202,17 +203,20 @@ let follower = near.defaultBehavior.followBehavior //returns the followbehavior 
 
 
 function createTouchButton(title, theFunction) {
-    let button = new BABYLON.GUI.TouchHolographicButton(title);
+    let button = new BABYLON.GUI.TouchHolographicButton("title");
     button.text = title;
     button.onPointerUpObservable.add(theFunction);
+    near.addButton(button);
+    return button;
 }
+
 
 createTouchButton("/", flipX);
 createTouchButton("---", flipZ);//X
 createTouchButton("|", flipY);
 createTouchButton("< <", connect);
 createTouchButton("turn model", flipModel);
-createTouchButton("blue", colorBlue).backMaterial = theMatirial;
+createTouchButton("blue", colorBlue);
 createTouchButton("red", colorRed);
 createTouchButton("black", colorBlack);
 createTouchButton("green", colorGreen);
