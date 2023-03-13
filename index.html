@@ -135,8 +135,8 @@
         var createScene = async function () {
             const scene = new BABYLON.Scene(engine);
             /////var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(-15, 0, -25), scene);////(0, 5, -50)
-            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -40), scene);
-            //const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 30, BABYLON.Vector3.Zero());
+            //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -40), scene);///(0, 5, -40)
+            const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 30, BABYLON.Vector3.Zero());
             camera.setTarget(BABYLON.Vector3.Zero());/////
             camera.attachControl(canvas, true);
 
