@@ -50,7 +50,8 @@
             console.log("reportConnect");
             ///for each mode write the model/ write user time and error / create next automtic stage
         }
-
+        const menuX = 15;
+        const modelX = -15;
         function wellcomeBox() {
 
 
@@ -144,8 +145,9 @@
             light1.intensity = 0.75;
             light2.intensity = 0.5;
             elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 20, height: 20}, scene);
-            ground.position.x = -20;
+            elementsMenu.position.x = menuX;
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30}, scene);
+            ground.position.x = modelX;
             ground.position.y = -1;
 
             const b1X5 = meshBlock(scene, 5);
@@ -200,28 +202,34 @@ let follower = near.defaultBehavior.followBehavior //returns the followbehavior 
     follower.defaultDistance = 10;
     follower.minimumDistance = 5;
     follower.maximumDistance = 35;
-
-
-function createTouchButton(title, theFunction) {
+near.columns = 6;
+near.margin = 0.2
+function createTouchButton(title, color, theFunction) {
     let button = new BABYLON.GUI.TouchHolographicButton("title");
-    button.text = title;
+    //button.text = title;
     button.onPointerUpObservable.add(theFunction);
     near.addButton(button);
+    const text1 = new BABYLON.GUI.TextBlock();
+    text1.text = title;
+    text1.color = color;
+    text1.fontSize = 90;
+    text1.fontStyle = "bold"
+    button.content = text1;
     return button;
 }
 
 
-createTouchButton("/", flipX);
-createTouchButton("---", flipZ);//X
-createTouchButton("|", flipY);
-createTouchButton("< <", connect);
-createTouchButton("turn model", flipModel);
-createTouchButton("blue", colorBlue);
-createTouchButton("red", colorRed);
-createTouchButton("black", colorBlack);
-createTouchButton("green", colorGreen);
-createTouchButton("Save", saveModel);
-createTouchButton("reBuild", reBuildModel);
+createTouchButton("/", "yellow",flipX);
+createTouchButton("---", "yellow",flipZ);//X
+createTouchButton("|", "yellow",flipY);
+createTouchButton("< <", "yellow",connect);
+createTouchButton("turn\nmodel", "yellow",flipModel);
+createTouchButton("blue", "blue",colorBlue);
+createTouchButton("red", "red",colorRed);
+createTouchButton("black","black", colorBlack);
+createTouchButton("green","green", colorGreen);
+createTouchButton("Save", "yellow", saveModel);
+createTouchButton("re\nBuild", "yellow",reBuildModel);
 
 /*
 const button0 = new BABYLON.GUI.TouchHolographicButton("button0");

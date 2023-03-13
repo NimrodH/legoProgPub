@@ -77,7 +77,7 @@ function setVisibleMeshChilds(theMesh, setItVisible) {
 
 function createModel() {
     let model = meshBlock(scene, 1);
-    model.position.x = -20;
+    model.position.x = -15;
     model.metadata = {
         inModel: true,
         blockNum: 0,
@@ -353,6 +353,7 @@ function meshWheel(scene, wheelWidth) {
     wheel.material = myMaterial;
     wheel.rotation = rotationX;
     addMeshContactSphere(wheel, 0);
+    wheel.position.x = menuX;
     return wheel;
 }
 
@@ -377,6 +378,7 @@ function meshBlock(scene, blockWidth) {
             }
         }
     }
+    box.position.x = menuX;
     return box
 }
 ////////////////////// end of game functions ///////////////////////////
