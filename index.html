@@ -189,9 +189,11 @@ const manager = new BABYLON.GUI.GUI3DManager(scene);
 
 // Let's add a slate
 const near = new BABYLON.GUI.NearMenu("near");
-near.position.x =10;
-near.position.y =10;
-near.position.z =10;
+let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
+    follower.defaultDistance = 10;
+    follower.minimumDistance = 5;
+    follower.maximumDistance = 35;
+
 
 manager.addControl(near);
 
