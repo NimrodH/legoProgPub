@@ -189,6 +189,9 @@ const manager = new BABYLON.GUI.GUI3DManager(scene);
 
 // Let's add a slate
 const near = new BABYLON.GUI.NearMenu("near");
+near.scaleX = 0.1;
+near.scaleY = 0.1;
+near.scaleZ = 0.1;
 manager.addControl(near);
 
 const button0 = new BABYLON.GUI.TouchHolographicButton("button0");
