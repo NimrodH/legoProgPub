@@ -156,7 +156,7 @@ function connect() {
     let newElement = selectedConnection.parent.clone(selectedConnection.parent.name);
     let newColor = selectedConnection.parent.material.diffuseColor;
     let selectedConnectionName = selectedConnection.name;
-    doConnect(newElement, newColor, selectedConnectionName);
+    doConnect(newElement, newColor, selectedConnectionName, true);
 }
 
 async function saveModel() {
@@ -205,7 +205,7 @@ async function reBuildModel() {
         let s = destSphereByOldData(inDatasDestBlock, inDatasDestPoint);
         setModelSelectedConnection(currentModel, s);
 
-        doConnect(newElement, newColor, srcConnectionName);
+        doConnect(newElement, newColor, srcConnectionName, false);
     }
 }
 
@@ -239,7 +239,7 @@ function destSphereByOldData(blockNumber, destPoint) {
 }
 
 ///called from connect and from reBuildModel
-function doConnect(newElement, newColor, selectedConnectionMame) {
+function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
     let newElementConnection;
     ///set any of its childrens with its own matirial and action
     let children = newElement.getChildren();
@@ -261,18 +261,20 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
     var global_delta = global_pos_m.subtract(global_pos_sc);
 
     ///move the elment by the calaculated vector, then add it to model
-    /////////newElement.position.addInPlace(global_delta);
-
-    newElement.setParent(null);
-    //newElement.setParent(currentModel);
-    let oldPos = newElement.position;//BABYLON.Vector3.TransformCoordinates(newElement.position, matrix_m);
-    
-    let newPos = oldPos.add(global_delta);
-    console.log(oldPos)
-    console.log(newPos)
-    animate(newElement, oldPos, newPos, scene);
-    ///
-    ///////newElement.setParent(currentModel);//need to do it later?
+    if (toAnimate) {
+        newElement.setParent(null);
+        let oldPos = newElement.position;//BABYLON.Vector3.TransformCoordinates(newElement.position, matrix_m);
+        
+        let newPos = oldPos.add(global_delta);
+        console.log(oldPos)
+        console.log(newPos)
+        animate(newElement, oldPos, newPos, scene); ///will setParent from inside when animation done   
+    } else {
+        newElement.position.addInPlace(global_delta);
+        newElement.setParent(currentModel);
+    }
+    //////
+ 
     newElement.metadata = {
         inModel: true,
         blockNum: currentModel.metadata.numOfBlocks + 1,
