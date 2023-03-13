@@ -168,7 +168,7 @@
             createButton(-150, " ", colorRed).background = "red";
             createButton(-200, " ", colorBlack).background = "black";
             createButton(-250, " ", colorGreen).background = "green";
-            createButton(400, "Save", saveModel);
+            //createButton(400, "Save", saveModel);
             createButton(450, "reBuild", reBuildModel);
             function createButton(position, name, func) {
                 let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", name);
@@ -190,7 +190,7 @@ const manager = new BABYLON.GUI.GUI3DManager(scene);
 // Let's add a slate
 const near = new BABYLON.GUI.NearMenu("near");
 let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
-    follower.defaultDistance = 10;
+    follower.defaultDistance = 20;
     follower.minimumDistance = 5;
     follower.maximumDistance = 35;
 
@@ -198,18 +198,18 @@ let follower = near.defaultBehavior.followBehavior //returns the followbehavior 
 manager.addControl(near);
 
 const button0 = new BABYLON.GUI.TouchHolographicButton("button0");
-button0.imageUrl = "./textures/IconFollowMe.png";
+//button0.imageUrl = "./textures/IconFollowMe.png";
 button0.text = "Button 0";
 near.addButton(button0);
 
 const button1 = new BABYLON.GUI.TouchHolographicButton("button1");
-button1.imageUrl = "./textures/IconClose.png";
+//button1.imageUrl = "./textures/IconClose.png";
 button1.text = "Button 1";
 button1.onPointerUpObservable.add(connect);
 near.addButton(button1); 
 
 const button2 = new BABYLON.GUI.TouchHolographicButton("button2");
-button2.imageUrl = "./textures/IconFollowMe.png";
+//button2.imageUrl = "./textures/IconFollowMe.png";
 button2.text = "Button 2";
 near.addButton(button2);
             /*//////////////////////////3D Panel////////////////
