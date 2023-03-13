@@ -259,13 +259,14 @@ near.addButton(button2);
 
             panel.blockLayout = false;
             *////////////////////////////end 3D panel///////////////////
-            //const env = scene.createDefaultEnvironment();
+            /*const env = scene.createDefaultEnvironment();
 
             const xr = await scene.createDefaultXRExperienceAsync({
                 floorMeshes: [env.ground]
             });
-
-            //wellcomeBox();
+            */
+            const xr = scene.createDefaultXRExperienceAsync();
+//wellcomeBox();
             /*
             scene.debugLayer.show({
                 embedMode: true,
