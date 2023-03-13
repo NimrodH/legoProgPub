@@ -146,17 +146,19 @@
             light2.intensity = 0.5;
             elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
             elementsMenu.position.x = menuX;
+            elementsMenu.position.x = -1;///position of center of B1X3 TODO:we need to replace it with virtual mesh
             var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30}, scene);
             ground.position.x = modelX;
             ground.position.y = -1;
 
             const b1X5 = meshBlock(scene, 5);
             b1X5.setParent(elementsMenu);
+            b1X5.position.y = -6;//
             const b1X3 = meshBlock(scene, 3);
-            b1X3.position.y = 3;
+            b1X3.position.y = -1;
             b1X3.setParent(elementsMenu);
             const b1X2 = meshBlock(scene, 2);
-            b1X2.position.y = -3;
+            b1X2.position.y = 3;
             b1X2.setParent(elementsMenu);
             const c1 = meshWheel(scene, 1);
             c1.position.y = 6;
@@ -224,11 +226,12 @@ createTouchButton("---", "yellow",flipZ);//X
 createTouchButton("|", "yellow",flipY);
 createTouchButton("< <", "yellow",connect);
 createTouchButton("turn\nmodel", "yellow",flipModel);
+createTouchButton("Save", "yellow", saveModel);
 createTouchButton("blue", "blue",colorBlue);
 createTouchButton("red", "red",colorRed);
 createTouchButton("black","black", colorBlack);
 createTouchButton("green","green", colorGreen);
-createTouchButton("Save", "yellow", saveModel);
+
 createTouchButton("re\nBuild", "yellow",reBuildModel);
 
 /*

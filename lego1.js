@@ -66,6 +66,39 @@ let currentModel;///returned by createModel that push it into modelsArray
 let elementsMenu;///the parent of the blocks that user can select
 let buttensPanel;
 /////////////////// GAME FUNCTIONS //////////////////////////
+function animate(box, oldPos, newPos, scene) {
+    const frameRate = 40;
+
+    const xSlide = new BABYLON.Animation("xSlide", "position", frameRate,BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    const keyFrames = []; 
+
+    keyFrames.push({
+        frame: 0,
+        value: oldPos
+    });
+/*
+    keyFrames.push({
+        frame: frameRate,
+        value: -2
+    });
+*/
+    keyFrames.push({
+        frame: 2 * frameRate,
+        value: newPos
+    });
+
+    xSlide.setKeys(keyFrames);
+    scene.beginDirectAnimation(box, [xSlide], 0, 2 * frameRate, false, 1, add2model);
+    //box.animations.push(xSlide);
+
+    //scene.beginAnimation(box, 0, 2 * frameRate, true);
+    function add2model() {
+        box.setParent(currentModel);
+        console.log("add2model" + oldPos.x);
+      }
+}
+
 function setVisibleMeshChilds(theMesh, setItVisible) {
     theMesh.isVisible = setItVisible;
     let childs = theMesh.getChildMeshes(false);
@@ -228,8 +261,18 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
     var global_delta = global_pos_m.subtract(global_pos_sc);
 
     ///move the elment by the calaculated vector, then add it to model
-    newElement.position.addInPlace(global_delta);
-    newElement.setParent(currentModel);
+    /////////newElement.position.addInPlace(global_delta);
+
+    newElement.setParent(null);
+    //newElement.setParent(currentModel);
+    let oldPos = newElement.position;//BABYLON.Vector3.TransformCoordinates(newElement.position, matrix_m);
+    
+    let newPos = oldPos.add(global_delta);
+    console.log(oldPos)
+    console.log(newPos)
+    animate(newElement, oldPos, newPos, scene);
+    ///
+    ///////newElement.setParent(currentModel);//need to do it later?
     newElement.metadata = {
         inModel: true,
         blockNum: currentModel.metadata.numOfBlocks + 1,
@@ -242,6 +285,7 @@ function doConnect(newElement, newColor, selectedConnectionMame) {
     ///TODO:rescale if removing block
     setModelSelectedConnection(currentModel, null);
     reportConnect(newElement);///newElement has connectedTo object
+    
 }
 ///turn the elemets
 function flipModel() {
