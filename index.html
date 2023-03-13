@@ -144,9 +144,9 @@
             light1.intensity = 0.75;
             light2.intensity = 0.5;
             elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 10, height: 10}, scene);
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 20, height: 20}, scene);
             ground.position.x = -20;
-            ground.position.y = -3;
+            ground.position.y = -1;
 
             const b1X5 = meshBlock(scene, 5);
             b1X5.setParent(elementsMenu);
@@ -201,8 +201,25 @@ let follower = near.defaultBehavior.followBehavior //returns the followbehavior 
     follower.maximumDistance = 35;
 
 
+function createTouchButton(title, theFunction) {
+    let button = new BABYLON.GUI.TouchHolographicButton(title);
+    button.text = title;
+    button.onPointerUpObservable.add(theFunction);
+}
 
+createTouchButton("/", flipX);
+createTouchButton("---", flipZ);//X
+createTouchButton("|", flipY);
+createTouchButton("< <", connect);
+createTouchButton("turn model", flipModel);
+createTouchButton("blue", colorBlue).backMaterial = theMatirial;
+createTouchButton("red", colorRed);
+createTouchButton("black", colorBlack);
+createTouchButton("green", colorGreen);
+createTouchButton("Save", saveModel);
+createTouchButton("reBuild", reBuildModel);
 
+/*
 const button0 = new BABYLON.GUI.TouchHolographicButton("button0");
 //button0.imageUrl = "./textures/IconFollowMe.png";
 button0.text = "Button 0";
@@ -218,6 +235,7 @@ const button2 = new BABYLON.GUI.TouchHolographicButton("button2");
 //button2.imageUrl = "./textures/IconFollowMe.png";
 button2.text = "Button 2";
 near.addButton(button2);
+*/
             /*//////////////////////////3D Panel////////////////
             var anchor = new BABYLON.TransformNode("");
 
