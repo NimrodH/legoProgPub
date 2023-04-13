@@ -314,18 +314,30 @@ function flipModel() {
 function flipZ() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationX;
+        selectedConnection.parent.position.y = menuY - elementsMenuY;
     }
 
 }
 function flipX() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationY;
+        selectedConnection.parent.position.y = menuY - elementsMenuY;
     }
 
 }
 function flipY() {
     if (selectedConnection) {
+        console.log("right: " + selectedConnection.parent.name)
+        //selectedConnection.parent.position.y = 5;//selectedConnection.parent.sizeX;
         selectedConnection.parent.rotation = rotationZ;
+        switch (selectedConnection.parent.name) {
+            case "b5":
+                selectedConnection.parent.position.y = 3.5;
+                break;
+        
+            default:
+                break;
+        }
     }
 
 }
@@ -399,7 +411,7 @@ function meshWheel(scene, wheelWidth) {
     wheel.material = myMaterial;
     wheel.rotation = rotationX;
     addMeshContactSphere(wheel, 0);
-    wheel.position.x = menuX;
+    wheel.position.y = 1;
     return wheel;
 }
 
@@ -424,7 +436,9 @@ function meshBlock(scene, blockWidth) {
             }
         }
     }
-    box.position.x = menuX;
+    //box.position.x = menuX;
+    
+    box.position.y = menuY;
     return box
 }
 ////////////////////// end of game functions ///////////////////////////
