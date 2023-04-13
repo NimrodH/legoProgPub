@@ -147,9 +147,9 @@
             elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
             elementsMenu.position.x = menuX;
             elementsMenu.position.y = -1;///position of center of B1X3 TODO:we need to replace it with virtual mesh
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30}, scene);
-            ground.position.x = modelX;
-            ground.position.y = -1;
+           // var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30}, scene);
+           // ground.position.x = modelX;
+           // ground.position.y = -1;
 
             const b1X5 = meshBlock(scene, 5);
             b1X5.setParent(elementsMenu);
