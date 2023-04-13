@@ -163,8 +163,8 @@
            // ground.position.y = -1;
 
            var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
-          // var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
-           //ground.material = new BABYLON.GridMaterial("mat", scene);
+           var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
+           ground.material = new BABYLON.GridMaterial("mat", scene);
 
             const b1X5 = meshBlock(scene, 5);
             b1X5.setParent(elementsMenu);
