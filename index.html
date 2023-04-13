@@ -134,6 +134,10 @@
         //const createScene = () => {
         var createScene = async function () {
             const scene = new BABYLON.Scene(engine);
+            const gravityVector = new BABYLON.Vector3(0, -9.8, 0);
+            const physicsPlugin = new BABYLON.CannonJSPlugin();
+            scene.enablePhysics(gravityVector, physicsPlugin);
+
             /////var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(-15, 0, -25), scene);////(0, 5, -50)
             //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -40), scene);///(0, 5, -40)
             
@@ -163,7 +167,12 @@
            // ground.position.y = -1;
 
            var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
+           environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"));
            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
+           ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);
+            ground.checkCollisions = true;
+
+
            ground.material = new BABYLON.GridMaterial("mat", scene);
 
             const b1X5 = meshBlock(scene, 5);
@@ -329,7 +338,9 @@ near.addButton(button2);
                 floorMeshes: [env.ground]
             });
             */
-            const xr = scene.createDefaultXRExperienceAsync();
+            const xr = scene.createDefaultXRExperienceAsync({
+        floorMeshes: [ground]
+    });;
 //wellcomeBox();
             /*
             scene.debugLayer.show({
