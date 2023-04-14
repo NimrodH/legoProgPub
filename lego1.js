@@ -170,7 +170,16 @@ function connect() {
 }
 
 async function saveModel() {
-    scene.environmentTexture = null;///////////////////////////////
+    //scene.environmentTexture = null;///////////////////////////////
+    var skybox = scene.getMeshByName("skyBox");
+    var skyboxMaterial = skybox.material;
+    
+    // Dispose of skybox material and texture
+    skyboxMaterial.reflectionTexture.dispose();
+    skyboxMaterial.dispose();
+    
+    // Dispose of skybox mesh
+    //skybox.dispose();
 
      return;///temporary to avoid some one from removing my model
     let childs = currentModel.getChildMeshes(true);
