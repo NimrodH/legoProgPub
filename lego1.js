@@ -160,6 +160,11 @@ function connect() {
 }
 
 async function saveModel() {
+    selectedConnection.parent.showBoundingBox = true;
+    selectedConnection.parent.refreshBoundingInfo();
+    var boundingInfo = selectedConnection.parent.getBoundingInfo();
+    var lowerEdgePosition = boundingInfo.boundingBox.minimumWorld;
+    console.log("bottom1: " + lowerEdgePosition)
     return;///temporary to avoid some one from removing my model
     let childs = currentModel.getChildMeshes(true);
     for (let index = 0; index < childs.length; index++) {
@@ -327,16 +332,16 @@ function flipX() {
 }
 function flipY() {
     if (selectedConnection) {
-        console.log("right: " + selectedConnection.parent.name)
+    
         //selectedConnection.parent.position.y = 5;//selectedConnection.parent.sizeX;
         selectedConnection.parent.rotation = rotationZ;
-        switch (selectedConnection.parent.name) {
-            case "b5":
-                selectedConnection.parent.position.y = 3.5;
-                break;
-        
-            default:
-                break;
+        selectedConnection.parent.refreshBoundingInfo();
+        selectedConnection.parent.computeWorldMatrix(true);
+        var boundingInfo = selectedConnection.parent.getBoundingInfo();
+        var lowerEdgePosition = boundingInfo.boundingBox.minimumWorld.y;
+        console.log("bottom1: " + lowerEdgePosition);
+        if (lowerEdgePosition < 0) {
+            selectedConnection.parent.position.y = selectedConnection.parent.position.y - lowerEdgePosition
         }
     }
 
