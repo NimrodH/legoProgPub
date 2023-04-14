@@ -144,13 +144,14 @@
             //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -40), scene);///(0, 5, -40)
             
             
-            const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 3, BABYLON.Vector3.Zero());
-            camera.setTarget(BABYLON.Vector3.Zero());/////
-            camera.attachControl(canvas, true);
-            
-            //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 10, 80), scene);
-            //camera.setTarget(new BABYLON.Vector3(0, 10, 400));///, 10, 400
+            //const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 3, BABYLON.Vector3.Zero());
+            //camera.setTarget(BABYLON.Vector3.Zero());/////
             //camera.attachControl(canvas, true);
+            
+            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+            //camera.setTarget(new BABYLON.Vector3(0, 10, 400));///, 10, 400
+            camera.setTarget(BABYLON.Vector3.Zero());
+            camera.attachControl(canvas, true);
             
             
             const light1 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 1));
