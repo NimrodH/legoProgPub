@@ -20,7 +20,7 @@ const colorsObj = [
     { "colorName": "selected", "colorVector": selectedColor },
     { "colorName": "notSelected", "colorVector": notSelectedColor }
 ];
-
+var scene = window.scene;
 function rotationVector2Name(vector) {
     if (vector.y > 0) { return "Y" };
     if (vector.z > 0) { return "Z" };
@@ -170,12 +170,9 @@ function connect() {
 }
 
 async function saveModel() {
-    selectedConnection.parent.showBoundingBox = true;
-    selectedConnection.parent.refreshBoundingInfo();
-    var boundingInfo = selectedConnection.parent.getBoundingInfo();
-    var lowerEdgePosition = boundingInfo.boundingBox.minimumWorld;
-    console.log("bottom1: " + lowerEdgePosition)
-    return;///temporary to avoid some one from removing my model
+    scene.environmentTexture = null;///////////////////////////////
+
+     return;///temporary to avoid some one from removing my model
     let childs = currentModel.getChildMeshes(true);
     for (let index = 0; index < childs.length; index++) {
         const element = childs[index];
