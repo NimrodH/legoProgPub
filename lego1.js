@@ -95,7 +95,16 @@ function animate(box, oldPos, newPos, scene) {
     //scene.beginAnimation(box, 0, 2 * frameRate, true);
     function add2model() {
         box.setParent(currentModel);
-        console.log("add2model" + oldPos.x);
+        //console.log("add2model" + oldPos.x);
+        ///rais all model abo=ve ground
+        currentModel.refreshBoundingInfo();
+        currentModel.computeWorldMatrix(true);
+        var boundingInfo = currentModel.getHierarchyBoundingVectors();
+        var lowerEdgePosition = boundingInfo.min.y;
+        console.log("bottom1: " + lowerEdgePosition);
+        if (lowerEdgePosition < 0) {
+            currentModel.position.y = currentModel.position.y - lowerEdgePosition
+        }
       }
 }
 
@@ -111,6 +120,7 @@ function setVisibleMeshChilds(theMesh, setItVisible) {
 function createModel() {
     let model = meshBlock(scene, 1);
     model.position.x = -15;
+    model.position.z = -5;
     model.metadata = {
         inModel: true,
         blockNum: 0,
