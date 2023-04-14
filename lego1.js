@@ -175,8 +175,9 @@ async function saveModel() {
     var skyboxMaterial = skybox.material;
     
     // Dispose of skybox material and texture
-    skyboxMaterial.reflectionTexture.dispose();
-    skyboxMaterial.dispose();
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/blue", scene);
+    //skyboxMaterial.reflectionTexture.dispose();
+    //skyboxMaterial.dispose();
     
     // Dispose of skybox mesh
     //skybox.dispose();
