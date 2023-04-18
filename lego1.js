@@ -60,6 +60,7 @@ function fullName2Private(theFullName) {
 }
 
 const tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
+const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/users';
 let selectedConnection;///the sphere that was clicked on one of the elements outside the model
 let modelsArray = [];
 let currentModel;///returned by createModel that push it into modelsArray
@@ -189,7 +190,19 @@ function changeSky(skyPath) {
 
 async function saveModel() {
 
-    changeSky("textures/blue");
+    /////changeSky("textures/blue");
+    let bodyData = {
+        'ActionType': "colorl",
+        'ActionDetails': "blue",
+        'actionID': "101",
+        'block': "b5",
+        'isTrueAction': true,
+        'model': "A",
+        'step': "5",
+        'time': "22:00",
+        'user': "100"
+    }
+    var result = await postData(usersURL, bodyData);
 
      return;///temporary to avoid some one from removing my model
     let childs = currentModel.getChildMeshes(true);
