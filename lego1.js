@@ -169,20 +169,27 @@ function connect() {
     doConnect(newElement, newColor, selectedConnectionName, true);
 }
 
-async function saveModel() {
-    //scene.environmentTexture = null;///////////////////////////////
+
+function changeSky(skyPath) {
     var skybox = scene.getMeshByName("skyBox");
 
     var skyboxMaterial = skybox.material;
     skyboxMaterial.backFaceCulling = false;
     // Dispose of skybox material and texture
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/blue", scene);
+    //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/blue", scene);
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(skyPath, scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     //skyboxMaterial.reflectionTexture.dispose();
     //skyboxMaterial.dispose();
     
     // Dispose of skybox mesh
     //skybox.dispose();
+
+}
+
+async function saveModel() {
+
+    changeSky("textures/red");
 
      return;///temporary to avoid some one from removing my model
     let childs = currentModel.getChildMeshes(true);
