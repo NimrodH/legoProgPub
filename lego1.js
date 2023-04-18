@@ -176,8 +176,8 @@ function changeSky(skyPath) {
     var skyboxMaterial = skybox.material;
     skyboxMaterial.backFaceCulling = false;
     // Dispose of skybox material and texture
-    //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/blue", scene);
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(skyPath, scene);
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/blue", scene);
+    //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(skyPath, scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     //skyboxMaterial.reflectionTexture.dispose();
     //skyboxMaterial.dispose();
