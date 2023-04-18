@@ -189,14 +189,14 @@ function changeSky(skyPath) {
 }
 
 async function saveModel() {
-/*
+
     /////changeSky("textures/blue");
     let bodyData = {
         'ActionType': "colorl",
         'ActionDetails': "blue",
         'actionID': "101",
         'block': "b5",
-        'isTrueAction': true,
+        'isTrueAction': "true",
         'model': "A",
         'step': "5",
         'time': "22:00",
@@ -205,7 +205,7 @@ async function saveModel() {
     var result = await postData(usersURL, bodyData);
 
      return;///temporary to avoid some one from removing my model
-*/
+
     let childs = currentModel.getChildMeshes(true);
     for (let index = 0; index < childs.length; index++) {
         const element = childs[index];
