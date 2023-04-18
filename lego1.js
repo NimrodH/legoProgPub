@@ -188,13 +188,11 @@ function changeSky(skyPath) {
 
 }
 
-async function saveModel() {
-
-    /////changeSky("textures/blue");
+async function saveUserAction() {
     let bodyData = {
         'ActionType': "colorl",
         'ActionDetails': "blue",
-        'actionId': "101",
+        'actionId': "102",
         'block': "b5",
         'isTrueAction': "true",
         'model': "A",
@@ -203,6 +201,12 @@ async function saveModel() {
         'user': "100"
     }
     var result = await postData(usersURL, bodyData);
+}
+
+async function saveModel() {
+
+    changeSky("textures/blue");
+    saveUserAction();
 
      return;///temporary to avoid some one from removing my model
 
