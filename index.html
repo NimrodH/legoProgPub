@@ -246,6 +246,7 @@
             let near = new BABYLON.GUI.NearMenu("near");
             manager.addControl(near);
             let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
+            near.defaultBehavior.followBehaviorEnabled = false;
             follower.defaultDistance = 10;
             follower.minimumDistance = 5;
             follower.maximumDistance = 35;
