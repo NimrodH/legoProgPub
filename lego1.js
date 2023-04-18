@@ -176,7 +176,7 @@ function changeSky(skyPath) {
     var skyboxMaterial = skybox.material;
     skyboxMaterial.backFaceCulling = false;
     // Dispose of skybox material and texture
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/red", scene);
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(skyPath, scene);
     //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(skyPath, scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     //skyboxMaterial.reflectionTexture.dispose();
@@ -189,7 +189,7 @@ function changeSky(skyPath) {
 
 async function saveModel() {
 
-    changeSky("textures/red");
+    changeSky("textures/blue");
 
      return;///temporary to avoid some one from removing my model
     let childs = currentModel.getChildMeshes(true);
