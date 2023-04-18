@@ -194,7 +194,7 @@ async function saveModel() {
     let bodyData = {
         'ActionType': "colorl",
         'ActionDetails': "blue",
-        'actionID': "101",
+        'actionId': "101",
         'block': "b5",
         'isTrueAction': "true",
         'model': "A",
