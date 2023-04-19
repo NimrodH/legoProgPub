@@ -202,8 +202,6 @@
             //light.intensity = 0.7;
             ///end light///
 
-            var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
-            environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"));
             
            ///SKYBOX///
            const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
@@ -230,7 +228,9 @@
             ground.material.lineColor = colorName2Vector("red");
             ///end GROUND///
 
- 
+            var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
+            environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"));
+
             ///ELEMENTS MENU///
             elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
             elementsMenu.position.x = menuX;
