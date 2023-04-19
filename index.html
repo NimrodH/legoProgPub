@@ -225,7 +225,7 @@
             ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);///not needed
             ground.checkCollisions = true;///not needed
             ground.material = new BABYLON.GridMaterial("mat", scene);
-            ground.material.lineColor = colorName2Vector("blue");
+            ground.material.lineColor = colorName2Vector("red");
             ///end GROUND///
 
             var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
