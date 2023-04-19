@@ -54,7 +54,7 @@
         const menuY = 0.5;//abselut position befor seting it as child of elementsMenu
         const modelX = -2;//-15;
         const elementsMenuY = -1;///sphre position that is parent of all menu meshes. we hide it under the ground
-
+        var ground = null;
         function wellcomeBox() {
 
 
@@ -175,7 +175,7 @@
 
             var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
             environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"));
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
+            ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
             ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);
             ground.checkCollisions = true;
 
