@@ -72,8 +72,13 @@
             inputTextArea.height = "40px";
             inputTextArea.color = "white";
             inputTextArea.fontSize = 24;
-
             advancedTexture.addControl(inputTextArea);
+     const text1 = new BABYLON.GUI.TextBlock();
+     text1.text = initialText;//"Hello world";
+     text1.color = "red";
+     text1.fontSize = 24;
+     advancedTexture.addControl(text1);
+            
             //plane.isVisible = false;
             //plane.dispose();
 
@@ -139,11 +144,12 @@
         //const createScene = () => {
         var createScene = async function () {
             const scene = new BABYLON.Scene(engine);
-
+            ///not in use?
             const gravityVector = new BABYLON.Vector3(0, -9.8, 0);
             const physicsPlugin = new BABYLON.CannonJSPlugin();
             scene.enablePhysics(gravityVector, physicsPlugin);
-
+            ///
+            ///camera///
             /////var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(-15, 0, -25), scene);////(0, 5, -50)
             //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -40), scene);///(0, 5, -40)
 
@@ -156,31 +162,49 @@
             //camera.setTarget(new BABYLON.Vector3(0, 10, 400));///, 10, 400
             camera.setTarget(BABYLON.Vector3.Zero());
             camera.attachControl(canvas, true);
-
-
+            ///end camera///
+            ///light///
             const light1 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 1));
             const light2 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0));
             light1.intensity = 0.75;
             light2.intensity = 0.5;
-
+            
             //var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
             //light.intensity = 0.7;
-
-            elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
-            elementsMenu.position.x = menuX;
-            elementsMenu.position.y = elementsMenuY;///position of center of B1X3 TODO:we need to replace it with virtual mesh
-            // var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30}, scene);
-            // ground.position.x = modelX;
-            // ground.position.y = -1;
+            ///end light///
 
             var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
             environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"));
+
+            ///GROUND///
+            // var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30}, scene);
+            // ground.position.x = modelX;
+            // ground.position.y = -1;
+            ///ground is global to allow changing its line color in changeSky()
             ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
-            ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);
-            ground.checkCollisions = true;
-
-
+            ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);///not needed
+            ground.checkCollisions = true;///not needed
             ground.material = new BABYLON.GridMaterial("mat", scene);
+            ground.material.lineColor = colorName2Vector("red");
+            ///end GROUND///
+
+            ///SKYBOX///
+            const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
+            const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+
+            skyboxMaterial.backFaceCulling = false;
+            //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://nimrodh.github.io/legoProgPub/textures/red", scene);
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/red", scene);
+            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skybox.material = skyboxMaterial;
+            ///end SKYBOX///
+
+            ///ELEMENTS MENU///
+            elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
+            elementsMenu.position.x = menuX;
+            elementsMenu.position.y = elementsMenuY;///position of center of B1X3 TODO:we need to replace it with virtual mesh
 
             const b1X5 = meshBlock(scene, 5);
             b1X5.setParent(elementsMenu);
@@ -194,21 +218,11 @@
             const c1 = meshWheel(scene, 1);
             c1.position.x = 6;
             c1.setParent(elementsMenu);
+            ///end ELEMENTS MENU///
 
+            ///MODEL///
             currentModel = createModel();
-            ///skybox///
-            const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
-            const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-
-            skyboxMaterial.backFaceCulling = false;
-            //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://nimrodh.github.io/legoProgPub/textures/red", scene);
-            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/red", scene);
-            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-            skybox.material = skyboxMaterial;
-            ///end skybox///
-
+            ///end MODEL///
 
             /*// 2D GUI
             buttensPanel = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
@@ -238,11 +252,8 @@
                 return button1;
             }
             */
-            ////////////////////near menu//////////////
-
+            ///NEAR MENU///
             const manager = new BABYLON.GUI.GUI3DManager(scene);
-
-            // Let's add a slate
             let near = new BABYLON.GUI.NearMenu("near");
             manager.addControl(near);
             let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
@@ -282,6 +293,9 @@
             createTouchButton("green", "green", colorGreen);
 
             createTouchButton("re\nBuild", "yellow", reBuildModel);
+            ///end NEAR MENU///
+ 
+            wellcomeBox();
 
             /*
             const button0 = new BABYLON.GUI.TouchHolographicButton("button0");
@@ -354,7 +368,7 @@
                 floorMeshes: [ground]
             });
 
-            //wellcomeBox();
+            
             /*
             scene.debugLayer.show({
                 embedMode: true,

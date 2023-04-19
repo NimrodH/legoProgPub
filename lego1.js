@@ -185,7 +185,7 @@ function changeSky(skyPath) {
     
     // Dispose of skybox mesh
     //skybox.dispose();
-    ground.material.lineColor = colorName2Vector("red");
+    ground.material.lineColor = colorName2Vector("blue");
 }
 
 
