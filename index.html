@@ -58,7 +58,9 @@
 
         function wellcomeBox() {
             var plane = BABYLON.Mesh.CreatePlane("plane", 10);
+            plane.position.z = -15;
             plane.position.y = 2;
+            plane.position.x = 0;
             plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
             var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
 
@@ -188,9 +190,9 @@
             //camera.setTarget(BABYLON.Vector3.Zero());/////
             //camera.attachControl(canvas, true);
 
-            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(5, 5, -10), scene);
+            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
             //camera.setTarget(new BABYLON.Vector3(0, 10, 400));///, 10, 400
-            camera.setTarget(BABYLON.Vector3.Zero());
+            camera.setTarget(new BABYLON.Vector3(0, 0, -15));
             camera.attachControl(canvas, true);
             ///end camera///
             ///light///
