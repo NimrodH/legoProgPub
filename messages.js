@@ -128,7 +128,13 @@ class Messages {
         this.advancedTexture.removeControl(idKeyboard);
         idKeyboard.dispose();
     }
+
+    showSelectElement(){
+        
+    }
+
     showInsButtons(){
         this.currentScreen = "InsButtons";
+        near.isVisible = true;
     }
 }

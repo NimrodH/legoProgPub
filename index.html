@@ -57,7 +57,7 @@
         const elementsMenuY = -1;///sphre position that is parent of all menu meshes. we hide it under the ground
         var ground = null;
         var messageBox = null;
-
+        var near = null;
         
         async function reportWrongMove(wrongConnection, wrongModelConnection) {
             console.log("reportWrongMove: ");
@@ -229,7 +229,7 @@
             */
             ///NEAR MENU///
             const manager = new BABYLON.GUI.GUI3DManager(scene);
-            let near = new BABYLON.GUI.NearMenu("near");
+            near = new BABYLON.GUI.NearMenu("near");
             manager.addControl(near);
             let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
             near.defaultBehavior.followBehaviorEnabled = false;
@@ -240,6 +240,7 @@
             near.columns = 6;
             near.margin = 0.2
             near.position = new BABYLON.Vector3(1, 6, 1);
+            near.isVisible = false;
             //near.scaling = new BABYLON.Vector3(0.8, 0.8, 0.8)
             /*
                         const text1 = new BABYLON.GUI.TextBlock();
