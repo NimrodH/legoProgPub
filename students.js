@@ -1,4 +1,5 @@
 "use strict"
+let currentSession = null;
 async function saveUserAction() {
     let bodyData = {
         'ActionType': "colorl",
@@ -15,7 +16,9 @@ async function saveUserAction() {
 }
 
 class Session {
-    constractor() {
-        
+    userID;
+    group;
+    constractor(id) {
+        this.userID = id;
     }
 }
