@@ -13,3 +13,9 @@ async function saveUserAction() {
     }
     var result = await postData(usersURL, bodyData);
 }
+
+class Session {
+    constractor() {
+        
+    }
+}
