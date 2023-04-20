@@ -125,10 +125,10 @@
                 text1.height = "200px"
                 this.advancedTexture.addControl(text1);
 
-                this.advancedTexture.focusedControl = inputTextArea;
+                //this.advancedTexture.focusedControl = inputTextArea;
                 //plane.isVisible = true;
                 //plane.dispose();
-                console.log("but1: " + this.advancedTexture.getControlByName("but1").width);
+                //console.log("but1: " + this.advancedTexture.getControlByName("but1").width);
 
             }
             showMessage(theText) {
@@ -211,7 +211,7 @@
 
             var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
             //camera.setTarget(new BABYLON.Vector3(0, 10, 400));///, 10, 400
-            camera.setTarget(new BABYLON.Vector3(0, 0, -15));
+            camera.setTarget(new BABYLON.Vector3(0, 4, -15));
             camera.attachControl(canvas, true);
             ///end camera///
             ///light///
