@@ -190,9 +190,9 @@ function changeSky(skyPath) {
 
 
 async function saveModel() {
-
+    messageBox.showMessage("בוקר מאד טוב\nלכולם בארץ");
     changeSky("textures/blue");
-    saveUserAction();
+    //saveUserAction();
 
      return;///temporary to avoid some one from removing my model
 
