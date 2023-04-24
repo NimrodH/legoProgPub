@@ -17,8 +17,31 @@ async function saveUserAction() {
 
 class Session {
     userID;
-    group;
+    group;///each group handle differant no. of models when training
+    currentModelInArray = 0;///index in array of shown model
+    traininigModel;
+    fb;
+
     constractor(id) {
         this.userID = id;
+        //await getData(tableURL, { 'myStep': 'ALL' })
+    }
+
+    async initSession() {
+        //this.traininigModel =  await getData(tableURL, { 'myStep': 'ALL' })
+        this.fb = new FbMessages();
+        this.traininigModel =  await loadModelData();
+        switch (this.group) {
+            case 'A'://two modeles
+                console.log("initSession A");
+                createModel("aaa");///second model (first one is the default empty one)
+                reBuildModel(this.traininigModel,3);
+                //createModel("aaa");
+                break;
+        
+            default:
+                console.log("initSession default")
+                break;
+        }
     }
 }

@@ -118,14 +118,15 @@ function setVisibleMeshChilds(theMesh, setItVisible) {
     }
 }
 
-function createModel() {
+function createModel(theModelName) {
     let model = meshBlock(scene, 1);
     model.position.x = -15;
     model.position.z = -5;
     model.metadata = {
         inModel: true,
         blockNum: 0,
-        numOfBlocks: 0
+        numOfBlocks: 0,
+        modelName: theModelName
     };
     modelsArray.push(model);
     return model;
@@ -190,8 +191,9 @@ function changeSky(skyPath) {
 
 
 async function saveModel() {
-    messageBox.showMessage("בוקר מאד טוב\nלכולם בארץ");
-    changeSky("textures/blue");
+    messageBox.fbMode();
+    //messageBox.showMessage("בוקר מאד טוב\nלכולם בארץ");
+    //changeSky("textures/blue");
     //saveUserAction();
 
      return;///temporary to avoid some one from removing my model
@@ -218,11 +220,18 @@ async function saveModel() {
     }
 }
 
-async function reBuildModel() {
-    var modelDataObj = await getData(tableURL, { 'myStep': 'ALL' });///working
+async function loadModelData() {
+    let modelDataObj =  await getData(tableURL, { 'myStep': 'ALL' });///working
     let modelData = modelDataObj.Items;///working
+    return modelData;
+}
 
-    for (let index = 1; index < modelData.length + 1; index++) {
+async function reBuildModel(modelData, step) {
+    //var modelDataObj = await getData(tableURL, { 'myStep': 'ALL' });///working
+    
+
+    //for (let index = 1; index < modelData.length + 1; index++) {
+    for (let index = 1; index < step; index++) {
         const element = modelData.filter(el => el.step == index)[0];
         let srcBlockName = element.type;
         let srcConnectionName = fullName2Private(element.srcPoint);
