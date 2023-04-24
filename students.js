@@ -29,7 +29,7 @@ class Session {
 
     async initSession() {
         //this.traininigModel =  await getData(tableURL, { 'myStep': 'ALL' })
-        this.fb = new FbMessages();
+        this.fb = new FbMessages("בוקר אביבי ושמח");
         this.traininigModel =  await loadModelData();
         switch (this.group) {
             case 'A'://two modeles

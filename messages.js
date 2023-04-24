@@ -155,10 +155,59 @@ class Messages {
 
 
 }
+/*
+class FbMessages {
+    font_size = 24; 
+    font = "bold " + this.font_size + "px Arial"; 
+    planeHeight = 0.5; 
+    //Set height for dynamic texture
+    DTHeight = 1.5 * this.font_size; //or set as wished
+    //Calcultae ratio
+    ratio = this.planeHeight / this.DTHeight;
+    dynamicTexture;
+    constructor() {
+        //Set font
+        
+        
+
+        //Set height for plane
+       
+
+ 
+        //Set text
+        var text = "שלום רב שובך ציפורה נחמדת";
+
+        //Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
+        var temp = new BABYLON.DynamicTexture("DynamicTexture", 64, scene);
+        var tmpctx = temp.getContext();
+        tmpctx.font = this.font;
+        this.DTWidth = tmpctx.measureText(text).width + 8;
+
+        //Calculate width the plane has to be 
+        var planeWidth = DTWidth * this.ratio;
+
+        //Create dynamic texture and write the text
+        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: DTWidth, height: this.DTHeight }, scene, false);
+        //var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: 2, height: 2 }, scene, false);
+        var mat = new BABYLON.StandardMaterial("mat", scene);
+        mat.diffuseTexture = dynamicTexture;
+        dynamicTexture.drawText(text, null, null, this.font, "#000000", "#ffffff", true);
+
+        //Create plane and set dynamic texture as material
+        var plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: this.planeHeight }, scene);
+        plane.material = mat;
+        plane.position.y = 3;
+        plane.position.z = 1;
+        plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+    }
+}
+*/
 
 class FbMessages {
-
-    constructor() {
+    dynamicTexture;
+    mat;
+    plane;
+    constructor(text) {
         //Set font
         var font_size = 24;
         var font = "bold " + font_size + "px Arial";
@@ -173,28 +222,39 @@ class FbMessages {
         var ratio = planeHeight / DTHeight;
 
         //Set text
-        var text = "שלום רב שובך ציפורה נחמדת";
+        //text = "שלום רב שובך ציפורה נחמדת";
 
         //Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
         var temp = new BABYLON.DynamicTexture("DynamicTexture", 64, scene);
         var tmpctx = temp.getContext();
         tmpctx.font = font;
         var DTWidth = tmpctx.measureText(text).width + 8;
-
+        temp.dispose();
         //Calculate width the plane has to be 
         var planeWidth = DTWidth * ratio;
 
         //Create dynamic texture and write the text
-        var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: DTWidth, height: DTHeight }, scene, false);
-        var mat = new BABYLON.StandardMaterial("mat", scene);
-        mat.diffuseTexture = dynamicTexture;
-        dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
+        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: DTWidth, height: DTHeight }, scene, false);
+        this.mat = new BABYLON.StandardMaterial("mat", scene);
+        this.mat.diffuseTexture = this.dynamicTexture;
+        this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
 
         //Create plane and set dynamic texture as material
-        var plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
-        plane.material = mat;
-        plane.position.y = 3;
-        plane.position.z = 1;
-
+        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
+        this.plane.material = this.mat;
+        this.plane.position.y = 3;
+        this.plane.position.z = 1;
+        this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+    }
+    hide(){
+        this.plane.isVisible = false;  
+    }
+    show(){
+        this.plane.isVisible = true;  
+    }
+    dispose() {
+        dynamicTexture.dispose();
+        mat.dispose();
+        plane.dispose();    
     }
 }
