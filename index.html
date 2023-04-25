@@ -54,7 +54,9 @@
         const menuX = 1;//;
         const menuY = 0.5;//abselut position befor seting it as child of elementsMenu
         const modelX = -2;//-15;
-        const elementsMenuY = -1;///sphre position that is parent of all menu meshes. we hide it under the ground
+        const elementsMenuY = 0;//-1;///sphre position that is parent of all menu meshes. we hide it under the ground
+        const scaleFactor = 0.2;
+        const scailingMenuModel = new BABYLON.Vector3(scaleFactor,scaleFactor,scaleFactor);
         var ground = null;
         var messageBox = null;
         var near = null;
@@ -177,7 +179,8 @@
             environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"));
 
             ///ELEMENTS MENU///
-            elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0 });
+            elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0.01 });
+           
             elementsMenu.position.x = menuX;
             elementsMenu.position.y = elementsMenuY;///position of center of B1X3 TODO:we need to replace it with virtual mesh
 
@@ -193,6 +196,8 @@
             const c1 = meshWheel(scene, 1);
             c1.position.x = 6;
             c1.setParent(elementsMenu);
+            elementsMenu.scaling = scailingMenuModel;
+           // elementsMenu.position.y = 2;
             ///end ELEMENTS MENU///
 
             ///MODEL///

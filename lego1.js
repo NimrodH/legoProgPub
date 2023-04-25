@@ -11,6 +11,7 @@ const rotationO = new BABYLON.Vector3(0, 0, 0);//only for model
 const rotationX = new BABYLON.Vector3(1.5708, 0, 0);
 const rotationY = new BABYLON.Vector3(0, 1.5708, 0);
 const rotationZ = new BABYLON.Vector3(0, 0, 1.5708);//Math.PI / 2 get diferent value in its last digit here and when called from mesh
+
 const colorsObj = [
     { "colorName": "blue", "colorVector": blueColor },
     { "colorName": "base", "colorVector": baseColor },
@@ -98,6 +99,8 @@ function animate(box, oldPos, newPos, scene) {
         box.setParent(currentModel);
         //console.log("add2model" + oldPos.x);
         ///rais all model abo=ve ground
+        setOnGround(currentModel,1);
+        /*
         currentModel.refreshBoundingInfo();
         currentModel.computeWorldMatrix(true);
         var boundingInfo = currentModel.getHierarchyBoundingVectors();
@@ -106,7 +109,23 @@ function animate(box, oldPos, newPos, scene) {
         if (lowerEdgePosition < 0) {
             currentModel.position.y = currentModel.position.y - lowerEdgePosition
         }
+        */
       }
+}
+
+function setOnGround(element, factor){
+    ///factor is the scale of parent of element while elemnt scale in it is 1 (we need worldScale of element)
+    element.refreshBoundingInfo();
+    element.computeWorldMatrix(true);
+    var boundingInfo = element.getHierarchyBoundingVectors();
+    var lowerEdgePosition = boundingInfo.min.y;
+    console.log("element.position.y: " + element.position.y);
+    console.log("lowerEdgePosition: " + lowerEdgePosition);
+    console.log("scale: " + element.scaling);
+    if (lowerEdgePosition < 0) {
+        element.position.y = element.position.y - (lowerEdgePosition/factor)
+    }
+    console.log("element.position.y after: " + element.position.y);
 }
 
 function setVisibleMeshChilds(theMesh, setItVisible) {
@@ -128,6 +147,7 @@ function createModel(theModelName) {
         numOfBlocks: 0,
         modelName: theModelName
     };
+    model.scaling = scailingMenuModel;
     modelsArray.push(model);
     return model;
 }
@@ -374,14 +394,17 @@ function flipY() {
     
         //selectedConnection.parent.position.y = 5;//selectedConnection.parent.sizeX;
         selectedConnection.parent.rotation = rotationZ;
-        selectedConnection.parent.refreshBoundingInfo();
-        selectedConnection.parent.computeWorldMatrix(true);
+        //selectedConnection.parent.refreshBoundingInfo();
+        //selectedConnection.parent.computeWorldMatrix(true);
+        setOnGround(selectedConnection.parent, scaleFactor);
+        /*
         var boundingInfo = selectedConnection.parent.getBoundingInfo();
         var lowerEdgePosition = boundingInfo.boundingBox.minimumWorld.y;
         console.log("bottom1: " + lowerEdgePosition);
         if (lowerEdgePosition < 0) {
-            selectedConnection.parent.position.y = selectedConnection.parent.position.y - lowerEdgePosition
+            selectedConnection.parent.position.y = selectedConnection.parent.position.y - (lowerEdgePosition/scaleFactor)
         }
+        */
     }
 
 }
