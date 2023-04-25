@@ -391,21 +391,9 @@ function flipX() {
 }
 function flipY() {
     if (selectedConnection) {
-    
-        //selectedConnection.parent.position.y = 5;//selectedConnection.parent.sizeX;
         selectedConnection.parent.rotation = rotationZ;
-        //selectedConnection.parent.refreshBoundingInfo();
-        //selectedConnection.parent.computeWorldMatrix(true);
-        setOnGround(selectedConnection.parent, scaleFactor);
-        /*
-        var boundingInfo = selectedConnection.parent.getBoundingInfo();
-        var lowerEdgePosition = boundingInfo.boundingBox.minimumWorld.y;
-        console.log("bottom1: " + lowerEdgePosition);
-        if (lowerEdgePosition < 0) {
-            selectedConnection.parent.position.y = selectedConnection.parent.position.y - (lowerEdgePosition/scaleFactor)
-        }
-        */
-    }
+         setOnGround(selectedConnection.parent, scaleFactor);
+     }
 
 }
 ///defign and highlite the conection sphere
