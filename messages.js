@@ -32,7 +32,7 @@ class Messages {
         text1.text = initialText;//"Hello world";
         text1.color = "white"//"red";
         text1.fontSize = 36;
-        text1.top = "-350px";
+        text1.top = "-300px";
         text1.height = "600px"
         this.advancedTexture.addControl(text1);
 
@@ -105,7 +105,7 @@ class Messages {
 
     showEditGroup() {
         this.currentScreen = "editGroup";
-        this.textField.text = "[יש לקליק את אות הקבוצה שקבלת ממנהלת הניסוי ואז להקליק [המשך"
+        this.textField.text = "יש לקליק את אות הקבוצה שקבלת ממנהלת הניסוי\n [ואז להקליק [המשך"
 
         let inputTextArea = new BABYLON.GUI.InputText('group', "");
         inputTextArea.height = "40px";
@@ -242,7 +242,7 @@ class FbMessages {
         //Create plane and set dynamic texture as material
         this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
         this.plane.material = this.mat;
-        this.plane.position.y = 1.5;
+        this.plane.position.y = 2.5;
         this.plane.position.z = 2;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     }

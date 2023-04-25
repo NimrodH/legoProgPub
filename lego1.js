@@ -151,6 +151,7 @@ function createModel(theModelName, x,y,z) {
     };
     model.scaling = scailingMenuModel;
     modelsArray.push(model);
+    setOnGround(model,1);
     return model;
 }
 
