@@ -137,10 +137,12 @@ function setVisibleMeshChilds(theMesh, setItVisible) {
     }
 }
 
-function createModel(theModelName) {
+function createModel(theModelName, x,y,z) {
+    var pos = new BABYLON.Vector3(x,y,z);
     let model = meshBlock(scene, 1);
-    model.position.x = -15;
-    model.position.z = -5;
+    //model.position.x = -5;
+    //model.position.z = -5;
+    model.position = pos;
     model.metadata = {
         inModel: true,
         blockNum: 0,
