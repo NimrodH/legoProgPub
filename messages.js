@@ -242,7 +242,7 @@ class FbMessages {
         //Create plane and set dynamic texture as material
         this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
         this.plane.material = this.mat;
-        this.plane.position.y = 1;
+        this.plane.position.y = 1.5;
         this.plane.position.z = 2;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     }

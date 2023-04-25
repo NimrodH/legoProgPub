@@ -55,7 +55,7 @@
         const menuY = 0.5;//abselut position befor seting it as child of elementsMenu
         const modelX = -1;//-15;
         const elementsMenuY = 0;//-1;///sphre position that is parent of all menu meshes. we hide it under the ground
-        const scaleFactor = 0.2;
+        const scaleFactor = 0.25;
         const scailingMenuModel = new BABYLON.Vector3(scaleFactor,scaleFactor,scaleFactor);
         var ground = null;
         var messageBox = null;
@@ -156,7 +156,7 @@
 
             skyboxMaterial.backFaceCulling = false;
             //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://nimrodh.github.io/legoProgPub/textures/red", scene);
-            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/blue", scene);
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/red", scene);
             skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
             skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
             skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
@@ -201,7 +201,7 @@
             ///end ELEMENTS MENU///
 
             ///MODEL///
-            currentModel = createModel("one", -5,0,-5 );
+            currentModel = createModel("one", -5, 0.5 ,-5 );
             ///end MODEL///
 
             /*// 2D GUI
