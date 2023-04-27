@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -46,34 +47,28 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script>
+        ///CAMERA//////LIGHT//////SKYBOX//////GROUND///ELEMENTS MENU///MODEL//////NEAR MENU///messages
         //////////////////// Ort MODE FUNCTIONS/////////////////////////////////
-        function reportConnect(newElement) {
-            console.log("reportConnect");
-            ///for each mode write the model/ write user time and error / create next automtic stage
-        }
         const menuX = 1;//;
         const menuY = 0.5;//abselut position befor seting it as child of elementsMenu
         const modelX = -1;//-15;
-        const elementsMenuY = 0;//-1;///sphre position that is parent of all menu meshes. we hide it under the ground
+        const elementsMenuY = 0;//-1;///sphere position that is parent of all menu meshes.
         const scaleFactor = 0.25;
         const scailingMenuModel = new BABYLON.Vector3(scaleFactor,scaleFactor,scaleFactor);
         var ground = null;
         var messageBox = null;
         var near = null;
         
-        async function reportWrongMove(wrongConnection, wrongModelConnection) {
-            console.log("reportWrongMove: ");
-        }
 
         function getData(url = '', data = {}) {
             fullURL = url + '?' + new URLSearchParams(data)
             return fetch(fullURL)
-                .then((data1) => { return data1.json() });////console.log(data1.json()));
+                .then((data1) => { return data1.json() });
         }
 
 
         async function postData(url = '', data = {}) {
-            console.log(JSON.stringify(data))
+            //console.log(JSON.stringify(data))
             fullURL = url + '?' + new URLSearchParams(data)
             fetch(fullURL, {
                 method: 'POST',
@@ -87,19 +82,7 @@
                 .catch(error => console.error(error));
 
         }
-        /*
-                window.onmessage = (event) => {
-                    if (event.data) {
-                        console.log(`HTML Component received a message: ${event.data}`);
-                        // additional code here
-                    }
-                }
-        
-                function sendMessage(msg) {
-                    //window.parent.postMessage(msg, "https://cconnect0.editorx.io/lego1");
-                }
-        
-        */
+
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -110,53 +93,38 @@
             });
         }
 
-        //var engine = null;
-        //var scene = null;
         var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
 
         var sceneToRender = null;
 
         /////////// CREATE SCENE ///////////////////////////
-        //const createScene = () => {
         var createScene = async function () {
             const scene = new BABYLON.Scene(engine);
             ///not in use?
             const gravityVector = new BABYLON.Vector3(0, -9.8, 0);
             const physicsPlugin = new BABYLON.CannonJSPlugin();
             scene.enablePhysics(gravityVector, physicsPlugin);
-            ///
-            ///camera///
-            /////var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(-15, 0, -25), scene);////(0, 5, -50)
-            //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -40), scene);///(0, 5, -40)
 
-
+            ///CAMERA///
             //const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 3, BABYLON.Vector3.Zero());
-            //camera.setTarget(BABYLON.Vector3.Zero());/////
-            //camera.attachControl(canvas, true);
-
-            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);
-            //camera.setTarget(new BABYLON.Vector3(0, 10, 400));///, 10, 400
+             var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);
             camera.setTarget(new BABYLON.Vector3(0, 4, -15));
             camera.attachControl(canvas, true);
             ///end camera///
-            ///light///
+
+            ///LIGHT///
             const light1 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 1));
             const light2 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0));
             light1.intensity = 0.75;
             light2.intensity = 0.5;
-
-            //var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-            //light.intensity = 0.7;
-            ///end light///
-
+            ///END LIGHT///
 
             ///SKYBOX///
+            let startSkyFiles = "textures/blue";
             const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
             const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-
             skyboxMaterial.backFaceCulling = false;
-            //skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://nimrodh.github.io/legoProgPub/textures/red", scene);
-            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/blue", scene);
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(startSkyFiles, scene);
             skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
             skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
             skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
@@ -164,9 +132,6 @@
             ///end SKYBOX///
 
             ///GROUND///
-            // var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30}, scene);
-            // ground.position.x = modelX;
-            // ground.position.y = -1;
             ///ground is global to allow changing its line color in changeSky()
             ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
             ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);///not needed
@@ -197,64 +162,23 @@
             c1.position.x = 6;
             c1.setParent(elementsMenu);
             elementsMenu.scaling = scailingMenuModel;
-           // elementsMenu.position.y = 2;
             ///end ELEMENTS MENU///
 
             ///MODEL///
             currentModel = createModel("one", -5, 0 ,-5 );
             ///end MODEL///
 
-            /*// 2D GUI
-            buttensPanel = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-            createButton(0, "/", flipX);
-            createButton(50, "---", flipZ);//X
-            createButton(100, "|", flipY);
-            createButton(200, "< <", 
-            );
-            createButton(300, "turn model", flipModel);
-            createButton(-100, " ", colorBlue).background = "blue";
-            createButton(-150, " ", colorRed).background = "red";
-            createButton(-200, " ", colorBlack).background = "black";
-            createButton(-250, " ", colorGreen).background = "green";
-            //createButton(400, "Save", saveModel);
-            createButton(450, "reBuild", reBuildModel);
-            function createButton(position, name, func) {
-                let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", name);
-                button1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                button1.top = position;
-                button1.width = "150px"
-                button1.height = "40px";
-                button1.color = "white";
-                button1.cornerRadius = 20;
-                button1.background = "gray";
-                button1.onPointerUpObservable.add(func);
-                buttensPanel.addControl(button1);
-                return button1;
-            }
-            */
             ///NEAR MENU///
             const manager = new BABYLON.GUI.GUI3DManager(scene);
             near = new BABYLON.GUI.NearMenu("near");
             manager.addControl(near);
             let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
             near.defaultBehavior.followBehaviorEnabled = false;
-            //follower.defaultDistance = 10;
-            //follower.minimumDistance = 5;
-            //follower.maximumDistance = 35;
-            //follower.maxViewVerticalDegrees= 1;
             near.columns = 6;
             near.margin = 0.2
             near.position = new BABYLON.Vector3(1, 6, 1);
             near.isVisible = false;
             near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-            //near.scaling = new BABYLON.Vector3(0.8, 0.8, 0.8)
-            /*
-                        const text1 = new BABYLON.GUI.TextBlock();
-                            text1.text = title;
-                            text1.color = color;
-                            text1.fontSize = 90;
-                            text1.fontStyle = "bold"
-             */
 
             function createTouchButton(title, color, theFunction) {
                 let button = new BABYLON.GUI.TouchHolographicButton("title");
@@ -269,7 +193,6 @@
                 button.content = text1;
                 return button;
             }
-            
 
             createTouchButton("/", "yellow", flipX);
             createTouchButton("---", "yellow", flipZ);//X
@@ -281,79 +204,11 @@
             createTouchButton("red", "red", colorRed);
             createTouchButton("black", "black", colorBlack);
             createTouchButton("green", "green", colorGreen);
-
             createTouchButton("re\nBuild", "yellow", reBuildModel);
             ///end NEAR MENU///
 
             messageBox = new Messages();
 
-            /*
-            const button0 = new BABYLON.GUI.TouchHolographicButton("button0");
-            //button0.imageUrl = "./textures/IconFollowMe.png";
-            button0.text = "Button 0";
-            near.addButton(button0);
-            
-            const button1 = new BABYLON.GUI.TouchHolographicButton("button1");
-            //button1.imageUrl = "./textures/IconClose.png";
-            button1.text = "Button 1";
-            button1.onPointerUpObservable.add(connect);
-            near.addButton(button1); 
-            
-            const button2 = new BABYLON.GUI.TouchHolographicButton("button2");
-            //button2.imageUrl = "./textures/IconFollowMe.png";
-            button2.text = "Button 2";
-            near.addButton(button2);
-            */
-            /*//////////////////////////3D Panel////////////////
-            var anchor = new BABYLON.TransformNode("");
-
-            camera.wheelDeltaPercentage = 0.01;
-            camera.attachControl(canvas, true);
-
-            // Create the 3D UI manager
-            var manager = new BABYLON.GUI.GUI3DManager(scene);
-
-            var panel = new BABYLON.GUI.PlanePanel();
-            panel.margin = 0.2;
-            panel.columns = 4;
-            manager.addControl(panel);
-            panel.linkToTransformNode(anchor);
-            panel.position.z = -20;
-            //panel.position.y = -20;
-            panel.position.x = 10;
-            // Let's add some buttons!
-            var addButton = function (title, theFunction) {
-                var button = new BABYLON.GUI.HolographicButton("orientation");
-                panel.addControl(button);
-                button.onPointerUpObservable.add(theFunction)
-                button.text = title;
-                button.imageUrl = "red.png";
-                return button;
-            }
-            let theMatirial = new BABYLON.StandardMaterial("myMaterial", scene);
-            theMatirial.diffuseColor = blueColor;
-
-            panel.blockLayout = true;
-            addButton("/", flipX);
-            addButton("---", flipZ);//X
-            addButton("|", flipY);
-            addButton("< <", connect);
-            addButton("turn model", flipModel);
-            addButton("blue", colorBlue).backMaterial = theMatirial;
-            addButton("red", colorRed);
-            addButton("black", colorBlack);
-            addButton("green", colorGreen);
-            addButton("Save", saveModel);
-            addButton("reBuild", reBuildModel);
-
-            panel.blockLayout = false;
-            *////////////////////////////end 3D panel///////////////////
-            /*const env = scene.createDefaultEnvironment();
-
-            const xr = await scene.createDefaultXRExperienceAsync({
-                floorMeshes: [env.ground]
-            });
-            */
             const xr = scene.createDefaultXRExperienceAsync({
                 floorMeshes: [ground]
             });
@@ -389,9 +244,7 @@
             sceneToRender = scene
         });
 
-        //initFunction().then(() => {scene.then(returnedScene => { sceneToRender = returnedScene; })});
-
-        // Resize
+         // Resize
         window.addEventListener("resize", function () {
             engine.resize();
         });

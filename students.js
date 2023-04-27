@@ -1,5 +1,5 @@
 "use strict"
-let currentSession = null;
+let currentSession = null;///will be created in messages
 async function saveUserAction() {
     let bodyData = {
         'ActionType': "colorl",
@@ -44,4 +44,10 @@ class Session {
                 break;
         }
     }
+
+    reportConnect(newElement) {
+        console.log("reportConnect");
+        ///for each mode write the model/ write user time and error / create next automtic stage
+    }
+
 }

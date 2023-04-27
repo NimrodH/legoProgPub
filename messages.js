@@ -1,4 +1,9 @@
 "use strict"
+///contains:
+/// class Messages (squre with controls behind) 
+/// class FbMessages (one line of text in front)
+
+
 class Messages {
 
     plane = BABYLON.Mesh.CreatePlane("plane", 10);
@@ -41,6 +46,9 @@ class Messages {
         //plane.dispose();
     }
 
+    ///switch screens by currentScreen. convention:
+    /// use function show<CurrentScreen> to show the new screen
+    /// use function done<CurrentScreen> if the screen need dispose objects or implemnt user data
     screenDone() {
         switch (this.currentScreen) {
             case "init":
@@ -63,9 +71,7 @@ class Messages {
             case "connect":
                 currentSession.initSession();
                 break;
-
             default:
-
                 console.log("default: " + this.currentScreen);
                 break;
         }
@@ -152,94 +158,42 @@ class Messages {
         this.currentScreen = "connect";
         this.textField.text = "להוספת האבן למודל יש להקליק על אחת הבליטות במודל\n[ << ] כאשר נקודה במודל ונקודה באבן נבחרו, ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n\n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור"
     }
-
-
 }
-/*
-class FbMessages {
-    font_size = 24; 
-    font = "bold " + this.font_size + "px Arial"; 
-    planeHeight = 0.5; 
-    //Set height for dynamic texture
-    DTHeight = 1.5 * this.font_size; //or set as wished
-    //Calcultae ratio
-    ratio = this.planeHeight / this.DTHeight;
-    dynamicTexture;
-    constructor() {
-        //Set font
-        
-        
-
-        //Set height for plane
-       
-
- 
-        //Set text
-        var text = "שלום רב שובך ציפורה נחמדת";
-
-        //Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
-        var temp = new BABYLON.DynamicTexture("DynamicTexture", 64, scene);
-        var tmpctx = temp.getContext();
-        tmpctx.font = this.font;
-        this.DTWidth = tmpctx.measureText(text).width + 8;
-
-        //Calculate width the plane has to be 
-        var planeWidth = DTWidth * this.ratio;
-
-        //Create dynamic texture and write the text
-        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: DTWidth, height: this.DTHeight }, scene, false);
-        //var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: 2, height: 2 }, scene, false);
-        var mat = new BABYLON.StandardMaterial("mat", scene);
-        mat.diffuseTexture = dynamicTexture;
-        dynamicTexture.drawText(text, null, null, this.font, "#000000", "#ffffff", true);
-
-        //Create plane and set dynamic texture as material
-        var plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: this.planeHeight }, scene);
-        plane.material = mat;
-        plane.position.y = 3;
-        plane.position.z = 1;
-        plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-    }
-}
-*/
 
 class FbMessages {
     dynamicTexture;
     mat;
     plane;
     constructor(text) {
-        //Set font
+        ///Set font
         var font_size = 24;
         var font = "bold " + font_size + "px Arial";
 
-        //Set height for plane
+        ///Set height for plane
         var planeHeight = 0.5;
 
-        //Set height for dynamic texture
+        ///Set height for dynamic texture
         var DTHeight = 1.5 * font_size; //or set as wished
 
-        //Calcultae ratio
+        ///Calcultae ratio
         var ratio = planeHeight / DTHeight;
 
-        //Set text
-        //text = "שלום רב שובך ציפורה נחמדת";
-
-        //Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
+         ///Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
         var temp = new BABYLON.DynamicTexture("DynamicTexture", 64, scene);
         var tmpctx = temp.getContext();
         tmpctx.font = font;
         var DTWidth = tmpctx.measureText(text).width + 8;
         temp.dispose();
-        //Calculate width the plane has to be 
+        ///Calculate width the plane has to be 
         var planeWidth = DTWidth * ratio;
 
-        //Create dynamic texture and write the text
+        ///Create dynamic texture and write the text
         this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: DTWidth, height: DTHeight }, scene, false);
         this.mat = new BABYLON.StandardMaterial("mat", scene);
         this.mat.diffuseTexture = this.dynamicTexture;
         this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
 
-        //Create plane and set dynamic texture as material
+        ///Create plane and set dynamic texture as material
         this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
         this.plane.material = this.mat;
         this.plane.position.y = 2.5;
