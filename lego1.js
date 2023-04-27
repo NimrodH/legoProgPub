@@ -200,9 +200,9 @@ function changeSky(skyPath, groundColorName) {
 
 
 async function saveModel() {
-    messageBox.fbMode();
+    //messageBox.fbMode();
     //messageBox.showMessage("בוקר מאד טוב\nלכולם בארץ");
-    //changeSky("textures/blue", colorName2Vector("blue"));
+    changeSky("textures/blue", colorName2Vector("blue"));
     //saveUserAction();
 
      return;///temporary to avoid some one from removing my model
