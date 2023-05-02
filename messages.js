@@ -2,7 +2,7 @@
 ///contains:
 /// class Messages (squre with controls behind) 
 /// class FbMessages (one line of text in front)
-
+var currentFbMessage = null;
 
 class Messages {
 
@@ -101,6 +101,7 @@ class Messages {
     }
     doneEditID() {
         let idInputfield = this.advancedTexture.getControlByName("id");
+        console.log("idInputfield.text: " + idInputfield.text);
         currentSession = new Session(idInputfield.text);
         this.advancedTexture.removeControl(idInputfield);
         idInputfield.dispose();
@@ -207,8 +208,8 @@ class FbMessages {
         this.plane.isVisible = true;  
     }
     dispose() {
-        dynamicTexture.dispose();
-        mat.dispose();
-        plane.dispose();    
+        this.dynamicTexture.dispose();
+        this.mat.dispose();
+        this.plane.dispose();    
     }
 }

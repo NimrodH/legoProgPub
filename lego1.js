@@ -71,8 +71,8 @@ let elementsMenu;///the parent of the blocks that user can select
 ///move block and connect it to model
 function animate(box, oldPos, newPos, scene) {
     const frameRate = 40;
-    const xSlide = new BABYLON.Animation("xSlide", "position", frameRate,BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-    const keyFrames = [];  
+    const xSlide = new BABYLON.Animation("xSlide", "position", frameRate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+    const keyFrames = [];
     keyFrames.push({
         frame: 0,
         value: oldPos
@@ -84,22 +84,22 @@ function animate(box, oldPos, newPos, scene) {
 
     xSlide.setKeys(keyFrames);
     scene.beginDirectAnimation(box, [xSlide], 0, 2 * frameRate, false, 1, add2model);
-    
+
     function add2model() {
         box.setParent(currentModel);
         ///rais all model above ground
-        setOnGround(currentModel,1);
-      }
+        setOnGround(currentModel, 1);
+    }
 }
 
-function setOnGround(element, factor){
+function setOnGround(element, factor) {
     ///factor is the scale of parent of element while elemnt scale in it is 1 (we need worldScale of element)
     element.refreshBoundingInfo();
     element.computeWorldMatrix(true);
     var boundingInfo = element.getHierarchyBoundingVectors();
     var lowerEdgePosition = boundingInfo.min.y;
-     if (lowerEdgePosition < 0) {
-        element.position.y = element.position.y - (lowerEdgePosition/factor)
+    if (lowerEdgePosition < 0) {
+        element.position.y = element.position.y - (lowerEdgePosition / factor)
     }
     //console.log("element.position.y after: " + element.position.y);
 }
@@ -114,8 +114,8 @@ function setVisibleMeshChilds(theMesh, setItVisible) {
 }
 */
 
-function createModel(theModelName, x,y,z) {
-    var pos = new BABYLON.Vector3(x,y,z);
+function createModel(theModelName, x, y, z) {
+    var pos = new BABYLON.Vector3(x, y, z);
     let model = meshBlock(scene, 1);
     //model.position.x = -5;
     //model.position.z = -5;
@@ -128,7 +128,7 @@ function createModel(theModelName, x,y,z) {
     };
     model.scaling = scailingMenuModel;
     modelsArray.push(model);
-    setOnGround(model,1);
+    setOnGround(model, 1);
     return model;
 }
 
@@ -143,6 +143,9 @@ function setSelectedConnectionColor(theColor) {
     let vectorColor = colorName2Vector(theColor);
     if (selectedConnection) {
         selectedConnection.parent.material.diffuseColor = vectorColor;
+        if (currentSession) {
+            currentSession.reportClick("color", theColor, selectedConnection.parent);
+        }            
     }
 }
 function colorBlue() {
@@ -158,36 +161,85 @@ function colorGreen() {
     setSelectedConnectionColor("green");
 }
 
+function removeLastBlock() {
+    let lastBlockNum = currentModel.metadata.numOfBlocks;
+    if (lastBlockNum == 0) return;
+    let modelBlocks = currentModel.getChildMeshes(false);
+    let lastBlock = modelBlocks.filter(lastByBlockNum)[0];
+    let destConnectionSphereName = lastBlock.metadata.connectedTo;
+    let destBlockNum = lastBlock.metadata.destBlock;
+    console.log("destBlockNum: " + destBlockNum);
+    console.log("lastBlockNum: " + lastBlockNum);
+    let destBlock
+    if (lastBlockNum >1) {
+        destBlock = modelBlocks.filter(destByBlockNum)[0];
+    } else {
+        destBlock = currentModel;
+    }
+    let sphers = destBlock.getChildMeshes(false);
+    let selectedSphere = sphers.filter(bySphereName)[0];
+    selectedSphere.scaling = new BABYLON.Vector3(1, 1, 1);
+
+    lastBlock.dispose();
+    currentModel.metadata.numOfBlocks = currentModel.metadata.numOfBlocks - 1;
+
+    function lastByBlockNum(e) {
+        return (isBlockByBlockNum(e, lastBlockNum));
+    }
+
+    function destByBlockNum(e) {
+        return (isBlockByBlockNum(e, destBlockNum));
+    }
+    
+    function bySphereName(e) {
+        return isSphereBySphereName(e, destConnectionSphereName);
+    }
+
+}
+
+///return true if the block numbered "blockNumber"
+///used by removeLastBlock & rebuild--> 
+function isBlockByBlockNum(block, blockNumber) {
+    if (block.metadata) {
+        return block.metadata.blockNum == blockNumber;
+    } else {
+        return false;
+    }
+}
+///return true if the sphere named "sphereName"
+///used by removeLastBlock & rebuild--> 
+function isSphereBySphereName(sphere, sphereName) {
+    if (sphere.name) {
+        return sphere.name == sphereName;
+    } else {
+        return false;
+    }
+}
+
+
 function connect() {
     if (!(selectedConnection && getModelSelectedConnection(currentModel))) {
         console.log("please select points");
-        reportWrongMove(selectedConnection, getModelSelectedConnection(currentModel))
+        currentSession.reportForbiddenMove(selectedConnection, getModelSelectedConnection(currentModel))
         return;
     }
     ///create element to place in the model
     let newElement = selectedConnection.parent.clone(selectedConnection.parent.name);
     let newColor = selectedConnection.parent.material.diffuseColor;
     let selectedConnectionName = selectedConnection.name;
-    doConnect(newElement, newColor, selectedConnectionName, true);
+    doConnect(newElement, newColor, selectedConnectionName, true);///has to be true
     if (currentSession) {
         currentSession.reportConnect(newElement);///newElement has connectedTo object
     }
-    
-}
 
-///move not done (i.e. missing selected point).
-/// we have another function "session.reportConnect" when connection done
-function reportWrongMove(wrongConnection, wrongModelConnection) {
-    console.log("reportWrongMove: ");
 }
-
 
 function changeSky(skyPath, groundColorName) {
     var skybox = scene.getMeshByName("skyBox");
 
     var skyboxMaterial = skybox.material;
     skyboxMaterial.backFaceCulling = false;
-    
+
     skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(skyPath, scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     /// Dispose of skybox material and texture
@@ -205,7 +257,7 @@ async function saveModel() {
     changeSky("textures/blue", colorName2Vector("blue"));
     //saveUserAction();
 
-     return;///temporary to avoid some one from removing my model
+    return;///temporary to avoid some one from removing my model
 
     let childs = currentModel.getChildMeshes(true);
     for (let index = 0; index < childs.length; index++) {
@@ -230,12 +282,19 @@ async function saveModel() {
 }
 
 async function loadModelData() {
-    let modelDataObj =  await getData(tableURL, { 'myStep': 'ALL' });///working
+    let modelDataObj = await getData(tableURL, { 'myStep': 'ALL' });///working
     let modelData = modelDataObj.Items;///working
     return modelData;
 }
 
-async function reBuildModel(modelData, step) {
+async function reBuildModelBut() {
+    let modelData = await loadModelData();
+    reBuildModel(modelData, modelData.length)
+}
+
+
+///called from session.initSession
+function reBuildModel(modelData, step) {
     for (let index = 1; index < step; index++) {
         const element = modelData.filter(el => el.step == index)[0];
         let srcBlockName = element.type;
@@ -252,6 +311,9 @@ async function reBuildModel(modelData, step) {
         const inDatasDestBlock = element.destBlock;
         const inDatasDestPoint = element.destPoint;
         let s = destSphereByOldData(inDatasDestBlock, inDatasDestPoint);
+        console.log("inDatasDestBlock: " + inDatasDestBlock);
+        console.log("inDatasDestPoint: " + inDatasDestPoint);
+
         setModelSelectedConnection(currentModel, s);
 
         doConnect(newElement, newColor, srcConnectionName, false);
@@ -269,22 +331,16 @@ function destSphereByOldData(blockNumber, destPoint) {
     let selectedSphere = sphers.filter(bySphereName)[0];
 
     function byBlockNum(e) {
-        if (e.metadata) {
-            return e.metadata.blockNum == blockNumber;
-        } else {
-            return false;
-        }
+        return isBlockByBlockNum(e, blockNumber);
     }
 
     function bySphereName(e) {
-        if (e.name) {
-            return e.name == destPoint;
-        } else {
-            return false;
-        }
+        return isSphereBySphereName(e, destPoint);
     }
+
     return selectedSphere;
 }
+
 
 ///called from connect and from reBuildModel
 function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
@@ -309,29 +365,30 @@ function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
     var global_delta = global_pos_m.subtract(global_pos_sc);
 
     ///move the elment by the calaculated vector, then add it to model
+    newElement.setParent(null);
+    let oldPos = newElement.position;//BABYLON.Vector3.TransformCoordinates(newElement.position, matrix_m);   
+    let newPos = oldPos.add(global_delta);
     if (toAnimate) {
-        newElement.setParent(null);
-        let oldPos = newElement.position;//BABYLON.Vector3.TransformCoordinates(newElement.position, matrix_m);
-        
-        let newPos = oldPos.add(global_delta);
         animate(newElement, oldPos, newPos, scene); ///will setParent from inside when animation done   
     } else {
-        newElement.position.addInPlace(global_delta);
+        newElement.position = newPos;
         newElement.setParent(currentModel);
+        setOnGround(currentModel, 1);
     }
     //////
- 
+
     newElement.metadata = {
         inModel: true,
         blockNum: currentModel.metadata.numOfBlocks + 1,
-        connection: newElementConnection.name, //selectedConnection,
-        connectedTo: getModelSelectedConnection(currentModel).name,
-        destBlock: getModelSelectedConnection(currentModel).parent.metadata.blockNum
+        connection: newElementConnection.name, //selectedConnection, name of the selected sphere in the new block
+        connectedTo: getModelSelectedConnection(currentModel).name, ///name of the selected sphere in the model
+        destBlock: getModelSelectedConnection(currentModel).parent.metadata.blockNum //number of the selected block in the model
     };
     currentModel.metadata.numOfBlocks = currentModel.metadata.numOfBlocks + 1;
-    getModelSelectedConnection(currentModel).scaling = new BABYLON.Vector3(0.9, 0.9, 0.9);
-    ///TODO:rescale if removing block
-    setModelSelectedConnection(currentModel, null);  
+    let sc = getModelSelectedConnection(currentModel)
+    sc.scaling = new BABYLON.Vector3(0.9, 0.9, 0.9);
+    sc.material.diffuseColor = notSelectedColor;
+    setModelSelectedConnection(currentModel, null);
 }
 
 ///turn the elemets
@@ -354,12 +411,19 @@ function flipModel() {
             console.log("error in flipModel");
             break;
     }
+    if (currentSession) {
+        currentSession.reportClick("flipModel", currentModel.rotation, currentModel);
+    } 
+    
 }
 ///rotate the selected block
 function flipZ() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationX;
         selectedConnection.parent.position.y = menuY - elementsMenuY;
+        if (currentSession) {
+            currentSession.reportClick("flip", "Z", selectedConnection.parent);
+        }            
     }
 
 }
@@ -367,14 +431,20 @@ function flipX() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationY;
         selectedConnection.parent.position.y = menuY - elementsMenuY;
+        if (currentSession) {
+            currentSession.reportClick("flip", "X", selectedConnection.parent);
+        }            
     }
 
 }
 function flipY() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationZ;
-         setOnGround(selectedConnection.parent, scaleFactor);
-     }
+        setOnGround(selectedConnection.parent, scaleFactor);
+        if (currentSession) {
+            currentSession.reportClick("flip", "Y", selectedConnection.parent);
+        }            
+    }
 
 }
 
@@ -382,9 +452,16 @@ function flipY() {
 function doClickConnection(event) {
     if (event.source.parent.metadata && event.source.parent.metadata.inModel) {
         doModelConnection(event.source);
+        if (currentSession) {
+            currentSession.reportClick("point", "on-model", event.source.parent);
+        }
         return;
     } else {
         doElementConnection(event.source);
+        if (currentSession) {
+            currentSession.reportClick("point", "on-menu", event.source.parent);
+        }
+
     }
 }
 
@@ -474,7 +551,7 @@ function meshBlock(scene, blockWidth) {
         }
     }
     //box.position.x = menuX;
-    
+
     box.position.y = menuY;
     return box
 }
