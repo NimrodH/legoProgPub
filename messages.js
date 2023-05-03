@@ -67,6 +67,14 @@ class Messages {
                 break;
             case "editGroup":
                 let group = this.doneEditGroup();
+                switch (group) {///TODO: build more then one model as defined for the group
+                    case "A":
+                        currentModel = createModel("man", -5, 0 ,-5 );
+                        break;
+                
+                    default:
+                        break;
+                }
                 this.showSelectBlock()
                 break;
             case "selectBlock":
