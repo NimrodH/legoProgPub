@@ -113,10 +113,53 @@ function setVisibleMeshChilds(theMesh, setItVisible) {
     }
 }
 */
+function createNearMenu(mode) {
+    const manager = new BABYLON.GUI.GUI3DManager(scene);
+    let near = new BABYLON.GUI.NearMenu("near");
+    manager.addControl(near);
+    let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
+    near.defaultBehavior.followBehaviorEnabled = false;
+    near.columns = 6;
+    near.margin = 0.2
+    near.position = new BABYLON.Vector3(1, 6, 1);
+    near.isVisible = false;
+    near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+
+    function createTouchButton(title, color, theFunction) {
+        let button = new BABYLON.GUI.TouchHolographicButton("title");
+        //button.text = title;
+        button.onPointerUpObservable.add(theFunction);
+        near.addButton(button);
+        const text1 = new BABYLON.GUI.TextBlock();
+        text1.text = title;
+        text1.color = color;
+        text1.fontSize = 90;
+        text1.fontStyle = "bold"
+        button.content = text1;
+        return button;
+    }
+
+    createTouchButton("/", "yellow", flipX);
+    createTouchButton("---", "yellow", flipZ);//X
+    createTouchButton("|", "yellow", flipY);
+    createTouchButton("< <", "yellow", connect);
+    createTouchButton("turn\nmodel", "yellow", flipModel);
+    createTouchButton("blue", "blue", colorBlue);
+    createTouchButton("red", "red", colorRed);
+    createTouchButton("black", "black", colorBlack);
+    createTouchButton("green", "green", colorGreen);
+    createTouchButton("> >", "yellow", removeLastBlock);
+    if (mode == "record") {
+        createTouchButton("re\nBuild", "yellow", reBuildModelBut);
+        createTouchButton("Save", "yellow", saveModel);
+    }
+    return near;
+}
 
 function createModel(theModelName, x, y, z) {
     var pos = new BABYLON.Vector3(x, y, z);
     let model = meshBlock(scene, 1);
+    //model.getChildMeshes(false)[1].dispose();
     //model.position.x = -5;
     //model.position.z = -5;
     model.position = pos;
@@ -145,7 +188,7 @@ function setSelectedConnectionColor(theColor) {
         selectedConnection.parent.material.diffuseColor = vectorColor;
         if (currentSession) {
             currentSession.reportClick("color", theColor, selectedConnection.parent);
-        }            
+        }
     }
 }
 function colorBlue() {
@@ -171,7 +214,7 @@ function removeLastBlock() {
     console.log("destBlockNum: " + destBlockNum);
     console.log("lastBlockNum: " + lastBlockNum);
     let destBlock
-    if (lastBlockNum >1) {
+    if (lastBlockNum > 1) {
         destBlock = modelBlocks.filter(destByBlockNum)[0];
     } else {
         destBlock = currentModel;
@@ -190,7 +233,7 @@ function removeLastBlock() {
     function destByBlockNum(e) {
         return (isBlockByBlockNum(e, destBlockNum));
     }
-    
+
     function bySphereName(e) {
         return isSphereBySphereName(e, destConnectionSphereName);
     }
@@ -220,7 +263,9 @@ function isSphereBySphereName(sphere, sphereName) {
 function connect() {
     if (!(selectedConnection && getModelSelectedConnection(currentModel))) {
         console.log("please select points");
-        currentSession.reportForbiddenMove(selectedConnection, getModelSelectedConnection(currentModel))
+        if (currentSession) {
+            currentSession.reportForbiddenMove(selectedConnection, getModelSelectedConnection(currentModel));
+        }
         return;
     }
     ///create element to place in the model
@@ -254,12 +299,13 @@ function changeSky(skyPath, groundColorName) {
 async function saveModel() {
     //messageBox.fbMode();
     //messageBox.showMessage("בוקר מאד טוב\nלכולם בארץ");
-    changeSky("textures/blue", colorName2Vector("blue"));
+    //changeSky("textures/blue", colorName2Vector("blue"));
     //saveUserAction();
 
-    return;///temporary to avoid some one from removing my model
+    //return;///temporary to avoid some one from removing my model
 
     let childs = currentModel.getChildMeshes(true);
+    let name = currentModel.metadata.modelName;
     for (let index = 0; index < childs.length; index++) {
         const element = childs[index];
         console.log("index: " + index);
@@ -274,7 +320,8 @@ async function saveModel() {
                 'destPoint': element.metadata.connectedTo,
                 'rotation': rotationVector2Name(element.rotation),
                 'srcPoint': element.metadata.connection,
-                'type': element.name
+                'type': element.name,
+                'modelName': name
             }
             var result = await postData(tableURL, bodyData);
         }
@@ -288,7 +335,10 @@ async function loadModelData() {
 }
 
 async function reBuildModelBut() {
-    let modelData = await loadModelData();
+    let modelDataAll = await loadModelData();
+    console.log("currentModel.metadata.modelName" + currentModel.metadata.modelName);
+    console.log(modelDataAll);
+    let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);
     reBuildModel(modelData, modelData.length)
 }
 
@@ -413,8 +463,8 @@ function flipModel() {
     }
     if (currentSession) {
         currentSession.reportClick("flipModel", currentModel.rotation, currentModel);
-    } 
-    
+    }
+
 }
 ///rotate the selected block
 function flipZ() {
@@ -423,7 +473,7 @@ function flipZ() {
         selectedConnection.parent.position.y = menuY - elementsMenuY;
         if (currentSession) {
             currentSession.reportClick("flip", "Z", selectedConnection.parent);
-        }            
+        }
     }
 
 }
@@ -433,7 +483,7 @@ function flipX() {
         selectedConnection.parent.position.y = menuY - elementsMenuY;
         if (currentSession) {
             currentSession.reportClick("flip", "X", selectedConnection.parent);
-        }            
+        }
     }
 
 }
@@ -443,7 +493,7 @@ function flipY() {
         setOnGround(selectedConnection.parent, scaleFactor);
         if (currentSession) {
             currentSession.reportClick("flip", "Y", selectedConnection.parent);
-        }            
+        }
     }
 
 }

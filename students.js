@@ -1,13 +1,13 @@
 "use strict"
 let currentSession = null;///will be created in messages
 
-async function saveUserAction(actionType, ActionDetails, actionId, block, model, step, time, user) {
+async function saveUserAction(actionType, ActionDetails, actionId, block, model, step, time, user, group) {
     let bodyData = {
         'ActionType': actionType,
         'ActionDetails': ActionDetails,
         'actionId': actionId,
         'block': block,
-        'isTrueAction': "true",///remove?
+        'group': group,
         'model': model,
         'step': step,
         'time': time,
@@ -23,15 +23,15 @@ class Session {
     group;///each group handle differant no. of models when training
     currentModelInArray = 0;///index in array of shown model
     trainingModelData;///array item per line. each line is object with the following props:
-                            /*
-                            srcPoint
-                            destPoint
-                            destBlock
-                            color
-                            rotation
-                            type
-                            step
-                            */
+    /*
+    srcPoint
+    destPoint
+    destBlock
+    color
+    rotation
+    type
+    step
+    */
     fb;///one line message to the lerner
 
     constructor(id) {
@@ -45,10 +45,22 @@ class Session {
         this.fb = new FbMessages("בוקר אביבי ושמח");
         this.trainingModelData = await loadModelData();
         switch (this.group) {
-            case 'A'://two modeles
+            case 'A'://4 models in same world
                 console.log("initSession A");
                 //createModel("aaa");///second model (first one is the default empty one)
-                reBuildModel(this.trainingModelData, 3);
+                //reBuildModel(this.trainingModelData, 3);
+                //createModel("aaa");
+                break;
+            case 'B'://2 models in one world & 2 in another
+                console.log("initSession B");
+                //createModel("aaa");///second model (first one is the default empty one)
+                //reBuildModel(this.trainingModelData, 3);
+                //createModel("aaa");
+                break;
+            case 'C'://4 models each in seperate world
+                console.log("initSession C");
+                //createModel("aaa");///second model (first one is the default empty one)
+                //reBuildModel(this.trainingModelData, 3);
                 //createModel("aaa");
                 break;
 
@@ -60,7 +72,7 @@ class Session {
 
     reportClick(action, details, newElement) {
         //console.log("reportClick: " + action);
-        saveUserAction(action, details, this.actionId++, newElement.name, this.currentModelInArray, currentModel.metadata.numOfBlocks+1, Date.now(), this.userId)
+        saveUserAction(action, details, this.actionId++, newElement.name, this.currentModelInArray, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group)
     }
 
     reportConnect(newElement) {
@@ -86,7 +98,7 @@ class Session {
             isCorect = false;
             wrongItems.push("rotation");
         }
-        
+
         let srcPointName = newElement.metadata.connection;
         //console.log("srcPointName: " + srcPointName + "  " + dataLine.srcPoint);
         if (srcPointName !== dataLine.srcPoint) {
@@ -103,7 +115,7 @@ class Session {
 
         let typeName = newElement.name;
         //console.log("typeName: " + typeName + "  " + dataLine.type);
-       if (typeName !== dataLine.type) {
+        if (typeName !== dataLine.type) {
             isCorect = false;
             wrongItems.push("block-type");
         }
@@ -117,14 +129,14 @@ class Session {
 
         if (isCorect) {
             this.fb.dispose()
-            this.fb = new FbMessages( (step+1) + " יפה מאד. המשך לשלב")
-            saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId)
+            this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
+            saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
         } else {
             this.fb.dispose()
-            this.fb = new FbMessages( (step+1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
-            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId)
+            this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
+            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
 
-        }       
+        }
     }
     ///move not done (i.e. missing selected point).
     /// we have another function "session.reportConnect" when connection done

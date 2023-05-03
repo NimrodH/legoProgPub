@@ -55,11 +55,18 @@ class Messages {
                 this.showEditID();
                 break;
             case "editID":
-                this.doneEditID();
-                this.showEditGroup();
+                let id = this.doneEditID();
+                if (id == "record") {
+                    this.showModel2record();
+                } else {
+                    this.showEditGroup();
+                }
+                break;
+            case "model2record":
+                    this.doneModel2record();
                 break;
             case "editGroup":
-                this.doneEditGroup();
+                let group = this.doneEditGroup();
                 this.showSelectBlock()
                 break;
             case "selectBlock":
@@ -99,15 +106,64 @@ class Messages {
         //keyboard.left = "10px";
         this.advancedTexture.addControl(keyboard);
     }
+
     doneEditID() {
         let idInputfield = this.advancedTexture.getControlByName("id");
-        console.log("idInputfield.text: " + idInputfield.text);
-        currentSession = new Session(idInputfield.text);
+        let theId = idInputfield.text;
+        console.log("theId: " + theId);
+        if (theId == "record") {
+           
+        }
+        else {
+            currentSession = new Session(theId);
+        }
+        
         this.advancedTexture.removeControl(idInputfield);
         idInputfield.dispose();
         let idKeyboard = this.advancedTexture.getControlByName("vkb");
         this.advancedTexture.removeControl(idKeyboard);
         idKeyboard.dispose();
+        return theId;
+    }
+
+    showModel2record() {
+        this.currentScreen = "model2record"; 
+        near = createNearMenu("record");
+        near.isVisible = true;
+
+        this.textField.text = "שם המודל"
+
+        let inputTextArea = new BABYLON.GUI.InputText('id', "");
+        inputTextArea.height = "40px";
+        inputTextArea.color = "white";
+        inputTextArea.fontSize = 48;
+        inputTextArea.top = "-120px";
+        inputTextArea.height = "70px";
+        inputTextArea.width = "200px";
+        this.advancedTexture.addControl(inputTextArea);
+
+        const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
+        keyboard.addKeysRow(["man", "car", "dog", "chair", "\u2190"]);
+        keyboard.connect(inputTextArea);
+        keyboard.top = "-10px";
+        keyboard.scaleY = 2;
+        keyboard.scaleX = 2;
+        //keyboard.left = "10px";
+        this.advancedTexture.addControl(keyboard);
+
+    }
+
+    doneModel2record() {
+        this.currentScreen = "end";
+        let idInputfield = this.advancedTexture.getControlByName("id");
+        let theId = idInputfield.text;
+        currentModel = createModel(theId, -5, 0 ,-5 );
+        this.advancedTexture.removeControl(idInputfield);
+        idInputfield.dispose();
+        let idKeyboard = this.advancedTexture.getControlByName("vkb");
+        this.advancedTexture.removeControl(idKeyboard);
+        idKeyboard.dispose();
+        return theId;
     }
 
     showEditGroup() {
@@ -135,12 +191,14 @@ class Messages {
 
     doneEditGroup() {
         let idInputfield = this.advancedTexture.getControlByName("group");
-        currentSession.group = idInputfield.text;
+        let theGroup = idInputfield.text;
+        currentSession.group = theGroup;
         this.advancedTexture.removeControl(idInputfield);
         idInputfield.dispose();
         let idKeyboard = this.advancedTexture.getControlByName("vkb");
         this.advancedTexture.removeControl(idKeyboard);
         idKeyboard.dispose();
+        return theGroup;
     }
 
     showSelectBlock() {
@@ -151,6 +209,7 @@ class Messages {
 
     showInsButtons() {
         this.currentScreen = "insButtons";
+        near = createNearMenu("no record");
         near.isVisible = true;
         this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
     }

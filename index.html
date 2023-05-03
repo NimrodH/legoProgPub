@@ -78,9 +78,8 @@
                 }
             })
                 .then(response => response.json())
-                .then(data2 => console.log(data2))
-                .catch(error => console.error(error));
-
+                .then(data2 => console.log("postData done"))
+                .catch(error => console.error("postData error: " + error));
         }
 
         var canvas = document.getElementById("renderCanvas");
@@ -165,48 +164,12 @@
             ///end ELEMENTS MENU///
 
             ///MODEL///
-            currentModel = createModel("one", -5, 0 ,-5 );
+            //currentModel = createModel("one", -5, 0 ,-5 );
             ///end MODEL///
 
             ///NEAR MENU///
-            const manager = new BABYLON.GUI.GUI3DManager(scene);
-            near = new BABYLON.GUI.NearMenu("near");
-            manager.addControl(near);
-            let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
-            near.defaultBehavior.followBehaviorEnabled = false;
-            near.columns = 6;
-            near.margin = 0.2
-            near.position = new BABYLON.Vector3(1, 6, 1);
-            near.isVisible = false;
-            near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-
-            function createTouchButton(title, color, theFunction) {
-                let button = new BABYLON.GUI.TouchHolographicButton("title");
-                //button.text = title;
-                button.onPointerUpObservable.add(theFunction);
-                near.addButton(button);
-                const text1 = new BABYLON.GUI.TextBlock();
-                text1.text = title;
-                text1.color = color;
-                text1.fontSize = 90;
-                text1.fontStyle = "bold"
-                button.content = text1;
-                return button;
-            }
-
-            createTouchButton("/", "yellow", flipX);
-            createTouchButton("---", "yellow", flipZ);//X
-            createTouchButton("|", "yellow", flipY);
-            createTouchButton("< <", "yellow", connect);
-            createTouchButton("turn\nmodel", "yellow", flipModel);
-            createTouchButton("Save", "yellow", saveModel);
-            createTouchButton("blue", "blue", colorBlue);
-            createTouchButton("red", "red", colorRed);
-            createTouchButton("black", "black", colorBlack);
-            createTouchButton("green", "green", colorGreen);
-            createTouchButton("re\nBuild", "yellow", reBuildModelBut);
-            createTouchButton("> >", "yellow", removeLastBlock);
-            
+            //near = createNearMenu();
+             
             ///end NEAR MENU///
 
             messageBox = new Messages();
