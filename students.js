@@ -39,7 +39,8 @@ class Session {
         this.userId = id;
     }
 
-    async initSession() {      
+    async initSession() { 
+        this.fb = new FbMessages("תפריט אבני בניין");     
         this.trainingModelData = await loadModelData();
         switch (this.group) {///TODO: build more then one model as defined for the group
             case "A":
