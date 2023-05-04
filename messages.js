@@ -77,6 +77,7 @@ class Messages {
                 break;
             case "connect":
                 currentSession.initSession();
+                this.currentScreen = "end";
                 break;
             default:
                 console.log("default: " + this.currentScreen);
