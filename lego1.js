@@ -336,10 +336,10 @@ async function loadModelData() {
 
 async function reBuildModelBut() {
     let modelDataAll = await loadModelData();
-    console.log("currentModel.metadata.modelName" + currentModel.metadata.modelName);
-    console.log(modelDataAll);
+    //console.log("currentModel.metadata.modelName" + currentModel.metadata.modelName);
+    //console.log(modelDataAll);
     let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);
-    reBuildModel(modelData, modelData.length)
+    reBuildModel(modelData, modelData.length+1);
 }
 
 

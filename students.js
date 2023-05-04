@@ -22,6 +22,7 @@ class Session {
     actionId = 0;
     group;///each group handle differant no. of models when training
     currentModelInArray = 0;///index in array of shown model
+    fb;///one line message to the larner. usage: //this.fb = new FbMessages("בוקר אביבי ושמח");
     trainingModelData;///array item per line. each line is object with the following props:
     /*
     srcPoint
@@ -32,42 +33,43 @@ class Session {
     type
     step
     */
-    fb;///one line message to the lerner
+    
 
     constructor(id) {
         this.userId = id;
-        //console.log("this.userId: " + id);
-        //await getData(tableURL, { 'myStep': 'ALL' })
     }
 
-    async initSession() {
-        //this.traininigModel =  await getData(tableURL, { 'myStep': 'ALL' })
-        this.fb = new FbMessages("בוקר אביבי ושמח");
+    async initSession() {      
         this.trainingModelData = await loadModelData();
-        switch (this.group) {
-            case 'A'://4 models in same world
-                console.log("initSession A");
-                //createModel("aaa");///second model (first one is the default empty one)
-                //reBuildModel(this.trainingModelData, 3);
-                //createModel("aaa");
+        switch (this.group) {///TODO: build more then one model as defined for the group
+            case "A":
+                currentModel = createModel("man", -5, 0, -5);
                 break;
-            case 'B'://2 models in one world & 2 in another
-                console.log("initSession B");
-                //createModel("aaa");///second model (first one is the default empty one)
-                //reBuildModel(this.trainingModelData, 3);
-                //createModel("aaa");
+            case "B":
+                currentModel = createModel("car", 5, 0, -5);
                 break;
-            case 'C'://4 models each in seperate world
-                console.log("initSession C");
-                //createModel("aaa");///second model (first one is the default empty one)
-                //reBuildModel(this.trainingModelData, 3);
-                //createModel("aaa");
+            case "C":
+                currentModel = createModel("dog", -5, 0, 5);
                 break;
+            case "D":
+                currentModel = createModel("chair", 5, 0,  5);
+                let modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
+                reBuildModel(modelData, modelData.length+1);
+                 currentModel = createModel("man", -5, 0, -5);
+                modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
+                reBuildModel(modelData, modelData.length+1);
+                currentModel = createModel("car", 5, 0, -5);
+                modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
+                reBuildModel(modelData, modelData.length+1);
+                currentModel = createModel("dog", -5, 0, 5);
+                modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
+                reBuildModel(modelData, modelData.length+1);
+               break;
 
             default:
-                console.log("initSession default")
                 break;
         }
+    
     }
 
     reportClick(action, details, newElement) {
@@ -82,7 +84,7 @@ class Session {
         let wrongItems = [];
         let step = newElement.metadata.blockNum;
         //console.log("step: " + step);
-        const dataLine = this.trainingModelData.filter(el => el.step == step)[0];
+        const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
         //console.log("dataLine: " + dataLine);
 
         let colorName = colorVector2Name(newElement.material.diffuseColor);
@@ -145,3 +147,5 @@ class Session {
     }
 
 }
+ //this.fb = new FbMessages("בוקר אביבי ושמח");
+ //let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);

@@ -63,18 +63,10 @@ class Messages {
                 }
                 break;
             case "model2record":
-                    this.doneModel2record();
+                this.doneModel2record();
                 break;
             case "editGroup":
                 let group = this.doneEditGroup();
-                switch (group) {///TODO: build more then one model as defined for the group
-                    case "A":
-                        currentModel = createModel("man", -5, 0 ,-5 );
-                        break;
-                
-                    default:
-                        break;
-                }
                 this.showSelectBlock()
                 break;
             case "selectBlock":
@@ -120,12 +112,11 @@ class Messages {
         let theId = idInputfield.text;
         console.log("theId: " + theId);
         if (theId == "record") {
-           
+            ///no session. will continue in showModel2record when we will return "record"
         }
         else {
             currentSession = new Session(theId);
         }
-        
         this.advancedTexture.removeControl(idInputfield);
         idInputfield.dispose();
         let idKeyboard = this.advancedTexture.getControlByName("vkb");
@@ -133,9 +124,9 @@ class Messages {
         idKeyboard.dispose();
         return theId;
     }
-
+/////RECORD MODE without session
     showModel2record() {
-        this.currentScreen = "model2record"; 
+        this.currentScreen = "model2record";
         near = createNearMenu("record");
         near.isVisible = true;
 
@@ -165,7 +156,7 @@ class Messages {
         this.currentScreen = "end";
         let idInputfield = this.advancedTexture.getControlByName("id");
         let theId = idInputfield.text;
-        currentModel = createModel(theId, -5, 0 ,-5 );
+        currentModel = createModel(theId, -5, 0, -5);
         this.advancedTexture.removeControl(idInputfield);
         idInputfield.dispose();
         let idKeyboard = this.advancedTexture.getControlByName("vkb");
@@ -173,6 +164,7 @@ class Messages {
         idKeyboard.dispose();
         return theId;
     }
+/////END RECORD MODE without session
 
     showEditGroup() {
         this.currentScreen = "editGroup";
@@ -246,7 +238,7 @@ class FbMessages {
         ///Calcultae ratio
         var ratio = planeHeight / DTHeight;
 
-         ///Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
+        ///Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
         var temp = new BABYLON.DynamicTexture("DynamicTexture", 64, scene);
         var tmpctx = temp.getContext();
         tmpctx.font = font;
@@ -268,15 +260,15 @@ class FbMessages {
         this.plane.position.z = 2;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     }
-    hide(){
-        this.plane.isVisible = false;  
+    hide() {
+        this.plane.isVisible = false;
     }
-    show(){
-        this.plane.isVisible = true;  
+    show() {
+        this.plane.isVisible = true;
     }
     dispose() {
         this.dynamicTexture.dispose();
         this.mat.dispose();
-        this.plane.dispose();    
+        this.plane.dispose();
     }
 }
