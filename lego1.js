@@ -89,6 +89,9 @@ function animate(box, oldPos, newPos, scene) {
         box.setParent(currentModel);
         ///rais all model above ground
         setOnGround(currentModel, 1);
+        let h = getTop(currentModel);
+        currentModel.metadata.label.setY(h+0.3) ;
+    
     }
 }
 
@@ -102,6 +105,15 @@ function setOnGround(element, factor) {
         element.position.y = element.position.y - (lowerEdgePosition / factor)
     }
     //console.log("element.position.y after: " + element.position.y);
+}
+
+function getTop(model) {
+    model.refreshBoundingInfo();
+    model.computeWorldMatrix(true);
+    var boundingInfo = model.getHierarchyBoundingVectors();
+    return boundingInfo.max.y;
+ 
+
 }
 /*not needed?
 function setVisibleMeshChilds(theMesh, setItVisible) {
@@ -142,17 +154,18 @@ function createNearMenu(mode) {
     createTouchButton("/", "yellow", flipX);
     createTouchButton("---", "yellow", flipZ);//X
     createTouchButton("|", "yellow", flipY);
-    createTouchButton("< <", "yellow", connect);
+    createTouchButton("add\n< <", "yellow", connect);
     createTouchButton("turn\nmodel", "yellow", flipModel);
-    createTouchButton("blue", "blue", colorBlue);
+    createTouchButton("delete\n> >", "yellow", removeLastBlock);
     createTouchButton("red", "red", colorRed);
     createTouchButton("black", "black", colorBlack);
     createTouchButton("green", "green", colorGreen);
-    createTouchButton("> >", "yellow", removeLastBlock);
+    createTouchButton("blue", "blue", colorBlue);
     if (mode == "record") {
         createTouchButton("re\nBuild", "yellow", reBuildModelBut);
         createTouchButton("Save", "yellow", saveModel);
     }
+    ///near.scaling - new BABYLON.Vector3(0.6,0.6,0.6);///not working?
     return near;
 }
 
@@ -276,7 +289,6 @@ function connect() {
     if (currentSession) {
         currentSession.reportConnect(newElement);///newElement has connectedTo object
     }
-
 }
 
 function changeSky(skyPath, groundColorName) {
@@ -505,13 +517,22 @@ function doClickConnection(event) {
         if (currentSession) {
             currentSession.reportClick("point", "on-model", event.source.parent);
         }
-        return;
+      return;
     } else {
         doElementConnection(event.source);
         if (currentSession) {
             currentSession.reportClick("point", "on-menu", event.source.parent);
         }
 
+    }
+}
+
+///the first block is the model and all other blocks are its childs
+function modelBySphere(sphere) {
+    if (sphere.parent.metadata.blockNum == 0) {
+        return sphere.parent;
+    } else {
+        return sphere.parent.parent;
     }
 }
 
@@ -532,16 +553,21 @@ function doElementConnection(connectionSphere) {
 
 ///defign and highlite the conection sphere in the model (called from doClickConnection)
 function doModelConnection(connectionSphere) {
-
+    let newModel = modelBySphere(connectionSphere);
+    console.log("newModel.metadata.modelName: " + newModel.metadata.modelName);
+ 
     if (getModelSelectedConnection(currentModel) && connectionSphere !== getModelSelectedConnection(currentModel)) {
+        ///there is another selected sphere so changedit to not-yellow
         getModelSelectedConnection(currentModel).material.diffuseColor = notSelectedColor;
     }
-    setModelSelectedConnection(currentModel, connectionSphere);
+    currentModel = newModel;
+    ///write the new sphere as sectedConnectin
+    setModelSelectedConnection(newModel, connectionSphere);
 
-    let m = getModelSelectedConnection(currentModel).material;
+    let m = getModelSelectedConnection(newModel).material;
     if (m.diffuseColor == selectedColor) {
         m.diffuseColor = notSelectedColor;
-        setModelSelectedConnection(currentModel, null);
+        setModelSelectedConnection(newModel, null);
     } else {
         m.diffuseColor = selectedColor;
     }

@@ -144,9 +144,13 @@
 
             ///ELEMENTS MENU///
             elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0.01 });
-           
+            
             elementsMenu.position.x = menuX;
             elementsMenu.position.y = elementsMenuY;///position of center of B1X3 TODO:we need to replace it with virtual mesh
+            elementsMenu.metadata = {
+                lable: new FbMessages("תפריט אבני בניין",0,1,0)
+            }
+            
 
             const b1X5 = meshBlock(scene, 5);
             b1X5.setParent(elementsMenu);
@@ -168,7 +172,7 @@
             ///end MODEL///
 
             ///NEAR MENU///
-            //near = createNearMenu();
+            //near = createNearMenu();///called now from messages. implemented in lego 1
              
             ///end NEAR MENU///
 

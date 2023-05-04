@@ -34,17 +34,23 @@ class Session {
     step
     */
     
-
     constructor(id) {
         this.userId = id;
     }
 
     async initSession() { 
-        this.fb = new FbMessages("תפריט אבני בניין");     
+        //elementsMenu.metadata.label =  new FbMessages("תפריט אבני בניין",0,1,0);    
         this.trainingModelData = await loadModelData();
+        this.requestedModelName;///we will set it when we ask user to change model 
+                                    ///we use it when compating its selection in reportConnect
         switch (this.group) {///TODO: build more then one model as defined for the group
             case "A":
                 currentModel = createModel("man", -5, 0, -5);
+                currentModel.metadata.label = new FbMessages("M1",-5, 1, -5);
+                
+                currentModel = createModel("car", 5, 0, -5);
+                currentModel.metadata.label = new FbMessages("M2",5, 1, -5);
+                this.requestedModelName = currentModel.metadata.modelName;
                 break;
             case "B":
                 currentModel = createModel("car", 5, 0, -5);
@@ -85,9 +91,14 @@ class Session {
         let wrongItems = [];
         let step = newElement.metadata.blockNum;
         //console.log("step: " + step);
-        const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
+        ////const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
+        const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == requestedModelName))[0];
         //console.log("dataLine: " + dataLine);
-
+        if(!dataLine) {
+            this.doFbMessage("no more steps");
+            console.log("missing line. no more steps?");
+            return
+        }
         let colorName = colorVector2Name(newElement.material.diffuseColor);
         //console.log("colorName: " + colorName + "  " + dataLine.color);
         if (colorName !== dataLine.color) {
@@ -113,7 +124,7 @@ class Session {
         //console.log("destPointName: " + destPointName + "  " + dataLine.destPoint);
         if (destPointName !== dataLine.destPoint) {
             isCorect = false;
-            wrongItems.push("model-point");
+            wrongItems.push("destenation-point");
         }
 
         let typeName = newElement.name;
@@ -127,16 +138,24 @@ class Session {
         //console.log("destBlockName: " + destBlockName + "  " + dataLine.destBlock);
         if (destBlockName.toString() !== dataLine.destBlock.toString()) {
             isCorect = false;
-            wrongItems.push("model-block");
+            wrongItems.push("destenation-block");
+        }
+        ///we assume block 0 will never be :newElement
+       // let modelName = newElement.parent.metadata.modelName;
+        if (currentModel.metadata.modelName !== dataLine.modelName) {
+            isCorect = false;
+            wrongItems.push("model");           
         }
 
         if (isCorect) {
-            this.fb.dispose()
-            this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
+            //this.fb.dispose()
+            //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
+            this.doFbMessage((step + 1) + " יפה מאד. המשך לשלב");
             saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
         } else {
-            this.fb.dispose()
-            this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
+            //this.fb.dispose()
+            //this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
+            this.doFbMessage((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב");
             saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
 
         }
@@ -147,6 +166,12 @@ class Session {
         console.log("reportWrongMove: ");
     }
 
+    doFbMessage(message) {
+        if( this.fb) {
+            this.fb.dispose(); 
+        }
+        this.fb = new FbMessages(message)
+    }
 }
  //this.fb = new FbMessages("בוקר אביבי ושמח");
  //let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);

@@ -225,7 +225,7 @@ class FbMessages {
     dynamicTexture;
     mat;
     plane;
-    constructor(text) {
+    constructor(text, x=0, y=2.5, z=2) {
         ///Set font
         var font_size = 24;
         var font = "bold " + font_size + "px Arial";
@@ -257,10 +257,16 @@ class FbMessages {
         ///Create plane and set dynamic texture as material
         this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
         this.plane.material = this.mat;
-        this.plane.position.y = 2.5;
-        this.plane.position.z = 2;
+        this.plane.position.y = y;
+        this.plane.position.z = z;
+        this.plane.position.x = x;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     }
+
+    setY(newY) {
+        this.plane.position.y = newY; 
+    }
+    
     hide() {
         this.plane.isVisible = false;
     }
