@@ -17,13 +17,18 @@ async function saveUserAction(actionType, ActionDetails, actionId, block, model,
     //console.log("saveUserAction: "+ actionType);
 }
 
+
+
 class Session {
     userId;
     actionId = 0;
+    connectedId = 0;///the order number of true conection action (no matter which model) in the session
     group;///each group handle differant no. of models when training
     currentModelInArray = 0;///index in array of shown model
     fb;///one line message to the larner. usage: //this.fb = new FbMessages("בוקר אביבי ושמח");
     trainingModelData;///array item per line. each line is object with the following props:
+    modelInSessionStage;
+    worldByModel;///model Mn will be in the world that is the value of item n
     /*
     srcPoint
     destPoint
@@ -41,23 +46,37 @@ class Session {
     async initSession() { 
         //elementsMenu.metadata.label =  new FbMessages("תפריט אבני בניין",0,1,0);    
         this.trainingModelData = await loadModelData();
-        this.requestedModelName;///we will set it when we ask user to change model 
-                                    ///we use it when compating its selection in reportConnect
+        //this.requestedModelName;///we will set it when we ask user to change model 
+                                    ///we use it when comparing its selection in reportConnect
+        ///the value of item i is the model name to use in overall stage i in this session
+        ///the next stage number of spsific model is kept on the model
+        this.modelInSessionStage = ["M1","M1","M4","M4","M4","M2","M2","M2","M2","M3","M3","M2","M2","M2","M4","M4","M4","M4","M1","M1","M1","M1","M3","M3","M3","M2","M2","M2","M4","M4","M4","M4","M1","M1","M1","M1","M1","M3","M3","M3","M2","M2","M2","M2","M3","M3","M3"];
+        //this.worldByModel; ///model Mn will be in the world that is the value of item n
+        let m1;
+        let m2;
+        let m3;
+        let m4;
+        m1 = createModel("car", 5, 0, -5);
+        m2 = createModel("chair", -5, 0, -5);
+        m3 = createModel("dog", -5, 0, 5);
+        m4 = createModel("man", 5, 0, 5);        
+
         switch (this.group) {///TODO: build more then one model as defined for the group
             case "A":
-                currentModel = createModel("man", -5, 0, -5);
-                currentModel.metadata.label = new FbMessages("M1",-5, 1, -5);
-                
-                currentModel = createModel("car", 5, 0, -5);
-                currentModel.metadata.label = new FbMessages("M2",5, 1, -5);
-                this.requestedModelName = currentModel.metadata.modelName;
+                this.worldByModel = {"M1":"W1","M2":"W1","M3":"W1","M4":"W1"};
                 break;
             case "B":
-                currentModel = createModel("car", 5, 0, -5);
+                setVisibleModel(m3, false);
+                setVisibleModel(m4, false);
+                this.worldByModel =  {"M1":"W1","M2":"W1","M3":"W2","M4":"W2"};
+                
                 break;
             case "C":
-                currentModel = createModel("dog", -5, 0, 5);
-                break;
+                this.worldByModel = {"M1":"W1","M2":"W2","M3":"W3","M4":"W4"};
+                setVisibleModel(m3, false);
+                setVisibleModel(m4, false);
+                setVisibleModel(m2, false);
+                 break;
             case "D":
                 currentModel = createModel("chair", 5, 0,  5);
                 let modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
@@ -76,7 +95,9 @@ class Session {
             default:
                 break;
         }
-    
+        currentModel = getModel(this.modelInSessionStage[0]);
+        currentWorld = this.worldByModel[currentModel];
+        setWorld(currentWorld);///TODO:in setWorld show only relevent models follwing session.worldByModel
     }
 
     reportClick(action, details, newElement) {
@@ -92,7 +113,7 @@ class Session {
         let step = newElement.metadata.blockNum;
         //console.log("step: " + step);
         ////const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
-        const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == requestedModelName))[0];
+        const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
         //console.log("dataLine: " + dataLine);
         if(!dataLine) {
             this.doFbMessage("no more steps");
@@ -151,7 +172,8 @@ class Session {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
             this.doFbMessage((step + 1) + " יפה מאד. המשך לשלב");
-            saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
+            saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group);
+
         } else {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")

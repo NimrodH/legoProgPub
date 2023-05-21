@@ -65,7 +65,57 @@ let selectedConnection;///the sphere that was clicked on one of the elements out
 let modelsArray = [];
 let currentModel;///returned by createModel that push it into modelsArray
 let elementsMenu;///the parent of the blocks that user can select
+let currentWorld;///to be returned by setWorld (that call cgangeSky)
 
+///modelLabel is like "M1". used in the arry of jumps
+///(differ then metadat.modelName wjich is the object for the label)
+/// moelName is like "car" it is in metadata.modelName. used in the database.
+/// the function returns the model object
+function label2name(modelLabel){
+    let modelName;
+    switch (modelLabel) {
+        case "M1":
+            modelName = "car"
+            break;
+        case "M2":
+            modelName = "chair"
+            break;
+        case "M1":
+            modelName = "dog"
+            break;
+        case "M1":
+            modelName = "man"
+            break;
+        default:
+            break;
+    }
+    return  modelName;
+}
+
+function name2label(modelName){
+    let modelLabel;
+    switch (modelName) {
+        case "car":
+            modelLabel = "M1"
+            break;
+        case "chair":
+            modelLabel = "M2"
+            break;
+        case "dog":
+            modelLabel = "M3"
+            break;
+        case "man":
+            modelLabel = "M4"
+            break;
+        default:
+            break;
+    }
+    return  modelLabel;
+}
+function getModel(modelLabel) {
+    let modelName = label2name(modelLabel);
+    return modelsArray.filter( x => x.metadata.modelName = modelName)[0];
+}
 /////////////////// GAME FUNCTIONS //////////////////////////
 
 ///move block and connect it to model
@@ -90,8 +140,8 @@ function animate(box, oldPos, newPos, scene) {
         ///rais all model above ground
         setOnGround(currentModel, 1);
         let h = getTop(currentModel);
-        currentModel.metadata.label.setY(h+0.3) ;
-    
+        currentModel.metadata.label.setY(h + 0.3);
+
     }
 }
 
@@ -112,19 +162,20 @@ function getTop(model) {
     model.computeWorldMatrix(true);
     var boundingInfo = model.getHierarchyBoundingVectors();
     return boundingInfo.max.y;
- 
+
 
 }
-/*not needed?
-function setVisibleMeshChilds(theMesh, setItVisible) {
+///not needed?
+function setVisibleModel(theMesh, setItVisible) {
     theMesh.isVisible = setItVisible;
     let childs = theMesh.getChildMeshes(false);
     for (let index = 0; index < childs.length; index++) {
         const element = childs[index];
         element.isVisible = setItVisible;
     }
+    theMesh.metadata.label.hide();
 }
-*/
+
 function createNearMenu(mode) {
     const manager = new BABYLON.GUI.GUI3DManager(scene);
     let near = new BABYLON.GUI.NearMenu("near");
@@ -172,6 +223,7 @@ function createNearMenu(mode) {
 function createModel(theModelName, x, y, z) {
     var pos = new BABYLON.Vector3(x, y, z);
     let model = meshBlock(scene, 1);
+    let title = name2label(theModelName);
     //model.getChildMeshes(false)[1].dispose();
     //model.position.x = -5;
     //model.position.z = -5;
@@ -183,6 +235,7 @@ function createModel(theModelName, x, y, z) {
         modelName: theModelName
     };
     model.scaling = scailingMenuModel;
+    model.metadata.label = new FbMessages(title, x, y+1, z);
     modelsArray.push(model);
     setOnGround(model, 1);
     return model;
@@ -291,6 +344,31 @@ function connect() {
     }
 }
 
+function setWorld(worldName) {
+    switch (worldName) {
+        case "W1":
+            changeSky("textures/blue", colorName2Vector("blue"));
+            currentWorld = "W1"
+            break;
+        case "W2":
+            changeSky("textures/red", colorName2Vector("red"));
+            currentWorld = "W2"
+            break;
+        case "W3":
+
+            currentWorld = "W3"
+            break;
+        case "W4":
+
+            currentWorld = "W4"
+            break;
+
+        default:
+            changeSky("textures/blue", colorName2Vector("blue"));
+            break;
+    }
+}
+
 function changeSky(skyPath, groundColorName) {
     var skybox = scene.getMeshByName("skyBox");
 
@@ -351,7 +429,7 @@ async function reBuildModelBut() {
     //console.log("currentModel.metadata.modelName" + currentModel.metadata.modelName);
     //console.log(modelDataAll);
     let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);
-    reBuildModel(modelData, modelData.length+1);
+    reBuildModel(modelData, modelData.length + 1);
 }
 
 
@@ -517,7 +595,7 @@ function doClickConnection(event) {
         if (currentSession) {
             currentSession.reportClick("point", "on-model", event.source.parent);
         }
-      return;
+        return;
     } else {
         doElementConnection(event.source);
         if (currentSession) {
@@ -555,7 +633,7 @@ function doElementConnection(connectionSphere) {
 function doModelConnection(connectionSphere) {
     let newModel = modelBySphere(connectionSphere);
     console.log("newModel.metadata.modelName: " + newModel.metadata.modelName);
- 
+
     if (getModelSelectedConnection(currentModel) && connectionSphere !== getModelSelectedConnection(currentModel)) {
         ///there is another selected sphere so changedit to not-yellow
         getModelSelectedConnection(currentModel).material.diffuseColor = notSelectedColor;
