@@ -334,12 +334,11 @@ function visibleModelsByWorld(world) {
 function setWorld(worldName) {
     switch (worldName) {
         case "W1":
-            changeSky("textures/green", colorName2Vector("green"));
+            changeSky("textures/pink", colorName2Vector("base"));
             currentWorld = "W1";
-
             break;
         case "W2":
-            changeSky("textures/red", colorName2Vector("red"));
+            changeSky("textures/green", colorName2Vector("green"));
             currentWorld = "W2"
             break;
         case "W3":
@@ -347,7 +346,7 @@ function setWorld(worldName) {
             currentWorld = "W3"
             break;
         case "W4":
-
+            changeSky("textures/red", colorName2Vector("red"));
             currentWorld = "W4"
             break;
 
