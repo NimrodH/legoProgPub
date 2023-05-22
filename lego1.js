@@ -26,7 +26,7 @@ function rotationVector2Name(vector) {
     if (vector.y > 0) { return "Y" };
     if (vector.z > 0) { return "Z" };
     if (vector.x > 0) { return "X" };
-    return "O";
+    return "X";
 }
 
 function rotationName2Vector(theName) {
@@ -65,7 +65,7 @@ let selectedConnection;///the sphere that was clicked on one of the elements out
 let modelsArray = [];
 let currentModel;///returned by createModel that push it into modelsArray
 let elementsMenu;///the parent of the blocks that user can select
-let currentWorld;///to be returned by setWorld (that call cgangeSky)
+let currentWorld;///to be returned by setWorld (that call chgangeSky)
 
 ///modelLabel is like "M1". used in the arry of jumps
 ///(differ then metadat.modelName wjich is the object for the label)
@@ -75,7 +75,7 @@ let currentWorld;///to be returned by setWorld (that call cgangeSky)
 
 ///model.metadata.modelTitle is the text on the model. model.Obj is the object for label
 function getModel(modelLabel) {
-    return modelsArray.filter( x => x.metadata.modelTitle = modelLabel)[0];
+    return modelsArray.filter(x => x.metadata.modelTitle == modelLabel)[0];
 }
 /////////////////// GAME FUNCTIONS //////////////////////////
 
@@ -102,6 +102,9 @@ function animate(box, oldPos, newPos, scene) {
         setOnGround(currentModel, 1);
         let h = getTop(currentModel);
         currentModel.metadata.labelObj.setY(h + 0.3);
+        if (currentSession) {
+            currentSession.reportConnect(box);///newElement(= box) has connectedTo object
+        }
     }
 }
 
@@ -125,7 +128,7 @@ function getTop(model) {
 
 
 }
-///not needed?
+///TODO: I remember there is built-in property\function that hide mesh including its childs? instead of the following?
 function setVisibleModel(theMesh, setItVisible) {
     theMesh.isVisible = setItVisible;
     let childs = theMesh.getChildMeshes(false);
@@ -133,7 +136,12 @@ function setVisibleModel(theMesh, setItVisible) {
         const element = childs[index];
         element.isVisible = setItVisible;
     }
-    theMesh.metadata.labelObj.hide();
+    if (setItVisible) {
+        theMesh.metadata.labelObj.show();
+    } else {
+        theMesh.metadata.labelObj.hide();
+    }
+    
 }
 
 function createNearMenu(mode) {
@@ -195,7 +203,7 @@ function createModel(theModelName, theModelTitle, x, y, z) {
         modelTitle: theModelTitle
     };
     model.scaling = scailingMenuModel;
-    model.metadata.labelObj = new FbMessages(theModelTitle, x, y+1, z);
+    model.metadata.labelObj = new FbMessages(theModelTitle, x, y + 1, z);
     modelsArray.push(model);
     setOnGround(model, 1);
     return model;
@@ -237,8 +245,8 @@ function removeLastBlock() {
     let lastBlock = modelBlocks.filter(lastByBlockNum)[0];
     let destConnectionSphereName = lastBlock.metadata.connectedTo;
     let destBlockNum = lastBlock.metadata.destBlock;
-    console.log("destBlockNum: " + destBlockNum);
-    console.log("lastBlockNum: " + lastBlockNum);
+    //console.log("destBlockNum: " + destBlockNum);
+    //console.log("lastBlockNum: " + lastBlockNum);
     let destBlock
     if (lastBlockNum > 1) {
         destBlock = modelBlocks.filter(destByBlockNum)[0];
@@ -299,26 +307,34 @@ function connect() {
     let newColor = selectedConnection.parent.material.diffuseColor;
     let selectedConnectionName = selectedConnection.name;
     doConnect(newElement, newColor, selectedConnectionName, true);///has to be true
+    /* ///moved to in animatr
     if (currentSession) {
         currentSession.reportConnect(newElement);///newElement has connectedTo object
     }
+    */
 }
 
 ///run on all models in modelsArray. if value of worldByModel[theModel] is world show the model
 ///model.metadata.modelTitle is the text on the model. model.metadata.labelObj is the object for label
 function visibleModelsByWorld(world) {
-        modelsArray.forEach(model => {
-            modelLabel = model.metadata.modelTitle;
-           setVisibleModel(model, (currentSession.worldByModel[modelLabel] == world));
-        });
-        
-    }
+    //console.log ("modelsArray");
+    //console.log (modelsArray);
+    modelsArray.forEach(model => {
+        let modelLabel = model.metadata.modelTitle;
+        //console.log ("model: " + model);
+        //console.log ("modelLabel: " + modelLabel);
+        //console.log ("world: " + world);
+        //console.log (currentSession.worldByModel[modelLabel])
+        setVisibleModel(model, (currentSession.worldByModel[modelLabel] == world));
+    });
+
+}
 
 
 function setWorld(worldName) {
     switch (worldName) {
         case "W1":
-            changeSky("textures/blue", colorName2Vector("blue"));
+            changeSky("textures/green", colorName2Vector("green"));
             currentWorld = "W1";
 
             break;
@@ -327,7 +343,7 @@ function setWorld(worldName) {
             currentWorld = "W2"
             break;
         case "W3":
-
+            changeSky("textures/blue", colorName2Vector("blue"));
             currentWorld = "W3"
             break;
         case "W4":
