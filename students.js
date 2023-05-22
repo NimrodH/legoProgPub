@@ -44,7 +44,7 @@ class Session {
     }
 
     async initSession() { 
-        //elementsMenu.metadata.label =  new FbMessages("תפריט אבני בניין",0,1,0);    
+        //elementsMenu.metadata.labelObj =  new FbMessages("תפריט אבני בניין",0,1,0);    
         this.trainingModelData = await loadModelData();
         //this.requestedModelName;///we will set it when we ask user to change model 
                                     ///we use it when comparing its selection in reportConnect
@@ -56,10 +56,10 @@ class Session {
         let m2;
         let m3;
         let m4;
-        m1 = createModel("car", 5, 0, -5);
-        m2 = createModel("chair", -5, 0, -5);
-        m3 = createModel("dog", -5, 0, 5);
-        m4 = createModel("man", 5, 0, 5);        
+        m1 = createModel("car", "M1", 5, 0, -5);
+        m2 = createModel("chair", "M2", -5, 0, -5);
+        m3 = createModel("dog", "M3", -5, 0, 5);
+        m4 = createModel("man", "M4", 5, 0, 5);        
 
         switch (this.group) {///TODO: build more then one model as defined for the group
             case "A":
@@ -78,16 +78,16 @@ class Session {
                 setVisibleModel(m2, false);
                  break;
             case "D":
-                currentModel = createModel("chair", 5, 0,  5);
+                currentModel = createModel("chair", "M2", 5, 0,  5);
                 let modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
                 reBuildModel(modelData, modelData.length+1);
-                 currentModel = createModel("man", -5, 0, -5);
+                 currentModel = createModel("man", "M4", -5, 0, -5);
                 modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
                 reBuildModel(modelData, modelData.length+1);
-                currentModel = createModel("car", 5, 0, -5);
+                currentModel = createModel("car", "M1", 5, 0, -5);
                 modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
                 reBuildModel(modelData, modelData.length+1);
-                currentModel = createModel("dog", -5, 0, 5);
+                currentModel = createModel("dog", "M3", -5, 0, 5);
                 modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
                 reBuildModel(modelData, modelData.length+1);
                break;

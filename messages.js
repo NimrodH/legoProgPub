@@ -157,7 +157,7 @@ class Messages {
         this.currentScreen = "end";
         let idInputfield = this.advancedTexture.getControlByName("id");
         let theId = idInputfield.text;
-        currentModel = createModel(theId, -5, 0, -5);
+        currentModel = createModel(theId, "for record", -5, 0, -5);
         this.advancedTexture.removeControl(idInputfield);
         idInputfield.dispose();
         let idKeyboard = this.advancedTexture.getControlByName("vkb");

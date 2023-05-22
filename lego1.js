@@ -71,50 +71,11 @@ let currentWorld;///to be returned by setWorld (that call cgangeSky)
 ///(differ then metadat.modelName wjich is the object for the label)
 /// moelName is like "car" it is in metadata.modelName. used in the database.
 /// the function returns the model object
-function label2name(modelLabel){
-    let modelName;
-    switch (modelLabel) {
-        case "M1":
-            modelName = "car"
-            break;
-        case "M2":
-            modelName = "chair"
-            break;
-        case "M1":
-            modelName = "dog"
-            break;
-        case "M1":
-            modelName = "man"
-            break;
-        default:
-            break;
-    }
-    return  modelName;
-}
 
-function name2label(modelName){
-    let modelLabel;
-    switch (modelName) {
-        case "car":
-            modelLabel = "M1"
-            break;
-        case "chair":
-            modelLabel = "M2"
-            break;
-        case "dog":
-            modelLabel = "M3"
-            break;
-        case "man":
-            modelLabel = "M4"
-            break;
-        default:
-            break;
-    }
-    return  modelLabel;
-}
+
+///model.metadata.modelTitle is the text on the model. model.Obj is the object for label
 function getModel(modelLabel) {
-    let modelName = label2name(modelLabel);
-    return modelsArray.filter( x => x.metadata.modelName = modelName)[0];
+    return modelsArray.filter( x => x.metadata.modelTitle = modelLabel)[0];
 }
 /////////////////// GAME FUNCTIONS //////////////////////////
 
@@ -140,8 +101,7 @@ function animate(box, oldPos, newPos, scene) {
         ///rais all model above ground
         setOnGround(currentModel, 1);
         let h = getTop(currentModel);
-        currentModel.metadata.label.setY(h + 0.3);
-
+        currentModel.metadata.labelObj.setY(h + 0.3);
     }
 }
 
@@ -173,7 +133,7 @@ function setVisibleModel(theMesh, setItVisible) {
         const element = childs[index];
         element.isVisible = setItVisible;
     }
-    theMesh.metadata.label.hide();
+    theMesh.metadata.labelObj.hide();
 }
 
 function createNearMenu(mode) {
@@ -220,10 +180,9 @@ function createNearMenu(mode) {
     return near;
 }
 
-function createModel(theModelName, x, y, z) {
+function createModel(theModelName, theModelTitle, x, y, z) {
     var pos = new BABYLON.Vector3(x, y, z);
     let model = meshBlock(scene, 1);
-    let title = name2label(theModelName);
     //model.getChildMeshes(false)[1].dispose();
     //model.position.x = -5;
     //model.position.z = -5;
@@ -232,10 +191,11 @@ function createModel(theModelName, x, y, z) {
         inModel: true,
         blockNum: 0,
         numOfBlocks: 0,
-        modelName: theModelName
+        modelName: theModelName,
+        modelTitle: theModelTitle
     };
     model.scaling = scailingMenuModel;
-    model.metadata.label = new FbMessages(title, x, y+1, z);
+    model.metadata.labelObj = new FbMessages(theModelTitle, x, y+1, z);
     modelsArray.push(model);
     setOnGround(model, 1);
     return model;
@@ -344,11 +304,23 @@ function connect() {
     }
 }
 
+///run on all models in modelsArray. if value of worldByModel[theModel] is world show the model
+///model.metadata.modelTitle is the text on the model. model.metadata.labelObj is the object for label
+function visibleModelsByWorld(world) {
+        modelsArray.forEach(model => {
+            modelLabel = model.metadata.modelTitle;
+           setVisibleModel(model, (currentSession.worldByModel[modelLabel] == world));
+        });
+        
+    }
+
+
 function setWorld(worldName) {
     switch (worldName) {
         case "W1":
             changeSky("textures/blue", colorName2Vector("blue"));
-            currentWorld = "W1"
+            currentWorld = "W1";
+
             break;
         case "W2":
             changeSky("textures/red", colorName2Vector("red"));
@@ -367,6 +339,7 @@ function setWorld(worldName) {
             changeSky("textures/blue", colorName2Vector("blue"));
             break;
     }
+    visibleModelsByWorld(currentWorld);///show/hide relevent models
 }
 
 function changeSky(skyPath, groundColorName) {
