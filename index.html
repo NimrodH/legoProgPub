@@ -175,8 +175,17 @@
             //near = createNearMenu();///called now from messages. implemented in lego 1
              
             ///end NEAR MENU///
-
-            messageBox = new Messages();
+/////////////////////
+var newPlane = BABYLON.Mesh.CreatePlane("plane", 10);
+  //newPlane.position.y = 1;
+  newPlane.position.z = -25;
+        newPlane.position.y = 2;/////2
+        newPlane.position.x = 0;
+  var newADT = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(newPlane);
+  var newImage = new BABYLON.GUI.Image("erji", "textures/pink_py.png");
+  newADT.addControl(newImage);
+////////////////////
+            ///////messageBox = new Messages();
 
             const xr = scene.createDefaultXRExperienceAsync({
                 floorMeshes: [ground]

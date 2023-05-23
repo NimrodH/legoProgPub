@@ -307,7 +307,7 @@ function connect() {
     let newColor = selectedConnection.parent.material.diffuseColor;
     let selectedConnectionName = selectedConnection.name;
     doConnect(newElement, newColor, selectedConnectionName, true);///has to be true
-    /* ///moved to in animatr
+    /* ///moved to add2model in animate
     if (currentSession) {
         currentSession.reportConnect(newElement);///newElement has connectedTo object
     }

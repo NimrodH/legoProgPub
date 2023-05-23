@@ -12,9 +12,10 @@ class Messages {
 
     constructor() {
         this.plane.position.z = -25;
-        this.plane.position.y = 2;
+        this.plane.position.y = 2;/////2
         this.plane.position.x = 0;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;///without iא its mirror
+        
         this.textField = new BABYLON.GUI.TextBlock("upperText");
 
         this.advancedTexture.background = 'green'
@@ -44,6 +45,7 @@ class Messages {
         //this.advancedTexture.focusedControl = inputTextArea;///create bug
         //plane.isVisible = true;
         //plane.dispose();
+        
     }
 
     ///switch screens by currentScreen. convention:
@@ -52,6 +54,7 @@ class Messages {
     screenDone() {
         switch (this.currentScreen) {
             case "init":
+                //this.showPic();/////
                 this.showEditID();
                 break;
             case "editID":
@@ -83,6 +86,18 @@ class Messages {
                 console.log("default: " + this.currentScreen);
                 break;
         }
+    }
+
+    showPic() {
+        console.log("in showPic");
+        this.textField.text = "foo";
+        let image = new BABYLON.GUI.Image("but");
+        image.source  = "textures/pink_py.png";
+        ////image.heightInPixels = 1000;
+        //image.widthInPixels = 1000; 
+        //image.top = "20px";   
+        this.advancedTexture.addControl(image);
+     console.log("image.top: " + image.top)
     }
 
     showEditID() {
