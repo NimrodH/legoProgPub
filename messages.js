@@ -289,7 +289,7 @@ class FbMessages {
             this.picPLane.position.x = x;
             this.picPLane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
             this.advancedTexture4Pic = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.picPLane);   
-            image = new BABYLON.GUI.Image("but");
+            let image = new BABYLON.GUI.Image("but");
             image.source  = pic;//"textures/pink_py.png";
             this.advancedTexture4Pic.addControl(image);
         }
