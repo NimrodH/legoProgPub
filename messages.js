@@ -54,8 +54,8 @@ class Messages {
     screenDone() {
         switch (this.currentScreen) {
             case "init":
-                this.showPic();/////
-                //this.showEditID();
+                //this.showPic();/////
+                this.showEditID();
                 break;
             case "editID":
                 let id = this.doneEditID();
@@ -240,7 +240,10 @@ class FbMessages {
     dynamicTexture;
     mat;
     plane;
-    constructor(text, x=0, y=2.5, z=2) {
+    picPLane;
+    advancedTexture4Pic;
+    image;
+    constructor(text, x=0, y=2.5, z=2, pic=null) {
         ///Set font
         var font_size = 24;
         var font = "bold " + font_size + "px Arial";
@@ -276,6 +279,20 @@ class FbMessages {
         this.plane.position.z = z;
         this.plane.position.x = x;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+
+        ///create plane for pic instructions
+        if (pic) {
+            this.picPLane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 5, height: 5 }, scene);
+            this.picPLane.material = this.mat;
+            this.picPLane.position.y = y+6;
+            this.picPLane.position.z = z;
+            this.picPLane.position.x = x;
+            this.picPLane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+            advancedTexture4Pic = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.picPLane);   
+            image = new BABYLON.GUI.Image("but");
+            image.source  = pic;//"textures/pink_py.png";
+            this.advancedTexture4Pic.addControl(image);
+        }
     }
 
     setY(newY) {

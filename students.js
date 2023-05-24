@@ -187,8 +187,9 @@ class Session {
                 if (nextWorld !== currentWorld) {
                     setWorld(nextWorld);///will update currentWorld in the function
                 } 
-                //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב"); 
-                this.doFbMessage("Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)");               
+                //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
+                let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
+                this.doFbMessage(msg, "textures/pink_py.png");               
             }
         } else {
             //this.fb.dispose()
@@ -204,11 +205,11 @@ class Session {
         console.log("reportWrongMove: ");
     }
 
-    doFbMessage(message) {
+    doFbMessage(message, pic) {
         if (this.fb) {
             this.fb.dispose();
         }
-        this.fb = new FbMessages(message)
+        this.fb = new FbMessages(message, x=0, y=2.5, z=2, pic)
     }
 }
  //this.fb = new FbMessages("בוקר אביבי ושמח");
