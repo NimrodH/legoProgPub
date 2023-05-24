@@ -282,16 +282,21 @@ class FbMessages {
 
         ///create plane for pic instructions
         if (pic) {
-            this.picPLane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 5, height: 5 }, scene);
+            let picHeight = 4;
+            let picWidth = 4;
+            this.picPLane = BABYLON.MeshBuilder.CreatePlane("plane", { width: picWidth, height: picHeight }, scene);
             this.picPLane.material = this.mat;
-            this.picPLane.position.y = y+6;
+            this.picPLane.position.y = y + picHeight/2+ planeHeight/2;
             this.picPLane.position.z = z;
             this.picPLane.position.x = x;
             this.picPLane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-            this.advancedTexture4Pic = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.picPLane);   
-            let image = new BABYLON.GUI.Image("but");
-            image.source  = pic;//"textures/pink_py.png";
-            this.advancedTexture4Pic.addControl(image);
+            this.advancedTexture4Pic = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.picPLane); 
+             
+            this.image = new BABYLON.GUI.Image("but");
+            this.image.source  = pic;//"textures/pink_py.png";
+            this.advancedTexture4Pic.addControl(this.image);
+            
+            this.advancedTexture4Pic.background = 'green';
         }
     }
 
@@ -309,5 +314,12 @@ class FbMessages {
         this.dynamicTexture.dispose();
         this.mat.dispose();
         this.plane.dispose();
+        if (this.picPLane) {
+            this.picPLane.dispose();
+        }
+        if (this.this.advancedTexture4Pic) {
+            this.this.advancedTexture4Pic.dispose();
+        }
+        
     }
 }
