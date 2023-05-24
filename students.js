@@ -209,7 +209,7 @@ class Session {
         if (this.fb) {
             this.fb.dispose();
         }
-        this.fb = new FbMessages(message, x=0, y=2.5, z=2, pic)
+        this.fb = new FbMessages(message, 0, 2.5, 2, pic)
     }
 }
  //this.fb = new FbMessages("בוקר אביבי ושמח");
