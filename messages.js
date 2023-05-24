@@ -54,8 +54,8 @@ class Messages {
     screenDone() {
         switch (this.currentScreen) {
             case "init":
-                //this.showPic();/////
-                this.showEditID();
+                this.showPic();/////
+                //this.showEditID();
                 break;
             case "editID":
                 let id = this.doneEditID();
