@@ -179,7 +179,8 @@ class Session {
 
             if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) { 
                 //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
-                this.doFbMessage("Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")");
+                let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")"
+                this.doFbMessage(msg, "textures/pink_py.png");
             } else {
                 let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
                 currentModel = getModel(nextModelLabel);///connectedStage = 0
