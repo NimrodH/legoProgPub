@@ -67,16 +67,16 @@ class Session {
         }
 
         switch (this.group) {///TODO: build more then one model as defined for the group
-            case "A":
+            case "A": ///all models in the same world
                 this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };
                 break;
-            case "B":
+            case "B": ///two worlds
                 setVisibleModel(m3, false);
                 setVisibleModel(m4, false);
                 this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W2", "M4": "W2" };
 
                 break;
-            case "C":
+            case "C":///each model in one of 4 worlds
                 this.worldByModel = { "M1": "W1", "M2": "W2", "M3": "W3", "M4": "W4" };
                 setVisibleModel(m3, false);
                 setVisibleModel(m4, false);
@@ -101,7 +101,7 @@ class Session {
                 elementsMenu.position.x = 5;
                 currentModel = createModel("car", "M1", 0, 0, 0);
                 currentModel.metadata.labelObj.hide();
-                ground.material.lineColor = colorName2Vector("black");
+                ground.material.lineColor = colorName2Vector("selected");//yellow
                 break;
 
             default:
@@ -113,6 +113,10 @@ class Session {
             currentModel = getModel(modelLabel);///connectedStage = 0
             currentWorld = this.worldByModel[modelLabel];
             setWorld(currentWorld);///TODO:in setWorld show only relevent models follwing session.worldByModel
+            let msg = "Please do step 1 in Model " + currentModel.metadata.modelTitle + ", following the above picture";
+            let mName = currentModel.metadata.modelName;
+            this.doFbMessage(msg, "textures/" + mName + "1.JPG");
+    
         }
     }
 
@@ -194,8 +198,9 @@ class Session {
 
                 if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
                     //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
-                    let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")"
-                    this.doFbMessage(msg, "textures/" + "car" + (step + 1) + ".JPG");
+                    let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
+                    let mName = currentModel.metadata.modelName;
+                    this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
                 } else {
                     let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
                     currentModel = getModel(nextModelLabel);///connectedStage = 0
@@ -203,9 +208,11 @@ class Session {
                     if (nextWorld !== currentWorld) {
                         setWorld(nextWorld);///will update currentWorld in the function
                     }
+                    step = currentModel.metadata.numOfBlocks;
                     //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
                     let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
-                    this.doFbMessage(msg, "textures/" + "car" + (step + 1) + ".JPG");
+                    let mName = currentModel.metadata.modelName;
+                    this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
                 }
             } else {///E
                 let msg =  this.doFbMessage((step + 1));
@@ -214,11 +221,21 @@ class Session {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
             let msg = (step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב";
-            this.doFbMessage(msg, "textures/" + "car" + step + ".JPG");;
+            let mName = currentModel.metadata.modelName;
+            this.doFbMessage(msg, "textures/" + mName + step + ".JPG");;
             saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
 
         }
     }
+
+    reportDelete() {
+        console.log("reportDelete");
+        let step = newElement.metadata.blockNum;
+        let msg = "Please do again step " + (step+1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
+        let mName = currentModel.metadata.modelName;
+        this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
+        }
+
     ///move not done (i.e. missing selected point).
     /// we have another function "session.reportConnect" when connection done
     reportForbiddenMove(wrongConnection, wrongModelConnection) {

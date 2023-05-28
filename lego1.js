@@ -259,6 +259,9 @@ function removeLastBlock() {
 
     lastBlock.dispose();
     currentModel.metadata.numOfBlocks = currentModel.metadata.numOfBlocks - 1;
+    if (currentSession ) {
+        currentSession.reportDelete();
+    }
 
     function lastByBlockNum(e) {
         return (isBlockByBlockNum(e, lastBlockNum));
@@ -271,7 +274,6 @@ function removeLastBlock() {
     function bySphereName(e) {
         return isSphereBySphereName(e, destConnectionSphereName);
     }
-
 }
 
 ///return true if the block numbered "blockNumber"

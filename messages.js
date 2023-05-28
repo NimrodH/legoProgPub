@@ -33,7 +33,7 @@ class Messages {
         button1.height = "70px";
         this.advancedTexture.addControl(button1);
 
-        const initialText = "במסך זה יופיעו הנחיות\n\n הביטי/הבט מימנך נמצאת שם קוביה קטנה - זה המודל\n מאחוריך מספר לבנים לבניית המודל\n\n[אחרי שראינו את המודל והאבנים יש להקליק על כפתור [המשך\nהקלקה פרושה להצביע עם הקרן על הכפתור וללחוץ על ההדק";
+        const initialText = "במסך זה יופיעו הנחיות\n\n מאחוריך מספר לבנים לבניית המודל\n\n[אחרי שראינו את המודל והאבנים יש להקליק על כפתור [המשך\nהקלקה פרושה להצביע עם הקרן על הכפתור וללחוץ על ההדק";
         let text1 = this.textField;
         text1.text = initialText;//"Hello world";
         text1.color = "white"//"red";
@@ -87,6 +87,7 @@ class Messages {
                 break;
             case "connect":
                 currentSession.initSession();
+                this.showGroupIstructions();
                 this.currentScreen = "end";
                 break;
             default:
@@ -282,6 +283,23 @@ class Messages {
     showConnect() {
         this.currentScreen = "connect";
         this.textField.text = "להוספת האבן למודל יש להקליק על אחת הבליטות במודל\n[ << ] כאשר נקודה במודל ונקודה באבן נבחרו, ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n\n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור"
+    }
+
+    showGroupIstructions() {
+        switch (currentSession.group) {
+            case "A":
+                this.textField.text = " מימינך ומשמולך בסיסים לשמי מודלים \n ומאחורי אבני הבנין שנית בסיסים נוספים.\n בבקשה להסתובב ולהתחיל לבנות את המודלים על פי ההסברים שמעל אבני הבניין";
+                break;
+            case "B":
+                this.textField.text = " .מימינך ומשמאלך בסיסים לשני מודלים עליהם תתבקש לבנות את המודל.\n שני מודלים נוספים יוצגו לפניך בהמשך בעולם אחר\n בבקשה להסתובב ולהתחיל בבניה על פי ההנחיות שמעל לאבני הבנין.";
+                break;
+            case "C":
+                this.textField.text = " . משמאלך בסיס למודל עליו תתבקש לבנות את המודל.\n שלושה מודלים נוספים יוצגו לפניך בהמשך בעולמות אחרים\n בבקשה להסתובב ולהתחיל בבניה על פי ההנחיות שמעל לאבני הבנין.";
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
