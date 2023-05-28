@@ -49,8 +49,8 @@
     <script>
         ///CAMERA//////LIGHT//////SKYBOX//////GROUND///ELEMENTS MENU///MODEL//////NEAR MENU///messages
         //////////////////// Ort MODE FUNCTIONS/////////////////////////////////
-        const menuX = 1;//;
-        const menuY = 0.5;//abselut position befor seting it as child of elementsMenu
+        const menuX = 1;//1;
+        const menuY = 0.5;//abselut position before seting it as child of elementsMenu
         const modelX = -1;//-15;
         const elementsMenuY = 0;//-1;///sphere position that is parent of all menu meshes.
         const scaleFactor = 0.25;
@@ -105,9 +105,9 @@
             scene.enablePhysics(gravityVector, physicsPlugin);
 
             ///CAMERA///
-            //const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 3, BABYLON.Vector3.Zero());
-             var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);
-            camera.setTarget(new BABYLON.Vector3(0, 4, -15));
+        const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 1, BABYLON.Vector3.Zero());
+            //// var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);
+            ////camera.setTarget(new BABYLON.Vector3(0, 4, -15));
             camera.attachControl(canvas, true);
             ///end camera///
 
@@ -148,7 +148,7 @@
             elementsMenu.position.x = menuX;
             elementsMenu.position.y = elementsMenuY;///position of center of B1X3 TODO:we need to replace it with virtual mesh
             elementsMenu.metadata = {
-                lable: new FbMessages("תפריט אבני בניין",0,1,0)
+                labelObj: new FbMessages("תפריט אבני בניין",0,1,0)
             }
             
 
@@ -156,14 +156,17 @@
             b1X5.setParent(elementsMenu);
             b1X5.position.x = -7;//
             const b1X3 = meshBlock(scene, 3);
-            b1X3.position.x = -1;
             b1X3.setParent(elementsMenu);
+            b1X3.position.x = -1;
+            
             const b1X2 = meshBlock(scene, 2);
-            b1X2.position.x = 3;
             b1X2.setParent(elementsMenu);
+            b1X2.position.x = 3;
+            
             const c1 = meshWheel(scene, 1);
-            c1.position.x = 6;
             c1.setParent(elementsMenu);
+            c1.position.x = 6;
+            
             elementsMenu.scaling = scailingMenuModel;
             ///end ELEMENTS MENU///
 

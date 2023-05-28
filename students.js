@@ -57,10 +57,14 @@ class Session {
         let m2;
         let m3;
         let m4;
-        m1 = createModel("car", "M1", 5, 0, -5);
-        m2 = createModel("chair", "M2", -5, 0, -5);
-        m3 = createModel("dog", "M3", -5, 0, 5);
-        m4 = createModel("man", "M4", 5, 0, 5);
+        if (this.group == "A" || this.group == "B" || this.group == "C") {
+            ///the normal groups. (differ than rebuild (D) or takepics)
+            /// we may need to set it in the "switch" if we want differant positions in each group
+            m1 = createModel("car", "M1", 5, 0, -5);
+            m2 = createModel("chair", "M2", -5, 0, -5);
+            m3 = createModel("dog", "M3", -5, 0, 5);
+            m4 = createModel("man", "M4", 5, 0, 5);
+        }
 
         switch (this.group) {///TODO: build more then one model as defined for the group
             case "A":
@@ -92,14 +96,24 @@ class Session {
                 modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
                 reBuildModel(modelData, modelData.length + 1);
                 break;
+            case "E":
+                elementsMenu.metadata.labelObj.hide();
+                elementsMenu.position.x = 5;
+                currentModel = createModel("car", "M1", 0, 0, 0);
+                currentModel.metadata.labelObj.hide();
+                ground.material.lineColor = colorName2Vector("black");
+                break;
 
             default:
                 break;
         }
-        let modelLabel = this.modelInConnectedStage[this.connectedStage];
-        currentModel = getModel(modelLabel);///connectedStage = 0
-        currentWorld = this.worldByModel[modelLabel];
-        setWorld(currentWorld);///TODO:in setWorld show only relevent models follwing session.worldByModel
+        if (this.group == "A" || this.group == "B" || this.group == "C") {
+            ///the normal groups. (differ than rebuild (D) or takepics)
+            let modelLabel = this.modelInConnectedStage[this.connectedStage];
+            currentModel = getModel(modelLabel);///connectedStage = 0
+            currentWorld = this.worldByModel[modelLabel];
+            setWorld(currentWorld);///TODO:in setWorld show only relevent models follwing session.worldByModel
+        }
     }
 
     reportClick(action, details, newElement) {
@@ -113,53 +127,53 @@ class Session {
         let isCorect = true;
         let wrongItems = [];
         let step = newElement.metadata.blockNum;
-        console.log("step: " + step);
+        //console.log("step: " + step);
         ////const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
         const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
-        console.log("dataLine: ");
-        console.log(dataLine);
+        //console.log("dataLine: ");
+        //console.log(dataLine);
         if (!dataLine) {
             this.doFbMessage("no more steps");
             console.log("missing line. no more steps?");
             return
         }
         let colorName = colorVector2Name(newElement.material.diffuseColor);
-        console.log("colorName: " + colorName + "  " + dataLine.color);
+        //console.log("colorName: " + colorName + "  " + dataLine.color);
         if (colorName !== dataLine.color) {
             isCorect = false;
             wrongItems.push("color");
         }
 
         let rotationName = rotationVector2Name(newElement.rotation);
-        console.log("rotationName: " + rotationName + "  " + dataLine.rotation);
+        //console.log("rotationName: " + rotationName + "  " + dataLine.rotation);
         if (rotationName !== dataLine.rotation) {
             isCorect = false;
             wrongItems.push("rotation");
         }
 
         let srcPointName = newElement.metadata.connection;
-        console.log("srcPointName: " + srcPointName + "  " + dataLine.srcPoint);
+        //console.log("srcPointName: " + srcPointName + "  " + dataLine.srcPoint);
         if (srcPointName !== dataLine.srcPoint) {
             isCorect = false;
             wrongItems.push("Block-Point");
         }
 
         let destPointName = newElement.metadata.connectedTo;
-        console.log("destPointName: " + destPointName + "  " + dataLine.destPoint);
+        //console.log("destPointName: " + destPointName + "  " + dataLine.destPoint);
         if (destPointName !== dataLine.destPoint) {
             isCorect = false;
             wrongItems.push("destenation-point");
         }
 
         let typeName = newElement.name;
-        console.log("typeName: " + typeName + "  " + dataLine.type);
+        //console.log("typeName: " + typeName + "  " + dataLine.type);
         if (typeName !== dataLine.type) {
             isCorect = false;
             wrongItems.push("block-type");
         }
 
         let destBlockName = newElement.metadata.destBlock;
-        console.log("destBlockName: " + destBlockName + "  " + dataLine.destBlock);
+        //console.log("destBlockName: " + destBlockName + "  " + dataLine.destBlock);
         if (destBlockName.toString() !== dataLine.destBlock.toString()) {
             isCorect = false;
             wrongItems.push("destenation-block");
@@ -175,27 +189,32 @@ class Session {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
             this.connectedStage++;
-            saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group);
+            if (this.group == "A" || this.group == "B" || this.group == "C") {
+                saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group);
 
-            if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) { 
-                //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
-                let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")"
-                this.doFbMessage(msg, "textures/pink_py.png");
-            } else {
-                let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
-                currentModel = getModel(nextModelLabel);///connectedStage = 0
-                let nextWorld = this.worldByModel[nextModelLabel];
-                if (nextWorld !== currentWorld) {
-                    setWorld(nextWorld);///will update currentWorld in the function
-                } 
-                //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
-                let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
-                this.doFbMessage(msg, "textures/pink_py.png");               
+                if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
+                    //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
+                    let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")"
+                    this.doFbMessage(msg, "textures/" + "car" + (step + 1) + ".JPG");
+                } else {
+                    let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
+                    currentModel = getModel(nextModelLabel);///connectedStage = 0
+                    let nextWorld = this.worldByModel[nextModelLabel];
+                    if (nextWorld !== currentWorld) {
+                        setWorld(nextWorld);///will update currentWorld in the function
+                    }
+                    //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
+                    let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
+                    this.doFbMessage(msg, "textures/" + "car" + (step + 1) + ".JPG");
+                }
+            } else {///E
+                let msg =  this.doFbMessage((step + 1));
             }
         } else {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
-            this.doFbMessage((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב");
+            let msg = (step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב";
+            this.doFbMessage(msg, "textures/" + "car" + step + ".JPG");;
             saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
 
         }

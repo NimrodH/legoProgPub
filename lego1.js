@@ -412,6 +412,38 @@ async function loadModelData() {
     return modelData;
 }
 
+async function reBuild4pics() {
+    let modelDataAll = await loadModelData();
+    let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);
+
+    const element = modelData.filter(el => el.step == index)[0];
+    let srcBlockName = element.type;
+    let srcConnectionName = fullName2Private(element.srcPoint);
+    ///  create new element (will be sent to doConnect)
+    let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == srcBlockName)[0];
+    let newElement = menuBlock.clone(menuBlock.name);
+    ///set oriantation of the new element
+    let newRotation = rotationName2Vector(element.rotation);
+    newElement.rotation = newRotation;
+    /// create color following the data (will be sent to doConnect)
+    let newColor = colorName2Vector(element.color);
+    ///set the selected connection on model (global variable)
+    const inDatasDestBlock = element.destBlock;
+    const inDatasDestPoint = element.destPoint;
+    let s = destSphereByOldData(inDatasDestBlock, inDatasDestPoint);
+    console.log("inDatasDestBlock: " + inDatasDestBlock);
+    console.log("inDatasDestPoint: " + inDatasDestPoint);
+
+    setModelSelectedConnection(currentModel, s);
+
+    doConnect(newElement, newColor, srcConnectionName, false);
+}
+
+
+
+
+
+
 async function reBuildModelBut() {
     let modelDataAll = await loadModelData();
     //console.log("currentModel.metadata.modelName" + currentModel.metadata.modelName);
@@ -472,6 +504,8 @@ function destSphereByOldData(blockNumber, destPoint) {
 
 ///called from connect and from reBuildModel
 function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
+    ////let globData = arrange4Connect(newElement, newColor, selectedConnectionMame)
+    
     let newElementConnection;
     ///set any of its childrens with its own matirial and action
     let children = newElement.getChildren();
@@ -491,7 +525,62 @@ function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
     const matrix_m = getModelSelectedConnection(currentModel).parent.computeWorldMatrix(true);
     var global_pos_m = BABYLON.Vector3.TransformCoordinates(getModelSelectedConnection(currentModel).position, matrix_m);
     var global_delta = global_pos_m.subtract(global_pos_sc);
+    
+    /////moveConnect(newElement, toAnimate, globData);
+    
+    ///move the elment by the calaculated vector, then add it to model
+    newElement.setParent(null);
+    let oldPos = newElement.position;//BABYLON.Vector3.TransformCoordinates(newElement.position, matrix_m);   
+    let newPos = oldPos.add(global_delta);
+    if (toAnimate) {
+        animate(newElement, oldPos, newPos, scene); ///will setParent from inside when animation done   
+    } else {
+        newElement.position = newPos;
+        newElement.setParent(currentModel);
+        setOnGround(currentModel, 1);
+    }
+    //////
 
+    newElement.metadata = {
+        inModel: true,
+        blockNum: currentModel.metadata.numOfBlocks + 1,
+        connection: newElementConnection.name, //selectedConnection, name of the selected sphere in the new block
+        connectedTo: getModelSelectedConnection(currentModel).name, ///name of the selected sphere in the model
+        destBlock: getModelSelectedConnection(currentModel).parent.metadata.blockNum //number of the selected block in the model
+    };
+    currentModel.metadata.numOfBlocks = currentModel.metadata.numOfBlocks + 1;
+    let sc = getModelSelectedConnection(currentModel)
+    sc.scaling = new BABYLON.Vector3(0.9, 0.9, 0.9);
+    sc.material.diffuseColor = notSelectedColor;
+    setModelSelectedConnection(currentModel, null);
+    
+}
+/*
+function arrange4Connect(newElement, newColor, selectedConnectionMame) {
+    
+    let newElementConnection;
+    ///set any of its childrens with its own matirial and action
+    let children = newElement.getChildren();
+    for (let index = 0; index < children.length; index++) {
+        const element = children[index];
+        initMeshContactSphere(element);
+        ///element.name is like b33.p-1 while selectedConnectionMame is like p-1 without prefix
+        if (fullName2Private(element.name) == selectedConnectionMame) {
+            newElementConnection = element;
+        }
+    }
+    newElement.material = new BABYLON.StandardMaterial("myMaterial", scene);
+    newElement.material.diffuseColor = newColor;
+    ///calculate the vector between the selected spheres in the new element and in the model
+    const matrix_sc = newElementConnection.parent.computeWorldMatrix(true);
+    var global_pos_sc = BABYLON.Vector3.TransformCoordinates(newElementConnection.position, matrix_sc);
+    const matrix_m = getModelSelectedConnection(currentModel).parent.computeWorldMatrix(true);
+    var global_pos_m = BABYLON.Vector3.TransformCoordinates(getModelSelectedConnection(currentModel).position, matrix_m);
+    var global_delta = global_pos_m.subtract(global_pos_sc);
+    return global_delta;
+}
+////TODO: we neeed to transfer newElementConnection from arrange4Connect  to moveConnect
+function moveConnect(newElement, toAnimate, global_delta) {
     ///move the elment by the calaculated vector, then add it to model
     newElement.setParent(null);
     let oldPos = newElement.position;//BABYLON.Vector3.TransformCoordinates(newElement.position, matrix_m);   
@@ -518,7 +607,7 @@ function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
     sc.material.diffuseColor = notSelectedColor;
     setModelSelectedConnection(currentModel, null);
 }
-
+*/
 ///turn the elemets
 function flipModel() {
     let currRotationName = rotationVector2Name(currentModel.rotation);

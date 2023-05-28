@@ -15,7 +15,7 @@ class Messages {
         this.plane.position.y = 2;/////2
         this.plane.position.x = 0;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;///without iא its mirror
-        
+
         this.textField = new BABYLON.GUI.TextBlock("upperText");
 
         this.advancedTexture.background = 'green'
@@ -45,7 +45,7 @@ class Messages {
         //this.advancedTexture.focusedControl = inputTextArea;///create bug
         //plane.isVisible = true;
         //plane.dispose();
-        
+
     }
 
     ///switch screens by currentScreen. convention:
@@ -62,11 +62,18 @@ class Messages {
                 if (id == "record") {
                     this.showModel2record();
                 } else {
-                    this.showEditGroup();
+                    if (id == "takePics") {
+                        this.showModel2takePics();
+                    } else {
+                        this.showEditGroup();
+                    }
                 }
                 break;
             case "model2record":
                 this.doneModel2record();
+                break;
+            case "model2takePics":
+                this.doneModel2takePics();
                 break;
             case "editGroup":
                 let group = this.doneEditGroup();
@@ -92,12 +99,12 @@ class Messages {
         console.log("in showPic");
         this.textField.text = "foo";
         let image = new BABYLON.GUI.Image("but");
-        image.source  = "textures/pink_py.png";
+        image.source = "textures/pink_py.png";
         ////image.heightInPixels = 1000;
         //image.widthInPixels = 1000; 
         //image.top = "20px";   
         this.advancedTexture.addControl(image);
-     console.log("image.top: " + image.top)
+        console.log("image.top: " + image.top)
     }
 
     showEditID() {
@@ -140,7 +147,7 @@ class Messages {
         idKeyboard.dispose();
         return theId;
     }
-/////RECORD MODE without session
+    /////RECORD MODE without session
     showModel2record() {
         this.currentScreen = "model2record";
         near = createNearMenu("record");
@@ -180,8 +187,50 @@ class Messages {
         idKeyboard.dispose();
         return theId;
     }
-/////END RECORD MODE without session
+    /////END RECORD MODE without session
 
+    showModel2takePics() {
+        this.currentScreen = "model2takePics";
+        near = createNearMenu("takePics");///for now create regular no record menu
+        near.isVisible = true;
+
+        this.textField.text = "שם המודל"
+
+        let inputTextArea = new BABYLON.GUI.InputText('id', "");
+        inputTextArea.height = "40px";
+        inputTextArea.color = "white";
+        inputTextArea.fontSize = 48;
+        inputTextArea.top = "-120px";
+        inputTextArea.height = "70px";
+        inputTextArea.width = "200px";
+        this.advancedTexture.addControl(inputTextArea);
+
+        const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
+        keyboard.addKeysRow(["man", "car", "dog", "chair", "\u2190"]);
+        keyboard.connect(inputTextArea);
+        keyboard.top = "-10px";
+        keyboard.scaleY = 2;
+        keyboard.scaleX = 2;
+        //keyboard.left = "10px";
+        this.advancedTexture.addControl(keyboard);
+
+    }
+
+    doneModel2takePics() {
+        this.currentScreen = "end";
+        let idInputfield = this.advancedTexture.getControlByName("id");
+        let theId = idInputfield.text;
+
+        currentModel = createModel(theId, " ", -3, 0, 0);
+        rebuild4pics();
+        this.advancedTexture.removeControl(idInputfield);
+        idInputfield.dispose();
+        let idKeyboard = this.advancedTexture.getControlByName("vkb");
+        this.advancedTexture.removeControl(idKeyboard);
+        idKeyboard.dispose();
+        return theId;
+    }
+    /////END TAKEPICS MODE without session
     showEditGroup() {
         this.currentScreen = "editGroup";
         this.textField.text = "יש לקליק את אות הקבוצה שקבלת ממנהלת הניסוי\n [ואז להקליק [המשך"
@@ -241,9 +290,9 @@ class FbMessages {
     mat;
     plane;
     picPLane;
-    advancedTexture4Pic;
+    advancedTexture4Pic = null;
     image;
-    constructor(text, x=0, y=2.5, z=2, pic=null) {
+    constructor(text, x = 0, y = 2.5, z = 2, pic = null) {
         ///Set font
         var font_size = 24;
         var font = "bold " + font_size + "px Arial";
@@ -286,24 +335,24 @@ class FbMessages {
             let picWidth = 4;
             this.picPLane = BABYLON.MeshBuilder.CreatePlane("plane", { width: picWidth, height: picHeight }, scene);
             this.picPLane.material = this.mat;
-            this.picPLane.position.y = y + picHeight/2+ planeHeight/2;
+            this.picPLane.position.y = y + picHeight / 2 + planeHeight / 2;
             this.picPLane.position.z = z;
             this.picPLane.position.x = x;
             this.picPLane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-            this.advancedTexture4Pic = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.picPLane); 
-             
+            this.advancedTexture4Pic = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.picPLane);
+
             this.image = new BABYLON.GUI.Image("but");
-            this.image.source  = pic;//"textures/pink_py.png";
+            this.image.source = pic;//"textures/pink_py.png";
             this.advancedTexture4Pic.addControl(this.image);
-            
+
             this.advancedTexture4Pic.background = 'green';
         }
     }
 
     setY(newY) {
-        this.plane.position.y = newY; 
+        this.plane.position.y = newY;
     }
-    
+
     hide() {
         this.plane.isVisible = false;
     }
@@ -317,9 +366,9 @@ class FbMessages {
         if (this.picPLane) {
             this.picPLane.dispose();
         }
-        if (this.this.advancedTexture4Pic) {
-            this.this.advancedTexture4Pic.dispose();
+        if (this.advancedTexture4Pic) {
+            this.advancedTexture4Pic.dispose();
         }
-        
+
     }
 }
