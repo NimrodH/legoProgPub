@@ -239,6 +239,9 @@ function colorGreen() {
 }
 
 function removeLastBlock() {
+    if (!currentModel) { /// we are on instructions before setting model
+        return;
+    }
     let lastBlockNum = currentModel.metadata.numOfBlocks;
     if (lastBlockNum == 0) return;
     let modelBlocks = currentModel.getChildMeshes(false);
@@ -297,6 +300,9 @@ function isSphereBySphereName(sphere, sphereName) {
 
 
 function connect() {
+    if (!currentModel) { /// we are on instructions before setting model
+        return;
+    }
     if (!(selectedConnection && getModelSelectedConnection(currentModel))) {
         console.log("please select points");
         if (currentSession) {
@@ -612,6 +618,9 @@ function moveConnect(newElement, toAnimate, global_delta) {
 */
 ///turn the elemets
 function flipModel() {
+    if (!currentModel) { /// we are on instructions before setting model
+        return;
+    }
     let currRotationName = rotationVector2Name(currentModel.rotation);
     switch (currRotationName) {
         case "X":

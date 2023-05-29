@@ -83,11 +83,13 @@ class Messages {
                 this.showInsButtons();
                 break;
             case "insButtons":
-                this.showConnect();
-                break;
-            case "connect":
+                //this.showConnect();
                 currentSession.initSession();
                 this.showGroupIstructions();
+                break;
+            case "GroupIstructions":
+                //this.showGroupIstructions();
+                this.showConnect();
                 this.currentScreen = "end";
                 break;
             default:
@@ -282,19 +284,20 @@ class Messages {
 
     showConnect() {
         this.currentScreen = "connect";
-        this.textField.text = "להוספת האבן למודל יש להקליק על אחת הבליטות במודל\n[ << ] כאשר נקודה במודל ונקודה באבן נבחרו, ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n\n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור"
+        this.textField.text = "להוספת האבן למודל יש להקליק על אחת הבליטות במודל\n[ << ] כאשר נקודה במודל ונקודה באבן נבחרו, ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור\n\nבבקשה להסתובב ולהתחיל לבנות את המודלים\n על פי ההסברים שמעל אבני הבניין"
     }
 
     showGroupIstructions() {
+        this.currentScreen = "GroupIstructions";
         switch (currentSession.group) {
             case "A":
-                this.textField.text = " מימינך ומשמולך בסיסים לשמי מודלים \n ומאחורי אבני הבנין שנית בסיסים נוספים.\n בבקשה להסתובב ולהתחיל לבנות את המודלים על פי ההסברים שמעל אבני הבניין";
+                this.textField.text = " מימינך ומשמולך בסיסים לשמי מודלים \n ומאחורי אבני הבנין שני בסיסים נוספים";
                 break;
             case "B":
-                this.textField.text = " .מימינך ומשמאלך בסיסים לשני מודלים עליהם תתבקש לבנות את המודל.\n שני מודלים נוספים יוצגו לפניך בהמשך בעולם אחר\n בבקשה להסתובב ולהתחיל בבניה על פי ההנחיות שמעל לאבני הבנין.";
+                this.textField.text = " .מימינך ומשמאלך בסיסים לשני מודלים עליהם תתבקש לבנות את המודל.\n שני מודלים נוספים יוצגו לפניך בהמשך בעולם אחר";
                 break;
             case "C":
-                this.textField.text = " . משמאלך בסיס למודל עליו תתבקש לבנות את המודל.\n שלושה מודלים נוספים יוצגו לפניך בהמשך בעולמות אחרים\n בבקשה להסתובב ולהתחיל בבניה על פי ההנחיות שמעל לאבני הבנין.";
+                this.textField.text = " . משמאלך בסיס למודל עליו תתבקש לבנות את המודל.\n שלושה מודלים נוספים יוצגו לפניך בהמשך בעולמות אחרים";
                 break;
 
             default:

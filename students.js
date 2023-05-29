@@ -99,7 +99,7 @@ class Session {
             case "E":
                 elementsMenu.metadata.labelObj.hide();
                 elementsMenu.position.x = 5;
-                currentModel = createModel("car", "M1", 0, 0, 0);
+                currentModel = createModel("man", "M1", 0, 0, 0);
                 currentModel.metadata.labelObj.hide();
                 ground.material.lineColor = colorName2Vector("selected");//yellow
                 break;
@@ -116,13 +116,15 @@ class Session {
             let msg = "Please do step 1 in Model " + currentModel.metadata.modelTitle + ", following the above picture";
             let mName = currentModel.metadata.modelName;
             this.doFbMessage(msg, "textures/" + mName + "1.JPG");
-    
+
         }
     }
 
     reportClick(action, details, newElement) {
         //console.log("reportClick: " + action);
-        saveUserAction(action, details, this.actionId++, newElement.name, this.currentModelInArray, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group)
+        if (currentModel) {
+            saveUserAction(action, details, this.actionId++, newElement.name, this.currentModelInArray, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group)
+        }
     }
 
     reportConnect(newElement) {
@@ -215,7 +217,7 @@ class Session {
                     this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
                 }
             } else {///E
-                let msg =  this.doFbMessage((step + 1));
+                let msg = this.doFbMessage((step + 1));
             }
         } else {
             //this.fb.dispose()
@@ -230,11 +232,11 @@ class Session {
 
     reportDelete() {
         console.log("reportDelete");
-        let step = newElement.metadata.blockNum;
-        let msg = "Please do again step " + (step+1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
+        let step = currentModel.metadata.numOfBlocks;
+        let msg = "Please do again step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
         let mName = currentModel.metadata.modelName;
         this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
-        }
+    }
 
     ///move not done (i.e. missing selected point).
     /// we have another function "session.reportConnect" when connection done
