@@ -99,7 +99,7 @@ class Session {
             case "E":
                 elementsMenu.metadata.labelObj.hide();
                 elementsMenu.position.x = 5;
-                currentModel = createModel("man", "M1", 0, 0, 0);
+                currentModel = createModel("car", "M1", 0, 0, 0);
                 currentModel.metadata.labelObj.hide();
                 ground.material.lineColor = colorName2Vector("selected");//yellow
                 break;
