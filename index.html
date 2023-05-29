@@ -105,9 +105,9 @@
             scene.enablePhysics(gravityVector, physicsPlugin);
 
             ///CAMERA///
-            const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 1, BABYLON.Vector3.Zero());///used only for taking pics
-            ////var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);///used for VR
-            ////camera.setTarget(new BABYLON.Vector3(0, 4, -15));///used for VR
+            ////const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 1, BABYLON.Vector3.Zero());///used only for taking pics
+            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);///used for VR
+            camera.setTarget(new BABYLON.Vector3(0, 4, -15));///used for VR
             camera.attachControl(canvas, true);///used always
             ///end camera///
 
@@ -119,7 +119,7 @@
             ///END LIGHT///
 
             ///SKYBOX///
-            let startSkyFiles = "textures/red";
+            let startSkyFiles = "textures/pink";
             const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
             const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
             skyboxMaterial.backFaceCulling = false;
@@ -136,7 +136,7 @@
             ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);///not needed
             ground.checkCollisions = true;///not needed
             ground.material = new BABYLON.GridMaterial("mat", scene);
-            ground.material.lineColor = colorName2Vector("red");
+            ground.material.lineColor = colorName2Vector("base");
             ///end GROUND///
 
             var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
