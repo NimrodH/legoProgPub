@@ -115,7 +115,9 @@ class Session {
             setWorld(currentWorld);///TODO:in setWorld show only relevent models follwing session.worldByModel
             let msg = "Please do step 1 in Model " + currentModel.metadata.modelTitle + ", following the above picture";
             let mName = currentModel.metadata.modelName;
-            this.doFbMessage(msg, "textures/" + mName + "1.JPG");
+            let pic = "textures/" + mName + "2.JPG";
+            console.log("pic: " + pic)
+            this.doFbMessage(msg, pic);
 
         }
     }
