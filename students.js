@@ -27,7 +27,7 @@ class Session {
     currentModelInArray = 0;///index in array of shown model
     fb;///one line message to the larner. usage: //this.fb = new FbMessages("בוקר אביבי ושמח");
     trainingModelData;///array item per line. each line is object with the following props:
-
+    part = "training"///training, examA, examB
     modelInConnectedStage;///array: item i represent  the i correct connection that done (in any models). the value is the title of the model to use for it
     worldByModel;///model Mn will be in the world that is the value of item n
     /*
@@ -51,7 +51,7 @@ class Session {
         ///we use it when comparing its selection in reportConnect
         ///the value of item i is the model name to use in overall stage i in this session
         ///the next stage number of spsific model is kept on the model
-        this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M1", "M3", "M3", "M3", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M1", "M1", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3"];
+        this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M1", "M3", "M3", "M3", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M1", "M1", "M3", "M3", "M3", "M2", "M2", "M2", "M3", "M3", "M3"];
         //this.worldByModel; ///model Mn will be in the world that is the value of item n
         let m1;
         let m2;
@@ -109,6 +109,7 @@ class Session {
         }
         if (this.group == "A" || this.group == "B" || this.group == "C") {
             ///the normal groups. (differ than rebuild (D) or takepics)
+            /*
             let modelLabel = this.modelInConnectedStage[this.connectedStage];
             currentModel = getModel(modelLabel);///connectedStage = 0
             currentWorld = this.worldByModel[modelLabel];
@@ -118,8 +119,66 @@ class Session {
             let pic = "textures/" + mName + "1.JPG";
             console.log("pic: " + pic)
             this.doFbMessage(msg, pic);
-
+            */
+           this.runPart();
         }
+    }
+
+    runPart() {
+        let modelLabel = this.modelInConnectedStage[this.connectedStage];
+        currentModel = getModel(modelLabel);///connectedStage = 0
+        currentWorld = this.worldByModel[modelLabel];
+        setWorld(currentWorld);///TODO:in setWorld show only relevent models follwing session.worldByModel
+        let msg = "Please do step 1 in Model " + currentModel.metadata.modelTitle + ", following the above picture";
+        let mName = currentModel.metadata.modelName;
+        let pic = "textures/" + mName + "1.JPG";
+        console.log("pic: " + pic)
+        this.doFbMessage(msg, pic);
+    }
+
+    nextStage() {
+        console.log("nextStage");
+            ///TODO: delete old models (they alreadtbuilt now)
+            ///TODO: must add "this.part" to the users rerds on the data base
+            switch (this.part) {
+            case "training":
+                this.doFbMessage("סיימת את שלב האימון. התבונןי במסך הירוק מאחוריך להוראות");
+                messageBox.showExamA();///when he will click there "next" we will call initExamA
+                break;
+            case "examA":
+                this.doFbMessage("סיימת את שלב הרצה 1 מתוך 2. התבונןי במסך הירוק מאחוריך להוראות");
+                messageBox.showExamB();///when he will click there "next" we will call initExamB
+                break;
+            case "examB":
+                this.doFbMessage("סיימת את הניסוי. התבונןי במסך הירוק מאחוריך לפרידה");
+                messageBox.showLastScreen();///when he will click there "next" we will call initExamB
+
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    initExamA() {
+        ///we will use the same this.trainingModelData because we use same models as in training
+       this.part = "examA";
+       let m1 = createModel("car", "M1", 5, 0, -5);
+       this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
+       this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M1
+       this.connectedStage = 0;
+       this.runPart();
+    }
+
+    initExamB() {
+        ///we will use the same this.trainingModelData because we use same models as in training
+       this.part = "examB";
+       m2 = createModel("chair", "M2", -5, 0, -5);
+       m3 = createModel("dog", "M3", 5, 0, -5);
+       this.modelInConnectedStage = ["M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M3", "M3", "M2", "M2", "M2"];
+       this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M2 & M3
+       this.connectedStage = 0;
+       this.runPart();
     }
 
     reportClick(action, details, newElement) {
@@ -197,9 +256,14 @@ class Session {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
             this.connectedStage++;
+
             if (this.group == "A" || this.group == "B" || this.group == "C") {
                 saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group);
-
+                if (this.connectedStage == this.modelInConnectedStage.length + 1) {
+                    ///we have to start the exam stage
+                    this.nextStage();
+                    return;
+                }
                 if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
                     //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
                     let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
@@ -214,6 +278,7 @@ class Session {
                     }
                     step = currentModel.metadata.numOfBlocks;
                     //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
+
                     let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
                     let mName = currentModel.metadata.modelName;
                     this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
@@ -221,7 +286,7 @@ class Session {
             } else {///E
                 let msg = this.doFbMessage((step + 1));
             }
-        } else {
+        } else {///wrong move
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
             let msg = (step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב";

@@ -92,6 +92,14 @@ class Messages {
                 this.showConnect();
                 this.currentScreen = "end";
                 break;
+            case "examA":
+                //this.showConnect();
+                currentSession.initExamA();
+                break;
+            case "examB":
+                //this.showConnect();
+                currentSession.initExamB();
+                break;
             default:
                 console.log("default: " + this.currentScreen);
                 break;
@@ -272,7 +280,6 @@ class Messages {
     showSelectBlock() {
         this.currentScreen = "selectBlock";
         this.textField.text = "ניתן לבחור אחת מהאבני הבניין שמאחוריך \nעל ידי הקלקה על אחת הבליטות המופיעות בה\n הבליטה תיצבע בצהוב\n\nבבקשה לבחור אבן ואז להקליק [המשך] במסך זה"
-
     }
 
     showInsButtons() {
@@ -285,6 +292,22 @@ class Messages {
     showConnect() {
         this.currentScreen = "connect";
         this.textField.text = "להוספת האבן למודל יש להקליק על אחת הבליטות במודל\n[ << ] כאשר נקודה במודל ונקודה באבן נבחרו, ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n\n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור\n\nבבקשה להסתובב ולהתחיל לבנות את המודלים\n על פי ההסברים שמעל אבני הבניין"
+    }
+
+    showExamA() {
+        this.currentScreen = "examA";
+        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן ומינימום טעויות. \nמי שייסיים את הבנייה של שלב זה והשלב הבא המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
+    }
+
+    showExamB() {
+        this.currentScreen = "examB";
+        this.textField.text = "לפניך השלב האחרון בו יש לבנות שני מודלים במינימום זמן ומינימום טעויות. \nמי שייסיים את הבנייה של שלב זה ווהקודם המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
+    }
+
+    showLastScreen() {
+        this.currentScreen = "lastScreen";
+        this.textField.text = "התודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
+
     }
 
     showGroupIstructions() {
