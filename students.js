@@ -51,7 +51,7 @@ class Session {
         ///we use it when comparing its selection in reportConnect
         ///the value of item i is the model name to use in overall stage i in this session
         ///the next stage number of spsific model is kept on the model
-        this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M1", "M3", "M3", "M3", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M1", "M1", "M3", "M3", "M3", "M2", "M2", "M2", "M3", "M3", "M3"];
+        this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
         //this.worldByModel; ///model Mn will be in the world that is the value of item n
         let m1;
         let m2;
@@ -292,8 +292,9 @@ class Session {
             let msg = (step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב";
             let mName = currentModel.metadata.modelName;
             this.doFbMessage(msg, "textures/" + mName + step + ".JPG");;
-            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group)
-
+            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group);
+            let delButton = (near.children).filter(b => b.name == "connect")[0];
+            delButton.isVisible = false;;
         }
     }
 
@@ -303,6 +304,9 @@ class Session {
         let msg = "Please do again step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
         let mName = currentModel.metadata.modelName;
         this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
+        let delButton = (near.children).filter(b => b.name == "connect")[0];
+        delButton.isVisible = true;;
+
     }
 
     ///move not done (i.e. missing selected point).

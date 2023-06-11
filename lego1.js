@@ -150,14 +150,14 @@ function createNearMenu(mode) {
     manager.addControl(near);
     let follower = near.defaultBehavior.followBehavior //returns the followbehavior created by the 
     near.defaultBehavior.followBehaviorEnabled = false;
-    near.columns = 6;
+    near.columns = 5;
     near.margin = 0.2
     near.position = new BABYLON.Vector3(1, 6, 1);
     near.isVisible = false;
     near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
 
-    function createTouchButton(title, color, theFunction) {
-        let button = new BABYLON.GUI.TouchHolographicButton("title");
+    function createTouchButton(name, title, color, theFunction) {
+        let button = new BABYLON.GUI.TouchHolographicButton(name);
         //button.text = title;
         button.onPointerUpObservable.add(theFunction);
         near.addButton(button);
@@ -165,24 +165,24 @@ function createNearMenu(mode) {
         text1.text = title;
         text1.color = color;
         text1.fontSize = 90;
-        text1.fontStyle = "bold"
+        text1.fontStyle = "bold";
         button.content = text1;
         return button;
     }
 
-    createTouchButton("/", "yellow", flipX);
-    createTouchButton("---", "yellow", flipZ);//X
-    createTouchButton("|", "yellow", flipY);
-    createTouchButton("add\n< <", "yellow", connect);
-    createTouchButton("turn\nmodel", "yellow", flipModel);
-    createTouchButton("delete\n> >", "yellow", removeLastBlock);
-    createTouchButton("red", "red", colorRed);
-    createTouchButton("black", "black", colorBlack);
-    createTouchButton("green", "green", colorGreen);
-    createTouchButton("blue", "blue", colorBlue);
+    createTouchButton("flipX", "/", "yellow", flipX);
+    createTouchButton("flipZ", "---", "yellow", flipZ);//X
+    createTouchButton("flipY", "|", "yellow", flipY);
+    createTouchButton("connect", "add\n< <", "yellow", connect);
+    //createTouchButton("turn\nmodel", "yellow", flipModel);
+    createTouchButton("delete", "delete\n> >", "yellow", removeLastBlock);
+    createTouchButton("red", "red", "red", colorRed);
+    createTouchButton("black", "black", "black", colorBlack);
+    createTouchButton("green", "green", "green", colorGreen);
+    createTouchButton("blue", "blue", "blue", colorBlue);
     if (mode == "record") {
-        createTouchButton("re\nBuild", "yellow", reBuildModelBut);
-        createTouchButton("Save", "yellow", saveModel);
+        createTouchButton("reBuild", "re\nBuild", "yellow", reBuildModelBut);
+        createTouchButton("Save", "Save", "yellow", saveModel);
     }
     ///near.scaling - new BABYLON.Vector3(0.6,0.6,0.6);///not working?
     return near;
