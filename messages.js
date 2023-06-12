@@ -144,7 +144,7 @@ class Messages {
     doneEditID() {
         let idInputfield = this.advancedTexture.getControlByName("id");
         let theId = idInputfield.text;
-        console.log("theId: " + theId);
+        //console.log("theId: " + theId);
         if (theId == "record") {
             ///no session. will continue in showModel2record when we will return "record"
         }

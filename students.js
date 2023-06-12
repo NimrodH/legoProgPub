@@ -136,7 +136,7 @@ class Session {
         let msg = "Please do step 1 in Model " + currentModel.metadata.modelTitle + ", following the above picture";
         let mName = currentModel.metadata.modelName;
         let pic = "textures/" + mName + "1.JPG";
-        console.log("pic: " + pic);
+        //console.log("pic: " + pic);
         this.doFbMessage(msg, pic);
     }
 
@@ -169,7 +169,8 @@ class Session {
         ///we will use the same this.trainingModelData because we use same models as in training
        this.part = "examA";
        let m1 = createModel("car", "M1", 5, 0, -5);
-       this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
+       /////////real///////this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
+       this.modelInConnectedStage = ["M1", "M1"];///for debug go 
        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M1
        this.connectedStage = 0;
        this.runPart();
@@ -178,8 +179,8 @@ class Session {
     initExamB() {
         ///we will use the same this.trainingModelData because we use same models as in training
        this.part = "examB";
-       m2 = createModel("chair", "M2", -5, 0, -5);
-       m3 = createModel("dog", "M3", 5, 0, -5);
+       let m2 = createModel("chair", "M2", -5, 0, -5);
+       let m3 = createModel("dog", "M3", 5, 0, -5);
        this.modelInConnectedStage = ["M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M3", "M3", "M2", "M2", "M2"];
        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M2 & M3
        this.connectedStage = 0;
@@ -199,9 +200,11 @@ class Session {
         let isCorect = true;
         let wrongItems = [];
         let step = newElement.metadata.blockNum;
+        let destModelLabel = this.modelInConnectedStage[this.connectedStage];
+        let destModel = getModel(destModelLabel);
         //console.log("step: " + step);
         ////const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
-        const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
+        const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == destModel.metadata.modelName))[0];
         //console.log("dataLine: ");
         //console.log(dataLine);
         if (!dataLine) {
@@ -250,13 +253,22 @@ class Session {
             isCorect = false;
             wrongItems.push("destenation-block");
         }
+        /*
         ///we assume block 0 will never be :newElement
         // let modelName = newElement.parent.metadata.modelName;
         if (currentModel.metadata.modelName !== dataLine.modelName) {
             isCorect = false;
             wrongItems.push("model");
         }
-
+        */
+        ///we assume block 0 will never be :newElement
+        let modelName = newElement.parent.metadata.modelName;
+        console.log("modelName: " + modelName );
+        console.log("dataLine.modelName: " + dataLine.modelName );
+        if (modelName !== dataLine.modelName) {
+            isCorect = false;
+            wrongItems.push("model");
+        }
         if (isCorect) {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
@@ -308,10 +320,23 @@ class Session {
     }
 
     reportDelete() {
-        console.log("reportDelete");
-        let step = currentModel.metadata.numOfBlocks;
-        let msg = "Please do again step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
-        let mName = currentModel.metadata.modelName;
+        //console.log("reportDelete");
+        ///it was worng so we still didnt incremnt connectedStage
+        console.log("this.connectedStage: " + this.connectedStage);
+        let msg;
+        let mName;
+        let step;
+        if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
+            step = currentModel.metadata.numOfBlocks;
+            msg = "Please do again step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
+            mName = currentModel.metadata.modelName;    
+        } else {
+            let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
+            let nextModel = getModel(nextModelLabel);
+            step = nextModel.metadata.numOfBlocks;
+            mName = nextModel.metadata.modelName;
+            msg = "Please do again step " + (step + 1) + " in Model (" + nextModel.metadata.modelTitle + ")";
+        }
         this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
         let addButton = (near.children).filter(b => b.name == "connect")[0];
         let delButton = (near.children).filter(b => b.name == "delete")[0];

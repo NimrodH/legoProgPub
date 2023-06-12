@@ -75,8 +75,8 @@ let currentWorld;///to be returned by setWorld (that call chgangeSky)
 
 ///model.metadata.modelTitle is the text on the model. model.Obj is the object for label
 function getModel(modelLabel) {
-    console.log("modelsArray[]");
-    console.log(modelsArray);
+    //console.log("modelsArray[]");
+    //console.log(modelsArray);
     return modelsArray.filter(x => x.metadata.modelTitle == modelLabel)[0];
 }
 /////////////////// GAME FUNCTIONS //////////////////////////
@@ -450,8 +450,8 @@ async function reBuild4pics() {
     const inDatasDestBlock = element.destBlock;
     const inDatasDestPoint = element.destPoint;
     let s = destSphereByOldData(inDatasDestBlock, inDatasDestPoint);
-    console.log("inDatasDestBlock: " + inDatasDestBlock);
-    console.log("inDatasDestPoint: " + inDatasDestPoint);
+    //console.log("inDatasDestBlock: " + inDatasDestBlock);
+    //console.log("inDatasDestPoint: " + inDatasDestPoint);
 
     setModelSelectedConnection(currentModel, s);
 
@@ -731,7 +731,7 @@ function doElementConnection(connectionSphere) {
 ///defign and highlite the conection sphere in the model (called from doClickConnection)
 function doModelConnection(connectionSphere) {
     let newModel = modelBySphere(connectionSphere);
-    console.log("newModel.metadata.modelName: " + newModel.metadata.modelName);
+    //console.log("newModel.metadata.modelName: " + newModel.metadata.modelName);
 
     if (getModelSelectedConnection(currentModel) && connectionSphere !== getModelSelectedConnection(currentModel)) {
         ///there is another selected sphere so changedit to not-yellow
