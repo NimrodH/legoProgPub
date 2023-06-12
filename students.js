@@ -1,7 +1,7 @@
 "use strict"
 let currentSession = null;///will be created in messages
 
-async function saveUserAction(actionType, ActionDetails, actionId, block, model, step, time, user, group) {
+async function saveUserAction(actionType, ActionDetails, actionId, block, model, step, time, user, group, part) {
     let bodyData = {
         'ActionType': actionType,
         'ActionDetails': ActionDetails,
@@ -11,7 +11,8 @@ async function saveUserAction(actionType, ActionDetails, actionId, block, model,
         'model': model,
         'step': step,
         'time': time,
-        'user': user
+        'user': user + part,
+        'part': part
     }
     var result = await postData(usersURL, bodyData);
     //console.log("saveUserAction: "+ actionType);
@@ -51,7 +52,8 @@ class Session {
         ///we use it when comparing its selection in reportConnect
         ///the value of item i is the model name to use in overall stage i in this session
         ///the next stage number of spsific model is kept on the model
-        this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
+        /////////real////////this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
+        this.modelInConnectedStage = ["M1", "M1", "M4"];///for debug go to exam
         //this.worldByModel; ///model Mn will be in the world that is the value of item n
         let m1;
         let m2;
@@ -99,7 +101,7 @@ class Session {
             case "E":
                 elementsMenu.metadata.labelObj.hide();
                 elementsMenu.position.x = 5;
-                currentModel = createModel("dog", "M1", 0, 0, 0);
+                currentModel = createModel("car", "M1", 0, 0, 0);
                 currentModel.metadata.labelObj.hide();
                 ground.material.lineColor = colorName2Vector("selected");//yellow
                 break;
@@ -125,6 +127,8 @@ class Session {
     }
 
     runPart() {
+        let delButton = (near.children).filter(b => b.name == "delete")[0];
+        delButton.isVisible = false;///if we allow to delete correct block we will get connectedStage++ twice
         let modelLabel = this.modelInConnectedStage[this.connectedStage];
         currentModel = getModel(modelLabel);///connectedStage = 0
         currentWorld = this.worldByModel[modelLabel];
@@ -132,14 +136,15 @@ class Session {
         let msg = "Please do step 1 in Model " + currentModel.metadata.modelTitle + ", following the above picture";
         let mName = currentModel.metadata.modelName;
         let pic = "textures/" + mName + "1.JPG";
-        console.log("pic: " + pic)
+        console.log("pic: " + pic);
         this.doFbMessage(msg, pic);
     }
 
     nextStage() {
         console.log("nextStage");
             ///TODO: delete old models (they alreadtbuilt now)
-            ///TODO: must add "this.part" to the users rerds on the data base
+            disposeModels();
+            ///TODO: must add "this.part" to the users records on the data base
             switch (this.part) {
             case "training":
                 this.doFbMessage("סיימת את שלב האימון. התבונןי במסך הירוק מאחוריך להוראות");
@@ -184,7 +189,7 @@ class Session {
     reportClick(action, details, newElement) {
         //console.log("reportClick: " + action);
         if (currentModel) {
-            saveUserAction(action, details, this.actionId++, newElement.name, this.currentModelInArray, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group)
+            saveUserAction(action, details, this.actionId++, newElement.name, this.currentModelInArray, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
         }
     }
 
@@ -258,8 +263,10 @@ class Session {
             this.connectedStage++;
 
             if (this.group == "A" || this.group == "B" || this.group == "C") {
-                saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group);
-                if (this.connectedStage == this.modelInConnectedStage.length + 1) {
+                saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group, this.part);
+                //console.log("this.connectedStage: " + this.connectedStage);
+                //console.log(this.modelInConnectedStage.length + 1);
+                if (this.connectedStage == this.modelInConnectedStage.length) {
                     ///we have to start the exam stage
                     this.nextStage();
                     return;
@@ -292,9 +299,11 @@ class Session {
             let msg = (step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב";
             let mName = currentModel.metadata.modelName;
             this.doFbMessage(msg, "textures/" + mName + step + ".JPG");;
-            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group);
-            let delButton = (near.children).filter(b => b.name == "connect")[0];
-            delButton.isVisible = false;;
+            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group, this.part);
+            let addButton = (near.children).filter(b => b.name == "connect")[0];
+            let delButton = (near.children).filter(b => b.name == "delete")[0];
+            addButton.isVisible = false;
+            delButton.isVisible = true;
         }
     }
 
@@ -304,9 +313,10 @@ class Session {
         let msg = "Please do again step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
         let mName = currentModel.metadata.modelName;
         this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
-        let delButton = (near.children).filter(b => b.name == "connect")[0];
-        delButton.isVisible = true;;
-
+        let addButton = (near.children).filter(b => b.name == "connect")[0];
+        let delButton = (near.children).filter(b => b.name == "delete")[0];
+        addButton.isVisible = true;
+        delButton.isVisible = false;/// if he will remove good block we will have connectedStage++ twice
     }
 
     ///move not done (i.e. missing selected point).

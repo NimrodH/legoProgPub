@@ -75,6 +75,8 @@ let currentWorld;///to be returned by setWorld (that call chgangeSky)
 
 ///model.metadata.modelTitle is the text on the model. model.Obj is the object for label
 function getModel(modelLabel) {
+    console.log("modelsArray[]");
+    console.log(modelsArray);
     return modelsArray.filter(x => x.metadata.modelTitle == modelLabel)[0];
 }
 /////////////////// GAME FUNCTIONS //////////////////////////
@@ -207,6 +209,15 @@ function createModel(theModelName, theModelTitle, x, y, z) {
     modelsArray.push(model);
     setOnGround(model, 1);
     return model;
+}
+
+function disposeModels() {
+    for (let index = modelsArray.length-1; index > -1; index--) {
+        //let element = modelsArray[index];
+        let element = modelsArray.pop();
+        element.metadata.labelObj.dispose();
+        element.dispose();
+    }
 }
 
 function getModelSelectedConnection(model) {

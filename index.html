@@ -105,9 +105,9 @@
             scene.enablePhysics(gravityVector, physicsPlugin);
 
             ///CAMERA///
-            ////const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 1, BABYLON.Vector3.Zero());///used only for taking pics
-            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);///used for VR
-            camera.setTarget(new BABYLON.Vector3(0, 4, -15));///used for VR
+            const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 1, BABYLON.Vector3.Zero());///used only for taking pics
+            ///////var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);///used for VR
+            ///////camera.setTarget(new BABYLON.Vector3(0, 4, -15));///used for VR
             camera.attachControl(canvas, true);///used always
             ///end camera///
 
