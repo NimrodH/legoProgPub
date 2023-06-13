@@ -306,7 +306,7 @@ class Messages {
 
     showLastScreen() {
         this.currentScreen = "lastScreen";
-        this.textField.text = "התודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
+        this.textField.text = "תודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
 
     }
 

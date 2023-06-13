@@ -52,8 +52,11 @@ class Session {
         ///we use it when comparing its selection in reportConnect
         ///the value of item i is the model name to use in overall stage i in this session
         ///the next stage number of spsific model is kept on the model
-        /////////real////////this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
-        this.modelInConnectedStage = ["M1", "M1", "M4"];///for debug go to exam
+        if (this.userId == 666) {
+            this.modelInConnectedStage = ["M1", "M1", "M4"];
+        } else {
+            this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
+        }
         //this.worldByModel; ///model Mn will be in the world that is the value of item n
         let m1;
         let m2;
@@ -158,7 +161,7 @@ class Session {
                 this.doFbMessage("סיימת את הניסוי. התבונןי במסך הירוק מאחוריך לפרידה");
                 messageBox.showLastScreen();
                 near.isVisible = false;
-                
+
                 break;
 
             default:
@@ -170,8 +173,11 @@ class Session {
         ///we will use the same this.trainingModelData because we use same models as in training
        this.part = "examA";
        let m1 = createModel("car", "M1", 5, 0, -5);
-       /////////real///////this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
-       this.modelInConnectedStage = ["M1", "M1"];///for debug go 
+       if (this.userId == 666) {
+        this.modelInConnectedStage = ["M1", "M1"];
+       } else {
+        this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
+       }
        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M1
        this.connectedStage = 0;
        this.runPart();
@@ -182,7 +188,11 @@ class Session {
        this.part = "examB";
        let m2 = createModel("chair", "M2", -5, 0, -5);
        let m3 = createModel("dog", "M3", 5, 0, -5);
-       this.modelInConnectedStage = ["M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M3", "M3", "M2", "M2", "M2"];
+       if (this.userId == 666) {
+        this.modelInConnectedStage = ["M3", "M3"];
+       } else {
+        this.modelInConnectedStage = ["M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M3", "M3", "M2", "M2", "M2"]; 
+       }
        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M2 & M3
        this.connectedStage = 0;
        this.runPart();
