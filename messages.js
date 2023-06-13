@@ -375,8 +375,8 @@ class FbMessages {
 
         ///create plane for pic instructions
         if (pic) {
-            let picHeight = 2;
-            let picWidth = 2;
+            let picHeight = 1.5;
+            let picWidth = 1.5;
             this.picPLane = BABYLON.MeshBuilder.CreatePlane("plane", { width: picWidth, height: picHeight }, scene);
             this.picPLane.material = this.mat;
             this.picPLane.position.y = y + picHeight / 2 + planeHeight / 2;
