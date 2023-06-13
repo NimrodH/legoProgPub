@@ -253,6 +253,12 @@ function removeLastBlock() {
     if (!currentModel) { /// we are on instructions before setting model
         return;
     }
+    ///if user click another model before he click delete we dont want to delete feom wrong 
+    if (currentSession ) {
+        let modelLabel = currentSession.modelInConnectedStage[currentSession.connectedStage];
+        
+    }
+
     let lastBlockNum = currentModel.metadata.numOfBlocks;
     if (lastBlockNum == 0) return;
     let modelBlocks = currentModel.getChildMeshes(false);
@@ -627,7 +633,7 @@ function moveConnect(newElement, toAnimate, global_delta) {
     setModelSelectedConnection(currentModel, null);
 }
 */
-///turn the elemets
+///turn the elemets not in use button that call it is not visible
 function flipModel() {
     if (!currentModel) { /// we are on instructions before setting model
         return;
@@ -690,6 +696,15 @@ function flipY() {
 ///defign and highlite the conection sphere
 function doClickConnection(event) {
     if (event.source.parent.metadata && event.source.parent.metadata.inModel) {
+        ///do not allow to change model if need to delete
+        if (currentSession ) {
+            let delButton = (near.children).filter(b => b.name == "delete")[0];
+            if (delButton.isVisible) {
+                console.log("we can't allow to change model [in doModelConnection] when need to delete");
+                currentSession.doFbMessage("יש למחוק קודם את האבן השגויה", null);
+                return;
+            }
+        }
         doModelConnection(event.source);
         if (currentSession) {
             currentSession.reportClick("point", "on-model", event.source.parent);

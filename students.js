@@ -156,8 +156,9 @@ class Session {
                 break;
             case "examB":
                 this.doFbMessage("סיימת את הניסוי. התבונןי במסך הירוק מאחוריך לפרידה");
-                messageBox.showLastScreen();///when he will click there "next" we will call initExamB
-
+                messageBox.showLastScreen();
+                near.isVisible = false;
+                
                 break;
 
             default:
