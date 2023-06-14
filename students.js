@@ -201,7 +201,8 @@ class Session {
     reportClick(action, details, newElement) {
         //console.log("reportClick: " + action);
         if (currentModel) {
-            saveUserAction(action, details, this.actionId++, newElement.name, this.currentModelInArray, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
+            let modelMx = currentModel.metadata.modelTitle;
+            saveUserAction(action, details, this.actionId++, newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
         }
     }
 
@@ -286,7 +287,8 @@ class Session {
             this.connectedStage++;
 
             if (this.group == "A" || this.group == "B" || this.group == "C") {
-                saveUserAction("connect", "CORRECT", this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group, this.part);
+                let modelMx = currentModel.metadata.modelTitle;
+                saveUserAction("connect", "CORRECT", this.actionId++, typeName, modelMx, step, Date.now(), this.userId, this.group, this.part);
                 //console.log("this.connectedStage: " + this.connectedStage);
                 //console.log(this.modelInConnectedStage.length + 1);
                 if (this.connectedStage == this.modelInConnectedStage.length) {
@@ -321,8 +323,9 @@ class Session {
             //this.fb = new FbMessages((step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב")
             let msg = (step + 1) + " מהלך שגוי. הורד את האבן [<<] ונסה שוב";
             let mName = currentModel.metadata.modelName;
-            this.doFbMessage(msg, "textures/" + mName + step + ".JPG");;
-            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, this.currentModelInArray, step, Date.now(), this.userId, this.group, this.part);
+            this.doFbMessage(msg, "textures/" + mName + step + ".JPG");
+            let modelMx = currentModel.metadata.modelTitle;
+            saveUserAction("connect", "WRONG: " + wrongItems.toString(), this.actionId++, typeName, modelMx, step, Date.now(), this.userId, this.group, this.part);
             let addButton = (near.children).filter(b => b.name == "connect")[0];
             let delButton = (near.children).filter(b => b.name == "delete")[0];
             addButton.isVisible = false;

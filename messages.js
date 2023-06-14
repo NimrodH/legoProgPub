@@ -9,7 +9,7 @@ class Messages {
     plane = BABYLON.Mesh.CreatePlane("plane", 10);
     advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.plane);
     currentScreen = "init";
-
+    nextButton;
     constructor() {
         this.plane.position.z = -25;
         this.plane.position.y = 2;/////2
@@ -21,17 +21,18 @@ class Messages {
         this.advancedTexture.background = 'green'
 
 
-        var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "המשך");
-        button1.width = 1;
-        button1.height = 0.4;
-        button1.color = "white";
-        button1.fontSize = 50;
-        button1.background = "green";
-        button1.onPointerUpObservable.add(this.screenDone.bind(this));
-        button1.top = "90px";//90
-        button1.left = "10px";
-        button1.height = "70px";
-        this.advancedTexture.addControl(button1);
+        this.nextButton = BABYLON.GUI.Button.CreateSimpleButton("but1", "המשך");
+        this.nextButton.width = 1;
+        this.nextButton.height = 0.4;
+        this.nextButton.color = "white";
+        this.nextButton.fontSize = 50;
+        this.nextButton.background = "green";
+        this.nextButton.onPointerUpObservable.add(this.screenDone.bind(this));
+        this.nextButton.top = "90px";//90
+        this.nextButton.left = "10px";
+        this.nextButton.height = "70px";
+        this.advancedTexture.addControl(this.nextButton);
+        
 
         const initialText = "במסך זה יופיעו הנחיות\n\n מאחוריך מספר לבנים לבניית המודל\n\n[אחרי שראינו את האבנים יש להקליק על כפתור [המשך\nהקלקה פרושה להצביע עם הקרן על הכפתור וללחוץ על ההדק";
         let text1 = this.textField;
@@ -95,10 +96,12 @@ class Messages {
             case "examA":
                 //this.showConnect();
                 currentSession.initExamA();
+                this.nextButton.isEnabled = false;
                 break;
             case "examB":
                 //this.showConnect();
                 currentSession.initExamB();
+                this.nextButton.isEnabled = false;
                 break;
             default:
                 console.log("default: " + this.currentScreen);
@@ -122,6 +125,8 @@ class Messages {
         this.currentScreen = "editID";
         this.textField.text = "יש להקליק בתוך השדה השחור. תופיע מקלדת\nיש לקליק בה את המספר שקבלת ממנהלת הניסוי"
 
+        this.nextButton.isEnabled = false;
+
         let inputTextArea = new BABYLON.GUI.InputText('id', "");
         inputTextArea.height = "40px";
         inputTextArea.color = "white";
@@ -129,6 +134,7 @@ class Messages {
         inputTextArea.top = "-120px";
         inputTextArea.height = "70px";
         inputTextArea.width = "200px";
+        inputTextArea.onTextChangedObservable.add(() => this.nextButton.isEnabled = true);
         this.advancedTexture.addControl(inputTextArea);
 
         const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
@@ -246,6 +252,8 @@ class Messages {
         this.currentScreen = "editGroup";
         this.textField.text = "יש לקליק את אות הקבוצה שקבלת ממנהלת הניסוי\n [ואז להקליק [המשך"
 
+        this.nextButton.isEnabled = false;
+
         let inputTextArea = new BABYLON.GUI.InputText('group', "");
         inputTextArea.height = "40px";
         inputTextArea.color = "white";
@@ -253,6 +261,7 @@ class Messages {
         inputTextArea.top = "-120px";
         inputTextArea.height = "70px";
         inputTextArea.width = "200px";
+        inputTextArea.onTextChangedObservable.add(() => this.nextButton.isEnabled = true);
         this.advancedTexture.addControl(inputTextArea);
 
         const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
@@ -292,14 +301,17 @@ class Messages {
     showConnect() {
         this.currentScreen = "connect";
         this.textField.text = "להוספת האבן למודל יש להקליק על אחת הבליטות במודל\n[ << ] כאשר נקודה במודל ונקודה באבן נבחרו, ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n\n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור\n\nבבקשה להסתובב ולהתחיל לבנות את המודלים\n על פי ההסברים שמעל אבני הבניין"
+        this.nextButton.isEnabled = false;
     }
 
     showExamA() {
+        this.nextButton.isEnabled = true;
         this.currentScreen = "examA";
         this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן ומינימום טעויות. \nמי שייסיים את הבנייה של שלב זה והשלב הבא המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
     }
 
     showExamB() {
+        this.nextButton.isEnabled = true;
         this.currentScreen = "examB";
         this.textField.text = "לפניך השלב האחרון בו יש לבנות שני מודלים במינימום זמן ומינימום טעויות. \nמי שייסיים את הבנייה של שלב זה ווהקודם המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
     }
@@ -307,7 +319,7 @@ class Messages {
     showLastScreen() {
         this.currentScreen = "lastScreen";
         this.textField.text = "תודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
-
+        this.nextButton.isEnabled = false;
     }
 
     showGroupIstructions() {
