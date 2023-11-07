@@ -60,7 +60,8 @@ function fullName2Private(theFullName) {
 }
 
 const tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
-const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/users';
+const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/foo';;///wrong for debug
+////const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/users';
 let selectedConnection;///the sphere that was clicked on one of the elements outside the model
 let modelsArray = [];
 let currentModel;///returned by createModel that push it into modelsArray
