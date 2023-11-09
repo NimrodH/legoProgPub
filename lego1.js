@@ -22,6 +22,7 @@ const colorsObj = [
     { "colorName": "notSelected", "colorVector": notSelectedColor }
 ];
 var scene = window.scene;
+var connectionInProcess = false;
 function rotationVector2Name(vector) {
     if (vector.y > 0) { return "Y" };
     if (vector.z > 0) { return "Z" };
@@ -108,6 +109,7 @@ function animate(box, oldPos, newPos, scene) {
         if (currentSession) {
             currentSession.reportConnect(box);///newElement(= box) has connectedTo object
         }
+        connectionInProcess = false;
     }
 }
 
@@ -255,7 +257,7 @@ function removeLastBlock() {
     if (!currentModel) { /// we are on instructions before setting model
         return;
     }
-    ///if user click another model before he click delete we dont want to delete feom wrong 
+    ///if user click another model before he click delete we dont want to delete from wrong 
     if (currentSession ) {
         let modelLabel = currentSession.modelInConnectedStage[currentSession.connectedStage];
         
@@ -532,7 +534,9 @@ function destSphereByOldData(blockNumber, destPoint) {
 ///called from connect and from reBuildModel
 function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
     ////let globData = arrange4Connect(newElement, newColor, selectedConnectionMame)
-    
+    if (toAnimate) {
+        connectionInProcess = true;
+    }
     let newElementConnection;
     ///set any of its childrens with its own matirial and action
     let children = newElement.getChildren();
@@ -697,6 +701,10 @@ function flipY() {
 
 ///defign and highlite the conection sphere
 function doClickConnection(event) {
+    if (connectionInProcess) {
+        currentSession.doFbMessage("לא ניתן להקליק עד שיושלם חיבור האבן הקודמת", null);
+        return;
+    }
     if (event.source.parent.metadata && event.source.parent.metadata.inModel) {
         ///do not allow to change model if need to delete
         if (currentSession ) {
