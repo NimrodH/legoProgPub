@@ -442,15 +442,15 @@ class Timer {
         this.mat.diffuseTexture = this.dynamicTexture;
         //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
         
-        const ctx = dynamicTexture.getContext();
-        const textureSize = dynamicTexture.getSize();
+        const ctx = this.dynamicTexture.getContext();
+        const textureSize = this.dynamicTexture.getSize();
         const text = '00:00';
         ctx.clearRect(0, 0, textureSize.width, textureSize.height);
         ctx.font = "bold 200px Arial";
         ctx.fillStyle = "white";
         ctx.textAlign = "center";
         ctx.fillText(text, textureSize.width / 2, textureSize.height / 2 + 70);
-        dynamicTexture.update();
+        this.dynamicTexture.update();
 
         ///Create plane and set dynamic texture as material
         this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
