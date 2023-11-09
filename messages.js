@@ -434,10 +434,10 @@ class Timer {
     mat;
     plane;
     currTime = 0;
-    constructor( x = 0, y = 2.5, z = 2) {
+    constructor( x = 0, y = 2, z = 1) {
      
         ///Create dynamic texture and write the text
-        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: 0.5, height: 0.5 }, scene, false);
+        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: 1, height:1 }, scene, false);
         this.mat = new BABYLON.StandardMaterial("mat", scene);
         this.mat.diffuseTexture = this.dynamicTexture;
         //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
@@ -453,7 +453,7 @@ class Timer {
         this.dynamicTexture.update();
 
         ///Create plane and set dynamic texture as material
-        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 1, height: 1 }, scene);
+        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 2, height: 2 }, scene);
         this.plane.material = this.mat;
         this.plane.position.y = y;
         this.plane.position.z = z;
