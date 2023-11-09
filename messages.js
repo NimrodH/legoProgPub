@@ -307,13 +307,13 @@ class Messages {
     showExamA() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examA";
-        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן ומינימום טעויות. \nמי שייסיים את הבנייה של שלב זה והשלב הבא המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
+        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן. \nמי שייסיים את הבנייה של שלב זה והשלב הבא המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
     }
 
     showExamB() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examB";
-        this.textField.text = "לפניך השלב האחרון בו יש לבנות שני מודלים במינימום זמן ומינימום טעויות. \nמי שייסיים את הבנייה של שלב זה ווהקודם המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
+        this.textField.text = "לפניך השלב האחרון בו יש לבנות שני מודלים במינימום זמן. \nמי שייסיים את הבנייה של שלב זה ווהקודם המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
     }
 
     showLastScreen() {
@@ -426,5 +426,67 @@ class FbMessages {
             this.advancedTexture4Pic.dispose();
         }
 
+    }
+}
+
+class Timer {
+    dynamicTexture;
+    mat;
+    plane;
+    currTime = 0;
+    constructor( x = 0, y = 2.5, z = 2) {
+     
+        ///Create dynamic texture and write the text
+        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: 0.5, height: 0.5 }, scene, false);
+        this.mat = new BABYLON.StandardMaterial("mat", scene);
+        this.mat.diffuseTexture = this.dynamicTexture;
+        //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
+        
+        const ctx = dynamicTexture.getContext();
+        const textureSize = dynamicTexture.getSize();
+        const text = '00:00';
+        ctx.clearRect(0, 0, textureSize.width, textureSize.height);
+        ctx.font = "bold 200px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(text, textureSize.width / 2, textureSize.height / 2 + 70);
+        dynamicTexture.update();
+
+        ///Create plane and set dynamic texture as material
+        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
+        this.plane.material = this.mat;
+        this.plane.position.y = y;
+        this.plane.position.z = z;
+        this.plane.position.x = x;
+        this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+
+     
+    }
+
+    startTimer() {
+        this.setInterval(updateTime, 1000);
+        this.show();
+    }
+
+    updateTime() {
+        this.currTime++;
+        this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
+    }
+
+    setY(newY) {
+        this.plane.position.y = newY;
+    }
+
+    hide() {
+        this.plane.isVisible = false;
+    }
+    show() {
+        this.plane.isVisible = true;
+    }
+    dispose() {
+        this.dynamicTexture.dispose();
+        this.mat.dispose();
+        this.plane.dispose();
+    
     }
 }

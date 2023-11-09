@@ -31,6 +31,7 @@ class Session {
     part = "training"///training, examA, examB
     modelInConnectedStage;///array: item i represent  the i correct connection that done (in any models). the value is the title of the model to use for it
     worldByModel;///model Mn will be in the world that is the value of item n
+    //timer;//
     /*
     srcPoint
     destPoint
@@ -46,6 +47,8 @@ class Session {
     }
 
     async initSession() {
+        let t = new Timer()
+        t.show();
         //elementsMenu.metadata.labelObj =  new FbMessages("תפריט אבני בניין",0,1,0);    
         this.trainingModelData = await loadModelData();
         //this.requestedModelName;///we will set it when we ask user to change model 
