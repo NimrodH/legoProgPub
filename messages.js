@@ -453,7 +453,7 @@ class Timer {
         this.dynamicTexture.update();
 
         ///Create plane and set dynamic texture as material
-        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
+        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 1, height: 1 }, scene);
         this.plane.material = this.mat;
         this.plane.position.y = y;
         this.plane.position.z = z;
