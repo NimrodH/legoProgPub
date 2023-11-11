@@ -32,7 +32,7 @@ class Messages {
         this.nextButton.left = "10px";
         this.nextButton.height = "70px";
         this.advancedTexture.addControl(this.nextButton);
-        
+
 
         const initialText = "במסך זה יופיעו הנחיות\n\n מאחוריך מספר לבנים לבניית המודל\n\n[אחרי שראינו את האבנים יש להקליק על כפתור [המשך\nהקלקה פרושה להצביע עם הקרן על הכפתור וללחוץ על ההדק";
         let text1 = this.textField;
@@ -431,46 +431,69 @@ class FbMessages {
 
 class Timer {
     dynamicTexture;
+    textureSize;
     mat;
     plane;
     currTime = 0;
-    constructor( x = 0, y = 2, z = 1) {
-     
+    constructor(x = 1.5, y = 3.5, z = 2) {
+        const text = '00:00';
+        ///Set font
+        var font_size = 24;
+        this.font = "bold " + font_size + "px Arial";
+
+        ///Set height for plane
+        var planeHeight = 0.5;
+
+        ///Set height for dynamic texture
+        var DTHeight = 1.5 * font_size; //or set as wished
+
+        ///Calcultae ratio
+        var ratio = planeHeight / DTHeight;
+
+        ///Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
+        var temp = new BABYLON.DynamicTexture("DynamicTexture", 64, scene);
+        var tmpctx = temp.getContext();
+        tmpctx.font = this.font;
+        var DTWidth = tmpctx.measureText(text).width + 8;
+        temp.dispose();
+        ///Calculate width the plane has to be 
+        var planeWidth = DTWidth * ratio;
+
         ///Create dynamic texture and write the text
-        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: 1, height:1 }, scene, false);
+        this.dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width: DTWidth, height: DTHeight }, scene, false);
         this.mat = new BABYLON.StandardMaterial("mat", scene);
         this.mat.diffuseTexture = this.dynamicTexture;
-        //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
-        
-        const ctx = this.dynamicTexture.getContext();
-        const textureSize = this.dynamicTexture.getSize();
-        const text = '00:00';
-        ctx.clearRect(0, 0, textureSize.width, textureSize.height);
-        ctx.font = "bold 200px Arial";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.fillText(text, textureSize.width / 2, textureSize.height / 2 + 70);
-        this.dynamicTexture.update();
+        this.dynamicTexture.drawText(text, null, null, this.font, "#000000", "#ffffff", true);
 
         ///Create plane and set dynamic texture as material
-        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: 2, height: 2 }, scene);
+        this.plane = BABYLON.MeshBuilder.CreatePlane("plane", { width: planeWidth, height: planeHeight }, scene);
         this.plane.material = this.mat;
         this.plane.position.y = y;
         this.plane.position.z = z;
         this.plane.position.x = x;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-
-     
+        this.textureSize = this.dynamicTexture.getSize();
+        this.hide();
     }
 
     startTimer() {
-        this.setInterval(updateTime, 1000);
+        this.timerInterval = setInterval(this.updateTime.bind(this), 1000);
         this.show();
+    }
+
+    stopTimer() {
+        clearInterval(this.timerInterval);
     }
 
     updateTime() {
         this.currTime++;
-        this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
+        //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
+        let newText = this.currTime.toString();
+        const ctx = this.dynamicTexture.getContext();
+        ctx.clearRect(0, 0, this.textureSize.width, this.textureSize.height);
+        //ctx.fillText(newText, textureSize.width / 2, textureSize.height / 2 + 70);
+        this.dynamicTexture.drawText(newText, null, null, this.font, "#000000", "#ffffff", true);
+        this.dynamicTexture.update();
     }
 
     setY(newY) {
@@ -487,6 +510,6 @@ class Timer {
         this.dynamicTexture.dispose();
         this.mat.dispose();
         this.plane.dispose();
-    
+
     }
 }
