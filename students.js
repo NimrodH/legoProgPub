@@ -49,7 +49,7 @@ class Session {
 
     async initSession() {
         this.timer = new Timer()
-        this.timer.startTimer();
+       
         
       
         //elementsMenu.metadata.labelObj =  new FbMessages("תפריט אבני בניין",0,1,0);    
@@ -160,14 +160,15 @@ class Session {
                 messageBox.showExamA();///when he will click there "next" we will call initExamA
                 break;
             case "examA":
+                this.timer.stopTimer();
                 this.doFbMessage("סיימת את שלב הרצה 1 מתוך 2. התבונןי במסך הירוק מאחוריך להוראות");
                 messageBox.showExamB();///when he will click there "next" we will call initExamB
                 break;
             case "examB":
+                this.timer.stopTimer();
                 this.doFbMessage("סיימת את הניסוי. התבונןי במסך הירוק מאחוריך לפרידה");
                 messageBox.showLastScreen();
                 near.isVisible = false;
-
                 break;
 
             default:
@@ -186,6 +187,7 @@ class Session {
        }
        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M1
        this.connectedStage = 0;
+       this.timer.startTimer();
        this.runPart();
     }
 
@@ -201,6 +203,7 @@ class Session {
        }
        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M2 & M3
        this.connectedStage = 0;
+       this.timer.startTimer();
        this.runPart();
     }
 

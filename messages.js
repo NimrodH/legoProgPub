@@ -477,6 +477,7 @@ class Timer {
     }
 
     startTimer() {
+        this.currTime = 0;
         this.timerInterval = setInterval(this.updateTime.bind(this), 1000);
         this.show();
     }
