@@ -472,7 +472,7 @@ class Timer {
     plane;
     currTime = 0;
     constructor(x = 1.5, y = 3.5, z = 2) {
-        const text = '00:00';
+        const text = '00:00 שניות';
         ///Set font
         var font_size = 24;
         this.font = "bold " + font_size + "px Arial";
