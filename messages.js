@@ -343,7 +343,7 @@ class Messages {
     showExamA() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examA";
-        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן. \nמי שייסיים את הבנייה של שלב זה והשלב הבא המהיר ביותר יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
+        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן \nמי שייסיים את הבנייה של שלב זה \nוהשלב הבא המהיר ביותר, יקבל בונוס \nבבקשה להקליק המשך ואז להסתובב ולהתחיל בבניה"
     }
 
     showExamB() {
@@ -525,7 +525,7 @@ class Timer {
     updateTime() {
         this.currTime++;
         //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
-        let newText = this.currTime.toString();
+        let newText = this.currTime.toString() + " שניות ";
         const ctx = this.dynamicTexture.getContext();
         ctx.clearRect(0, 0, this.textureSize.width, this.textureSize.height);
         //ctx.fillText(newText, textureSize.width / 2, textureSize.height / 2 + 70);
