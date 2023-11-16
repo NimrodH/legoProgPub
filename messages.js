@@ -9,7 +9,7 @@ class Messages {
     plane = BABYLON.Mesh.CreatePlane("plane", 10);
     advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.plane);
     currentScreen = "init";
-    nextButton;
+    nextButton;///also sent as parameter in new session and called from there
     constructor() {
         this.plane.position.z = -25;
         this.plane.position.y = 2;/////2
@@ -43,12 +43,34 @@ class Messages {
         text1.height = "600px"
         this.advancedTexture.addControl(text1);
 
+        addEventListener("reportClick", this.handleReportClick.bind(this))
         //this.advancedTexture.focusedControl = inputTextArea;///create bug
         //plane.isVisible = true;
         //plane.dispose();
 
     }
 
+    handleReportClick(e) {
+        if (currentSession && currentSession.part == "learning") {
+            if (currentSession) {
+                console.log(this.currentScreen)
+            }
+            
+            if (e.detail.action == "point" && e.detail.details == "on-menu" && e.detail.newElement.name == 'b5' && this.currentScreen == "selectBlock") {
+                this.nextButton.isEnabled = true;
+            }
+            if (e.detail.action == "color" && e.detail.details == "red" &&this.currentScreen == "colorButtons") { //&& e.detail.details == "red"
+                this.nextButton.isEnabled = true;
+            }
+            if (e.detail.action == "flip" && e.detail.details == "Y" && this.currentScreen == "rotateButtons") { 
+                this.nextButton.isEnabled = true;
+            }
+            if (e.detail.action == "point" && e.detail.details == "on-model" && this.currentScreen == "modelScreen" && e.detail.newElement.metadata.modelTitle =="M1") { 
+                this.nextButton.isEnabled = true;
+            }
+            
+        }
+    }
     ///switch screens by currentScreen. convention:
     /// use function show<CurrentScreen> to show the new screen
     /// use function done<CurrentScreen> if the screen need dispose objects or implemnt user data
@@ -81,14 +103,17 @@ class Messages {
                 this.showSelectBlock()
                 break;
             case "selectBlock":
-                this.showInsButtons();
+                this.showColorButtons();
                 break;
-            case "insButtons":
-                //this.showConnect();
+            case "colorButtons":
+                this.showRotateButtons();
+                break;
+            //this.showConnect();
+            case "rotateButtons":
                 currentSession.initSession();
-                this.showGroupIstructions();
+                this.showModelScreen();
                 break;
-            case "GroupIstructions":
+            case "modelScreen":
                 //this.showGroupIstructions();
                 this.showConnect();
                 this.currentScreen = "end";
@@ -288,20 +313,31 @@ class Messages {
 
     showSelectBlock() {
         this.currentScreen = "selectBlock";
-        this.textField.text = "ניתן לבחור אחת מהאבני הבניין שמאחוריך \nעל ידי הקלקה על אחת הבליטות המופיעות בה\n הבליטה תיצבע בצהוב\n\nבבקשה לבחור אבן ואז להקליק [המשך] במסך זה"
+        this.textField.text = "ניתן לבחור אחת מהאבני הבניין שמאחוריך \nעל ידי הקלקה על אחת הבליטות המופיעות בה\n הבליטה תיצבע בצהוב\n\nבבקשה לבחור את האבן הארוכה ואז להקליק [המשך] במסך זה"
+        this.nextButton.isEnabled = false;//////to allow only after clicking
     }
 
-    showInsButtons() {
-        this.currentScreen = "insButtons";
+    showColorButtons() {
+        this.currentScreen = "colorButtons";
         near = createNearMenu("no record");
         near.isVisible = true;
-        this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
+        //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
+        this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] הקלק על אחד הכפתורים לבחירת צבע אדום לאבן \n "
+        this.nextButton.isEnabled = false;
+    }
+
+    showRotateButtons() {
+        this.currentScreen = "rotateButtons";
+        this.textField.text = "\n לרשותך גם כפתורים לסיבוב האבן\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n סובב/י את האבן למצב עומד על ידי בחירת כפתור מתאים: \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
+        //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
+        this.nextButton.isEnabled = false;
     }
 
     showConnect() {
         this.currentScreen = "connect";
-        this.textField.text = "להוספת האבן למודל יש להקליק על אחת הבליטות במודל\n[ << ] כאשר נקודה במודל ונקודה באבן נבחרו, ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n\n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור\n\nבבקשה להסתובב ולהתחיל לבנות את המודלים\n על פי ההסברים שמעל אבני הבניין"
+        this.textField.text = "להוספת האבן למודל, אחרי \n[ << ] שנקודה במודל ונקודה באבן נבחרו, יש ללחוץ על כפתור\nהאבן תוצמד למודל כך שהנקודות שנבחרו באבן ובמודל יתלכדו \n\n[ >> ] להסרת האבן האחרונה שהוספת למודל יש ללחוץ על כפתור\n\nבבקשה להסתובב ולהתחיל לבנות את המודלים\n על פי ההסברים שמעל אבני הבניין"
         this.nextButton.isEnabled = false;
+        currentSession.part = "training"
     }
 
     showExamA() {
@@ -322,19 +358,19 @@ class Messages {
         this.nextButton.isEnabled = false;
     }
 
-    showGroupIstructions() {
-        this.currentScreen = "GroupIstructions";
+    showModelScreen() {
+        this.currentScreen = "modelScreen";
+        this.nextButton.isEnabled = false;
         switch (currentSession.group) {
             case "A":
-                this.textField.text = " מימינך ומשמולך בסיסים לשמי מודלים \n ומאחורי אבני הבנין שני בסיסים נוספים";
+                this.textField.text = " מימינך ומשמולך בסיסים לשמי מודלים \n ומאחורי אבני הבנין שני בסיסים נוספים\n בחר את המודל \n M1 \n על ידי הקלקה על הבליטה שבו כך שהיא תיצבע בצהוב";
                 break;
             case "B":
-                this.textField.text = " .מימינך ומשמאלך בסיסים לשני מודלים \n שני מודלים נוספים יוצגו לפניך בהמשך בעולם אחר";
+                this.textField.text = " .מימינך ומשמאלך בסיסים לשני מודלים \n שני מודלים נוספים יוצגו לפניך בהמשך בעולם אחר\n בחר את המודל \n M1 \n על ידי הקלקה על הבליטה שבו כך שהיא תיצבע בצהוב";
                 break;
             case "C":
-                this.textField.text = " .משמאלך בסיס למודל \n שלושה מודלים נוספים יוצגו לפניך בהמשך בעולמות אחרים";
+                this.textField.text = " .משמאלך בסיס למודל \n שלושה מודלים נוספים יוצגו לפניך בהמשך בעולמות אחרים\n בחר את המודל \n M1 \n על ידי הקלקה על הבליטה שבו כך שהיא תיצבע בצהוב";
                 break;
-
             default:
                 break;
         }

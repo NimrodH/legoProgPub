@@ -12,6 +12,8 @@ const rotationX = new BABYLON.Vector3(1.5708, 0, 0);
 const rotationY = new BABYLON.Vector3(0, 1.5708, 0);
 const rotationZ = new BABYLON.Vector3(0, 0, 1.5708);//Math.PI / 2 get diferent value in its last digit here and when called from mesh
 
+
+
 const colorsObj = [
     { "colorName": "blue", "colorVector": blueColor },
     { "colorName": "base", "colorVector": baseColor },
@@ -161,7 +163,7 @@ function createNearMenu(mode) {
     near.isVisible = false;
     near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     near.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-
+    
     function createTouchButton(name, title, color, theFunction) {
         let button = new BABYLON.GUI.TouchHolographicButton(name);
         //button.text = title;
@@ -235,9 +237,12 @@ function setSelectedConnectionColor(theColor) {
     let vectorColor = colorName2Vector(theColor);
     if (selectedConnection) {
         selectedConnection.parent.material.diffuseColor = vectorColor;
-        if (currentSession) {
-            currentSession.reportClick("color", theColor, selectedConnection.parent);
-        }
+        const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "color", details: theColor, newElement: selectedConnection.parent }});
+        dispatchEvent(reportClickEvent);
+
+        //if (currentSession) {
+        //    currentSession.reportClick("color", theColor, selectedConnection.parent);
+        //}
     }
 }
 function colorBlue() {
@@ -415,7 +420,7 @@ async function saveModel() {
     let name = currentModel.metadata.modelName;
     for (let index = 0; index < childs.length; index++) {
         const element = childs[index];
-        console.log("index: " + index);
+        //console.log("index: " + index);
         if (element.metadata) {
             let theColor = element.material.diffuseColor;
             ///we dont use for now "table" parameter. the lambda function dont work when we set table name as parameter
@@ -500,8 +505,8 @@ function reBuildModel(modelData, step) {
         const inDatasDestBlock = element.destBlock;
         const inDatasDestPoint = element.destPoint;
         let s = destSphereByOldData(inDatasDestBlock, inDatasDestPoint);
-        console.log("inDatasDestBlock: " + inDatasDestBlock);
-        console.log("inDatasDestPoint: " + inDatasDestPoint);
+        //console.log("inDatasDestBlock: " + inDatasDestBlock);
+        //console.log("inDatasDestPoint: " + inDatasDestPoint);
 
         setModelSelectedConnection(currentModel, s);
 
@@ -662,9 +667,12 @@ function flipModel() {
             console.log("error in flipModel");
             break;
     }
-    if (currentSession) {
-        currentSession.reportClick("flipModel", currentModel.rotation, currentModel);
-    }
+    const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "flipModel", details:currentModel.rotation, newElement: currentModel }});
+    dispatchEvent(reportClickEvent);
+
+    //if (currentSession) {
+    //    currentSession.reportClick("flipModel", currentModel.rotation, currentModel);
+    //}
 
 }
 ///rotate the selected block
@@ -672,9 +680,12 @@ function flipZ() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationX;
         selectedConnection.parent.position.y = menuY - elementsMenuY;
-        if (currentSession) {
-            currentSession.reportClick("flip", "Z", selectedConnection.parent);
-        }
+        const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "flip", details:"Z", newElement: selectedConnection.parent }});
+        dispatchEvent(reportClickEvent);
+
+        //if (currentSession) {
+        //    currentSession.reportClick("flip", "Z", selectedConnection.parent);
+        //}
     }
 
 }
@@ -682,9 +693,12 @@ function flipX() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationY;
         selectedConnection.parent.position.y = menuY - elementsMenuY;
-        if (currentSession) {
-            currentSession.reportClick("flip", "X", selectedConnection.parent);
-        }
+        const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "flip", details:"X", newElement: selectedConnection.parent }});
+        dispatchEvent(reportClickEvent);
+
+        //if (currentSession) {
+        //    currentSession.reportClick("flip", "X", selectedConnection.parent);
+        //}
     }
 
 }
@@ -692,9 +706,12 @@ function flipY() {
     if (selectedConnection) {
         selectedConnection.parent.rotation = rotationZ;
         setOnGround(selectedConnection.parent, scaleFactor);
-        if (currentSession) {
-            currentSession.reportClick("flip", "Y", selectedConnection.parent);
-        }
+        const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "flip", details:"Y", newElement: selectedConnection.parent }});
+        dispatchEvent(reportClickEvent);
+
+//        if (currentSession) {
+//            currentSession.reportClick("flip", "Y", selectedConnection.parent);
+//        }
     }
 
 }
@@ -716,16 +733,26 @@ function doClickConnection(event) {
             }
         }
         doModelConnection(event.source);
+        const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "point", details:"on-model", newElement: event.source.parent }});
+        dispatchEvent(reportClickEvent);
+        /*
         if (currentSession) {
-            currentSession.reportClick("point", "on-model", event.source.parent);
+            //currentSession.reportClick("point", "on-model", event.source.parent);
         }
+        */
         return;
     } else {
         doElementConnection(event.source);
-        if (currentSession) {
-            currentSession.reportClick("point", "on-menu", event.source.parent);
-        }
-
+        const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "point", details:"on-menu", newElement: event.source.parent }});
+        dispatchEvent(reportClickEvent);
+        /*
+//        if (currentSession) {
+//            //currentSession.reportClick("point", "on-menu", event.source.parent);
+ //       }
+       const myEvent = new CustomEvent("report", { detail: d.getTime().toString() });
+        //window.dispatchEvent(myEvent);
+        dispatchEvent(myEvent);
+        */
     }
 }
 

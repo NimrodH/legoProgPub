@@ -28,10 +28,11 @@ class Session {
     currentModelInArray = 0;///index in array of shown model
     fb;///one line message to the larner. usage: //this.fb = new FbMessages("בוקר אביבי ושמח");
     trainingModelData;///array item per line. each line is object with the following props:
-    part = "training"///training, examA, examB
+    part = "learning"///learning, training, examA, examB
     modelInConnectedStage;///array: item i represent  the i correct connection that done (in any models). the value is the title of the model to use for it
     worldByModel;///model Mn will be in the world that is the value of item n
     timer;
+    msgNextBtn; ///the next button we will get from messages when it creat this session
     //timer;//
     /*
     srcPoint
@@ -45,13 +46,25 @@ class Session {
 
     constructor(id) {
         this.userId = id;
+        addEventListener("reportClick", this.handleReportClick.bind(this))
+    }
+
+    handleReportClick = (e) => {
+        //console.log('Event received:');
+        //console.log(e);
+        if (this.part !== "learning" && currentModel) {
+            let modelMx = currentModel.metadata.modelTitle;
+            saveUserAction(e.detail.action, e.detail.details, this.actionId++, e.detail.newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
+        }
+
+        // Handle the event
     }
 
     async initSession() {
         this.timer = new Timer()
-       
-        
-      
+
+
+
         //elementsMenu.metadata.labelObj =  new FbMessages("תפריט אבני בניין",0,1,0);    
         this.trainingModelData = await loadModelData();
         //this.requestedModelName;///we will set it when we ask user to change model 
@@ -131,7 +144,7 @@ class Session {
             console.log("pic: " + pic)
             this.doFbMessage(msg, pic);
             */
-           this.runPart();
+            this.runPart();
         }
     }
 
@@ -151,10 +164,10 @@ class Session {
 
     nextStage() {
         console.log("nextStage");
-            ///TODO: delete old models (they alreadtbuilt now)
-            disposeModels();
-            ///TODO: must add "this.part" to the users records on the data base
-            switch (this.part) {
+        ///TODO: delete old models (they alreadtbuilt now)
+        disposeModels();
+        ///TODO: must add "this.part" to the users records on the data base
+        switch (this.part) {
             case "training":
                 this.doFbMessage("סיימת את שלב האימון. התבונןי במסך הירוק מאחוריך להוראות");
                 messageBox.showExamA();///when he will click there "next" we will call initExamA
@@ -178,37 +191,37 @@ class Session {
 
     initExamA() {
         ///we will use the same this.trainingModelData because we use same models as in training
-       this.part = "examA";
-       let m1 = createModel("car", "M1", 5, 0, -5);
-       if (this.userId == 666) {
-        this.modelInConnectedStage = ["M1", "M1"];
-       } else {
-        this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
-       }
-       this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M1
-       this.connectedStage = 0;
-       this.timer.startTimer();
-       this.runPart();
+        this.part = "examA";
+        let m1 = createModel("car", "M1", 5, 0, -5);
+        if (this.userId == 666) {
+            this.modelInConnectedStage = ["M1", "M1"];
+        } else {
+            this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
+        }
+        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M1
+        this.connectedStage = 0;
+        this.timer.startTimer();
+        this.runPart();
     }
 
     initExamB() {
         ///we will use the same this.trainingModelData because we use same models as in training
-       this.part = "examB";
-       let m2 = createModel("chair", "M2", -5, 0, -5);
-       let m3 = createModel("dog", "M3", 5, 0, -5);
-       if (this.userId == 666) {
-        this.modelInConnectedStage = ["M3", "M3"];
-       } else {
-        this.modelInConnectedStage = ["M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M3", "M3", "M2", "M2", "M2"]; 
-       }
-       this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M2 & M3
-       this.connectedStage = 0;
-       this.timer.startTimer();
-       this.runPart();
+        this.part = "examB";
+        let m2 = createModel("chair", "M2", -5, 0, -5);
+        let m3 = createModel("dog", "M3", 5, 0, -5);
+        if (this.userId == 666) {
+            this.modelInConnectedStage = ["M3", "M3"];
+        } else {
+            this.modelInConnectedStage = ["M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M3", "M3", "M2", "M2", "M2"];
+        }
+        this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };///we need here only M2 & M3
+        this.connectedStage = 0;
+        this.timer.startTimer();
+        this.runPart();
     }
 
+///to be removed when all wil became by events
     reportClick(action, details, newElement) {
-        //console.log("reportClick: " + action);
         if (currentModel) {
             let modelMx = currentModel.metadata.modelTitle;
             saveUserAction(action, details, this.actionId++, newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
@@ -284,8 +297,8 @@ class Session {
         */
         ///we assume block 0 will never be :newElement
         let modelName = newElement.parent.metadata.modelName;
-        console.log("modelName: " + modelName );
-        console.log("dataLine.modelName: " + dataLine.modelName );
+        //console.log("modelName: " + modelName);
+        //console.log("dataLine.modelName: " + dataLine.modelName);
         if (modelName !== dataLine.modelName) {
             isCorect = false;
             wrongItems.push("model");
@@ -345,14 +358,14 @@ class Session {
     reportDelete() {
         //console.log("reportDelete");
         ///it was worng so we still didnt incremnt connectedStage
-        console.log("this.connectedStage: " + this.connectedStage);
+        //console.log("this.connectedStage: " + this.connectedStage);
         let msg;
         let mName;
         let step;
         if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
             step = currentModel.metadata.numOfBlocks;
             msg = "Please do again step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
-            mName = currentModel.metadata.modelName;    
+            mName = currentModel.metadata.modelName;
         } else {
             let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
             let nextModel = getModel(nextModelLabel);
@@ -380,5 +393,5 @@ class Session {
         this.fb = new FbMessages(message, 0, 2.5, 2, pic)
     }
 }
- //this.fb = new FbMessages("בוקר אביבי ושמח");
- //let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);
+//this.fb = new FbMessages("בוקר אביבי ושמח");
+//let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);
