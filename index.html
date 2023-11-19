@@ -193,7 +193,7 @@ var newPlane = BABYLON.Mesh.CreatePlane("plane", 10);
             const xr = scene.createDefaultXRExperienceAsync({
                 floorMeshes: [ground]
             });
-
+            xr.pointerSelection.laserPointerDefaultColor = new BABYLON.Color3(1, 0, 0); //....
 
             /*
             scene.debugLayer.show({
