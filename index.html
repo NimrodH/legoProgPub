@@ -190,9 +190,11 @@ var newPlane = BABYLON.Mesh.CreatePlane("plane", 10);
 *////////////////////
             messageBox = new Messages();
 
-            const xr = scene.createDefaultXRExperienceAsync({
+            const xr = await scene.createDefaultXRExperienceAsync({
                 floorMeshes: [ground]
-            }); 
+            });
+            console.log("xr"); 
+            console.log(xr); 
             xr.pointerSelection.laserPointerDefaultColor = new BABYLON.Color3(1, 0, 0); //....
 
             /*
