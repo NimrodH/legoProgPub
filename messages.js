@@ -472,7 +472,7 @@ class Timer {
     plane;
     currTime = 0;
     constructor(x = 1.5, y = 3.5, z = 2) {
-        const text = '00:00 שניות';
+        const text = '00:00 ';
         ///Set font
         var font_size = 24;
         this.font = "bold " + font_size + "px Arial";
@@ -525,7 +525,8 @@ class Timer {
     updateTime() {
         this.currTime++;
         //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
-        let newText = " שניות " + this.currTime.toString();
+        //let newText = " שניות " + this.currTime.toString();
+        let newText = secToTimeString(this.currTime);
         const ctx = this.dynamicTexture.getContext();
         ctx.clearRect(0, 0, this.textureSize.width, this.textureSize.height);
         //ctx.fillText(newText, textureSize.width / 2, textureSize.height / 2 + 70);
@@ -533,6 +534,11 @@ class Timer {
         this.dynamicTexture.update();
     }
 
+    secToTimeString(sec) {
+        const minutes = Math.floor(sec / 60);
+        const remainingSeconds = sec % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`; 
+    }
     setY(newY) {
         this.plane.position.y = newY;
     }
