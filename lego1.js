@@ -121,7 +121,7 @@ function setOnGround(element, factor) {
     element.computeWorldMatrix(true);
     var boundingInfo = element.getHierarchyBoundingVectors();
     var lowerEdgePosition = boundingInfo.min.y;
-    if (lowerEdgePosition < 0) {
+    if (lowerEdgePosition != 0) {
         element.position.y = element.position.y - (lowerEdgePosition / factor)
     }
     //console.log("element.position.y after: " + element.position.y);
@@ -289,6 +289,7 @@ function removeLastBlock() {
 
     lastBlock.dispose();
     currentModel.metadata.numOfBlocks = currentModel.metadata.numOfBlocks - 1;
+    setOnGround(currentModel, 1);
     if (currentSession ) {
         currentSession.reportDelete();
     }
