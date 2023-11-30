@@ -148,7 +148,7 @@ class Messages {
 
     showEditID() {
         this.currentScreen = "editID";
-        this.textField.text = "יש להקליק בתוך השדה השחור. תופיע מקלדת\nיש לקליק בה את המספר שקבלת ממנהלת הניסוי"
+        this.textField.text = "יש ללחוץ (להקליק) בתוך השדה השחור\nלאחר שנפתחה המקלדת, יש להזין את \nהמספר שקיבלת ממנהלת הניסויn\ביום לחצ/י המשך"
 
         this.nextButton.isEnabled = false;
 
