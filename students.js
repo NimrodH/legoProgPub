@@ -169,17 +169,17 @@ class Session {
         ///TODO: must add "this.part" to the users records on the data base
         switch (this.part) {
             case "training":
-                this.doFbMessage("סיימת את שלב האימון. התבונןי במסך הירוק מאחוריך להוראות");
+                this.doFbMessage("סיימת את שלב האימון. התבונן/י במסך הירוק מאחוריך להוראות");
                 messageBox.showExamA();///when he will click there "next" we will call initExamA
                 break;
             case "examA":
                 this.timer.stopTimer();
-                this.doFbMessage("סיימת את שלב הרצה 1 מתוך 2. התבונןי במסך הירוק מאחוריך להוראות");
+                this.doFbMessage("סיימת את שלב הרצה 1 מתוך 2. התבונן/י במסך הירוק מאחוריך להוראות");
                 messageBox.showExamB();///when he will click there "next" we will call initExamB
                 break;
             case "examB":
                 this.timer.stopTimer();
-                this.doFbMessage("סיימת את הניסוי. התבונןי במסך הירוק מאחוריך לפרידה");
+                this.doFbMessage("סיימת את הניסוי. התבונן/י במסך הירוק מאחוריך לפרידה");
                 messageBox.showLastScreen();
                 near.isVisible = false;
                 break;
