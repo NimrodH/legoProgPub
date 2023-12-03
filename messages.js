@@ -526,7 +526,7 @@ class Timer {
         this.currTime++;
         //this.dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
         //let newText = " שניות " + this.currTime.toString();
-        let newText = secToTimeString(this.currTime);
+        let newText = this.secToTimeString(this.currTime);
         const ctx = this.dynamicTexture.getContext();
         ctx.clearRect(0, 0, this.textureSize.width, this.textureSize.height);
         //ctx.fillText(newText, textureSize.width / 2, textureSize.height / 2 + 70);
