@@ -153,23 +153,25 @@ function setVisibleModel(theMesh, setItVisible) {
 
 function createNearMenu(mode) {
     const manager = new BABYLON.GUI.GUI3DManager(scene);
-    let near = new BABYLON.GUI.NearMenu("near");
+    //let near = new BABYLON.GUI.NearMenu("near");
+    let near = new BABYLON.GUI.PlanePanel();
     manager.addControl(near);
-    let follower = near.defaultBehavior.followBehavior; //returns the followbehavior created by the 
-    near.defaultBehavior.followBehaviorEnabled = false;///false
+    //let follower = near.defaultBehavior.followBehavior; //returns the followbehavior created by the 
+    //near.defaultBehavior.followBehaviorEnabled = false;///false
     near.columns = 5;
     near.margin = 0.2
-    near.position = new BABYLON.Vector3(0, 0.3, -5);///1, 6, 1);
+    near.position = new BABYLON.Vector3(0, 0.5, -3);///1, 6, 1);///0 0.3 -5
     near.isVisible = false;
     near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     near.backPlateMargin = 0.01;
-    near.scaling = new BABYLON.Vector3(0.1, 0.1, 0.1);///0.5
+    near.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);///0.5///0.1
     
     function createTouchButton(name, title, color, theFunction) {
         let button = new BABYLON.GUI.TouchHolographicButton(name);
         //button.text = title;
         button.onPointerUpObservable.add(theFunction);
-        near.addButton(button);
+        //near.addButton(button);
+        near.addControl(button);
         const text1 = new BABYLON.GUI.TextBlock();
         text1.text = title;
         text1.color = color;
