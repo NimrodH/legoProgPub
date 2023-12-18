@@ -160,14 +160,15 @@ function createNearMenu(mode) {
     //near.defaultBehavior.followBehaviorEnabled = false;///false
     near.columns = 5;
     near.margin = 0.2
-    near.position = new BABYLON.Vector3(0, 0.5, -3);///1, 6, 1);///0 0.3 -5
+    near.position = new BABYLON.Vector3(0, 0.3, -2);///1, 6, 1);///0 0.3 -5
     near.isVisible = false;
     near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     near.backPlateMargin = 0.01;
-    near.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);///0.5///0.1
+    near.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);///0.5///0.1
     
     function createTouchButton(name, title, color, theFunction) {
-        let button = new BABYLON.GUI.TouchHolographicButton(name);
+        //let button = new BABYLON.GUI.TouchHolographicButton(name);
+        let button = new BABYLON.GUI.HolographicButton(name);
         //button.text = title;
         button.onPointerUpObservable.add(theFunction);
         //near.addButton(button);
