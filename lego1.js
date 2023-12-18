@@ -158,8 +158,8 @@ function createNearMenu(mode) {
     manager.addControl(near);
     //let follower = near.defaultBehavior.followBehavior; //returns the followbehavior created by the 
     //near.defaultBehavior.followBehaviorEnabled = false;///false
-    near.columns = 5;
-    near.margin = 0.2
+    near.columns = 10;
+    near.margin = 0.1
     near.position = new BABYLON.Vector3(0, 2, 0);///1, 6, 1);///0 0.3 -5
     near.isVisible = false;
     //near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
