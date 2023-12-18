@@ -160,7 +160,7 @@ function createNearMenu(mode) {
     //near.defaultBehavior.followBehaviorEnabled = false;///false
     near.columns = 10;
     near.margin = 0.1
-    near.position = new BABYLON.Vector3(0, 2, 0);///1, 6, 1);///0 0.3 -5
+    near.position = new BABYLON.Vector3(0, 1.6, 0);///1, 6, 1);///0 0.3 -5
     near.isVisible = false;
     //near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     //near.orientation = 1;
