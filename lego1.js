@@ -165,7 +165,7 @@ function createNearMenu(mode) {
     //near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     //near.orientation = 1;
     near.backPlateMargin = 0.01;
-    near.scaling = new BABYLON.Vector3(0.25, 0.25, 0.25);///0.5///0.1
+    near.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);///0.5///0.1
     
     function createTouchButton(name, title, color, theFunction) {
         //let button = new BABYLON.GUI.TouchHolographicButton(name);
