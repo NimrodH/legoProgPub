@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -54,11 +53,11 @@
         const modelX = -1;//-15;
         const elementsMenuY = 0;//-1;///sphere position that is parent of all menu meshes.
         const scaleFactor = 0.25;
-        const scailingMenuModel = new BABYLON.Vector3(scaleFactor,scaleFactor,scaleFactor);
+        const scailingMenuModel = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
         var ground = null;
         var messageBox = null;
         var near = null;
-        
+        var camera = null;
 
         function getData(url = '', data = {}) {
             fullURL = url + '?' + new URLSearchParams(data)
@@ -95,7 +94,7 @@
         var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
 
         var sceneToRender = null;
-
+         
         /////////// CREATE SCENE ///////////////////////////
         var createScene = async function () {
             const scene = new BABYLON.Scene(engine);
@@ -106,7 +105,7 @@
 
             ///CAMERA///
             ///////const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 1, BABYLON.Vector3.Zero());///used only for taking pics
-            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);///used for VR
+            camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);///used for VR
             camera.setTarget(new BABYLON.Vector3(0, 4, -15));///used for VR
             camera.attachControl(canvas, true);///used always
             ///end camera///
@@ -144,13 +143,13 @@
 
             ///ELEMENTS MENU///
             elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0.01 });
-            
+
             elementsMenu.position.x = menuX;
             elementsMenu.position.y = elementsMenuY;///position of center of B1X3 TODO:we need to replace it with virtual mesh
             elementsMenu.metadata = {
-                labelObj: new FbMessages("תפריט אבני בניין",1,1,0)
+                labelObj: new FbMessages("תפריט אבני בניין", 1, 1, 0)
             }
-            
+
 
             const b1X5 = meshBlock(scene, 5);
             b1X5.setParent(elementsMenu);
@@ -158,15 +157,15 @@
             const b1X3 = meshBlock(scene, 3);
             b1X3.setParent(elementsMenu);
             b1X3.position.x = -1;
-            
+
             const b1X2 = meshBlock(scene, 2);
             b1X2.setParent(elementsMenu);
             b1X2.position.x = 3;
-            
+
             const c1 = meshWheel(scene, 1);
             c1.setParent(elementsMenu);
             c1.position.x = 6;
-            
+
             elementsMenu.scaling = scailingMenuModel;
             ///end ELEMENTS MENU///
 
@@ -176,18 +175,18 @@
 
             ///NEAR MENU///
             //near = createNearMenu();///called now from messages. implemented in lego 1
-             
+
             ///end NEAR MENU///
-/*////////////////////
-var newPlane = BABYLON.Mesh.CreatePlane("plane", 10);
-  //newPlane.position.y = 1;
-  newPlane.position.z = -25;
-        newPlane.position.y = 2;/////2
-        newPlane.position.x = 0;
-  var newADT = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(newPlane);
-  var newImage = new BABYLON.GUI.Image("erji", "textures/pink_py.png");
-  newADT.addControl(newImage);
-*////////////////////
+            /*////////////////////
+            var newPlane = BABYLON.Mesh.CreatePlane("plane", 10);
+              //newPlane.position.y = 1;
+              newPlane.position.z = -25;
+                    newPlane.position.y = 2;/////2
+                    newPlane.position.x = 0;
+              var newADT = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(newPlane);
+              var newImage = new BABYLON.GUI.Image("erji", "textures/pink_py.png");
+              newADT.addControl(newImage);
+            *////////////////////
             messageBox = new Messages();
 
             const xr = await scene.createDefaultXRExperienceAsync({
@@ -221,13 +220,40 @@ var newPlane = BABYLON.Mesh.CreatePlane("plane", 10);
             startRenderLoop(engine, canvas);
 
             window.scene = await createScene();
+
+            ///////////
+            // Assuming you have a WebXR experience set up
+            window.scene.onBeforeRenderObservable.add(() => {
+                const xrInput = scene.activeCamera.inputs.attached.webVR || scene.activeCamera.inputs.attached.webXR;
+
+                if (xrInput) {
+                    xrInput.controllers.forEach(controller => {
+                        if (controller.inputSource.gamepad) {
+                            const buttons = controller.inputSource.gamepad.buttons;
+
+                            // Check if button A is pressed
+                            if (buttons[0].pressed) {
+                                // React to button A being pressed
+                                console.log("Button A pressed");
+                                camera.position = new BABYLON.Vector3(0, 5, -7);
+                                // Add your action here
+                            }
+                        }
+                    });
+                }
+            });
+
+
+            /////////////            
+
         };
+
 
         initFunction().then(() => {
             sceneToRender = scene
         });
 
-         // Resize
+        // Resize
         window.addEventListener("resize", function () {
             engine.resize();
         });
