@@ -1,7 +1,11 @@
 "use strict"
 let currentSession = null;///will be created in messages
+let allowReport = false;
 
 async function saveUserAction(actionType, ActionDetails, actionId, block, model, step, time, user, group, part) {
+    if (!allowReport) {
+        return;
+    }
     let bodyData = {
         'ActionType': actionType,
         'ActionDetails': ActionDetails,
@@ -62,7 +66,8 @@ class Session {
 
     async initSession() {
         this.timer = new Timer()
-
+        allowReport = true;
+        console.log("allowReport set to true");
 
 
         //elementsMenu.metadata.labelObj =  new FbMessages("תפריט אבני בניין",0,1,0);    
@@ -229,6 +234,10 @@ class Session {
     }
 
     reportConnect(newElement) {
+        if (!allowReport) {
+            
+            return;
+        }
         //console.log("reportConnect");
         ///for each mode write the model/ write user time and error / create next automtic stage
         let isCorect = true;
@@ -356,6 +365,9 @@ class Session {
     }
 
     reportDelete() {
+        if (!allowReport) {
+            return;
+        }
         //console.log("reportDelete");
         ///it was worng so we still didnt incremnt connectedStage
         //console.log("this.connectedStage: " + this.connectedStage);

@@ -55,20 +55,24 @@ class Messages {
             if (currentSession) {
                 console.log(this.currentScreen)
             }
-            
+
             if (e.detail.action == "point" && e.detail.details == "on-menu" && e.detail.newElement.name == 'b5' && this.currentScreen == "selectBlock") {
                 this.nextButton.isEnabled = true;
             }
-            if (e.detail.action == "color" && e.detail.details == "red" &&this.currentScreen == "colorButtons") { //&& e.detail.details == "red"
+            if (e.detail.action == "color" && e.detail.details == "red" && this.currentScreen == "colorButtons") { //&& e.detail.details == "red"
                 this.nextButton.isEnabled = true;
             }
-            if (e.detail.action == "flip" && e.detail.details == "Y" && this.currentScreen == "rotateButtons") { 
+            if (e.detail.action == "flip" && e.detail.details == "Y" && this.currentScreen == "rotateButtons") {
                 this.nextButton.isEnabled = true;
             }
-            if (e.detail.action == "point" && e.detail.details == "on-model" && this.currentScreen == "modelScreen" && e.detail.newElement.metadata.modelTitle =="M1") { 
+            if (e.detail.action == "point" && e.detail.details == "on-model" && this.currentScreen == "modelScreen" && e.detail.newElement.metadata.modelTitle == "M1") {
+                this.nextButton.isEnabled = true;
+            }
+            if (e.detail.action == "connect") {
                 this.nextButton.isEnabled = true;
             }
             
+
         }
     }
     ///switch screens by currentScreen. convention:
@@ -110,11 +114,18 @@ class Messages {
                 break;
             //this.showConnect();
             case "rotateButtons":
-                currentSession.initSession();
+                //////currentSession.initSession();
+                currentModel = createModel("car", "M1", 5, 0, -5);//////
                 this.showModelScreen();
                 break;
             case "modelScreen":
                 //this.showGroupIstructions();
+                this.showTrainingScreen();
+                break;
+            case "trainingScreen":
+                //this.showGroupIstructions();
+                disposeModels();
+                currentSession.initSession();
                 this.showConnect();
                 this.currentScreen = "end";
                 break;
@@ -333,9 +344,48 @@ class Messages {
         this.nextButton.isEnabled = false;
     }
 
+    showModelScreen() {
+        this.currentScreen = "modelScreen";
+        this.nextButton.isEnabled = false;
+        /////
+        this.textField.text = "משמאלך בסיס למודל\n\nבחר/י את המודל\n M1 \nעל ידי לחיצה (הקלקה) על הבליטה שבו\n כך שהיא תיצבע בצבע צהוב\n\nלאחר מכן לחצ/י המשך";
+        /*
+        switch (currentSession.group) {
+            case "A":
+                this.textField.text = "מאחורי אבני הבניין ישנם שני בסיסים נוספים.\n\nנא בחר/י את המודל\n M1\n על ידי לחיצה על הבליטה והפיכתה לצבע צהוב\n\nלאחר מכן לחצ/י המשך";
+                break;
+            case "B":
+                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים\nשני מודלים נוספים יוצגו לפניך בהמשך\nבחר/י את המודל\nM1\nעל ידי לחיצה (הקלקה) על הבליטה שבו\n כך שהיא תיצבע בצבע צהוב\nלאחר מכן לחצ/י המשך";
+                break;
+            case "C":
+                this.textField.text = "משמאלך בסיס למודל\nשלושה מודלים נוספים יוצגו לפניך בהמשך\n\nבחר/י את המודל\n M1 \nעל ידי לחיצה (הקלקה) על הבליטה שבו\n כך שהיא תיצבע בצבע צהוב\n\nלאחר מכן לחצ/י המשך";
+                break;
+            default:
+                break;
+        }
+        */
+    }
+
+    showTrainingScreen() {
+        this.nextButton.isEnabled = false;
+        this.currentScreen = "trainingScreen";
+        this.textField.text = "לפני הוספת אבן למודל יש לבחור בליטה במודל\n ובליטה בחלק המתחבר כך שיצבעו בצבע צהוב\n לאחר מכן יש ללחוץ על כפתור [>>]. לאחר \nלחיצה על כפתור זה, האבן תוצמד למודל\n והנקודות שנבחרו יתלכדו\n\nלהסרת האבן האחרונה שנוספה למודל \nיש ללחוץ על כפתור [<<].כעת \nחבר/י מספר אבנים למודל על פי הנחיות המנחה"
+    }
     showConnect() {
         this.currentScreen = "connect";
-        this.textField.text = "לפני הוספת אבן למודל יש לבחור בליטה במודל\n ובליטה בחלק המתחבר כך שיצבעו בצבע צהוב\n לאחר מכן יש ללחוץ על כפתור [>>]. לאחר \nלחיצה על כפתור זה, האבן תוצמד למודל\n והנקודות שנבחרו יתלכדו\n\nלהסרת האבן האחרונה שנוספה למודל \nיש ללחוץ על כפתור [<<].כעת \nניתן להתחיל לבנות את המודלים בהתאם \nלהסברים המופיעים מעל אבני הבניין. בהצלחה"
+        switch (currentSession.group) {
+            case "A":
+                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים\nמאחורי אבני הבניין ישנם שני בסיסים נוספים\nרק לאחר קבלת הוראה מהמנחה ניתן \nלהתחיל לבנות את המודלים בהתאם\nלהסברים שיופיעו מעל אבני הבניין. בהצלחה";
+                break;
+            case "B":
+                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים\nשני מודלים נוספים יוצגו לפניך בהמשך\nרק לאחר קבלת הוראה מהמנחה ניתן \nלהתחיל לבנות את המודלים בהתאם\nלהסברים שיופיעו מעל אבני הבניין. בהצלחה";
+                break;
+            case "C":
+                this.textField.text = "משמאלך שוב הבסיס למודל\nשלושה מודלים נוספים יוצגו לפניך בהמשך\nרק לאחר קבלת הוראה מהמנחה ניתן \nלהתחיל לבנות את המודלים בהתאם\nלהסברים שיופיעו מעל אבני הבניין. בהצלחה";
+                break;
+            default:
+                break;
+        }
         this.nextButton.isEnabled = false;
         currentSession.part = "training"
     }
@@ -343,7 +393,7 @@ class Messages {
     showExamA() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examA";
-        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן\nמי שיסיים את הבנייה בשלב זה ובשלב\nהבא בזמן המהיר ביותר, יקבל בונוס\nנא לחצ/י המשך ואז הסתובב/י והתחל/י בבנייה" 
+        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן\nמי שיסיים את הבנייה בשלב זה ובשלב\nהבא בזמן המהיר ביותר, יקבל בונוס\nנא לחצ/י המשך ואז הסתובב/י והתחל/י בבנייה"
     }
 
     showExamB() {
@@ -358,23 +408,8 @@ class Messages {
         this.nextButton.isEnabled = false;
     }
 
-    showModelScreen() {
-        this.currentScreen = "modelScreen";
-        this.nextButton.isEnabled = false;
-        switch (currentSession.group) {
-            case "A":
-                this.textField.text = "מאחורי אבני הבניין ישנם שני בסיסים נוספים.\n\nנא בחר/י את המודל\n M1\n על ידי לחיצה על הבליטה והפיכתה לצבע צהוב\n\nלאחר מכן לחצ/י המשך";
-                break;
-            case "B":
-                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים\nשני מודלים נוספים יוצגו לפניך בהמשך\nבחר/י את המודל\nM1\nעל ידי לחיצה (הקלקה) על הבליטה שבו\n כך שהיא תיצבע בצבע צהוב\nלאחר מכן לחצ/י המשך";
-                break;
-            case "C":
-                this.textField.text = "משמאלך בסיס למודל\nשלושה מודלים נוספים יוצגו לפניך בהמשך\n\nבחר/י את המודל\n M1 \nעל ידי לחיצה (הקלקה) על הבליטה שבו\n כך שהיא תיצבע בצבע צהוב\n\nלאחר מכן לחצ/י המשך";
-                break;
-            default:
-                break;
-        }
-    }
+ 
+
 }
 
 class FbMessages {
@@ -537,7 +572,7 @@ class Timer {
     secToTimeString(sec) {
         const minutes = Math.floor(sec / 60);
         const remainingSeconds = sec % 60;
-        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`; 
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
     setY(newY) {
         this.plane.position.y = newY;

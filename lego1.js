@@ -269,7 +269,7 @@ function removeLastBlock() {
     }
     ///if user click another model before he click delete we dont want to delete from wrong 
     if (currentSession ) {
-        let modelLabel = currentSession.modelInConnectedStage[currentSession.connectedStage];
+        //let modelLabel = currentSession.modelInConnectedStage[currentSession.connectedStage];////?///
         
     }
 
@@ -545,6 +545,9 @@ function destSphereByOldData(blockNumber, destPoint) {
 ///called from connect and from reBuildModel
 function doConnect(newElement, newColor, selectedConnectionMame, toAnimate) {
     ////let globData = arrange4Connect(newElement, newColor, selectedConnectionMame)
+    const reportClickEvent = new CustomEvent("reportClick", {detail: { action: "connect", details:toAnimate, newElement: newElement }});
+    dispatchEvent(reportClickEvent);
+
     if (toAnimate) {
         connectionInProcess = true;
     }
@@ -732,7 +735,7 @@ function doClickConnection(event) {
         ///do not allow to change model if need to delete
         if (currentSession ) {
             let delButton = (near.children).filter(b => b.name == "delete")[0];
-            if (delButton.isVisible) {
+            if (delButton.isVisible && allowReport) {
                 console.log("we can't allow to change model [in doModelConnection] when need to delete");
                 currentSession.doFbMessage("יש למחוק קודם את האבן השגויה", null);
                 return;
