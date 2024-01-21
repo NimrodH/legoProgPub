@@ -58,9 +58,10 @@ class Session {
         //console.log(e);
         if (this.part !== "learning" && currentModel) {
             let modelMx = currentModel.metadata.modelTitle;
-            saveUserAction(e.detail.action, e.detail.details, this.actionId++, e.detail.newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
+            if (e.detail.action != "connect") { ///connect handle seperatly in 
+                saveUserAction(e.detail.action, e.detail.details, this.actionId++, e.detail.newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
+            } 
         }
-
         // Handle the event
     }
 
@@ -226,13 +227,14 @@ class Session {
     }
 
 ///to be removed when all wil became by events
+/*
     reportClick(action, details, newElement) {
         if (currentModel) {
             let modelMx = currentModel.metadata.modelTitle;
             saveUserAction(action, details, this.actionId++, newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
         }
     }
-
+*/
     reportConnect(newElement) {
         if (!allowReport) {
             
