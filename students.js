@@ -136,10 +136,10 @@ class Session {
                 camera.setTarget(new BABYLON.Vector3( -5, 0, -5));
 
                 elementsMenu.position.x = 100;
-                if (this.userId == "w1") {
-                    console.log("W1!!!");
-                    setWorld(this.userId);
-                }
+                //if (this.userId == "w1") {
+                //    console.log("W1!!!");
+                setWorld(this.userId);
+                //}
 
                 ////N1/5
                 break;
