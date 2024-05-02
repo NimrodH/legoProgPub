@@ -128,8 +128,13 @@ class Session {
                 ////N1/5
                 messageBox.hide();
                 elementsMenu.metadata.labelObj.hide();
-                camera.position = new BABYLON.Vector3( 5, 1.5, 0);///5, 2, -1
-                camera.setTarget(new BABYLON.Vector3( 5, 0, -5));
+                ///for M1 that is in 5, 0, -5
+                //camera.position = new BABYLON.Vector3( 5, 1.5, 0);
+                //camera.setTarget(new BABYLON.Vector3( 5, 0, -5));
+                ///
+                camera.position = new BABYLON.Vector3( -7, 1.5, 0);
+                camera.setTarget(new BABYLON.Vector3(  -5, 0, -5));
+
                 elementsMenu.position.x = 100;
                 if (this.userId == "w1") {
                     console.log("W1!!!");
