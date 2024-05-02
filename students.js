@@ -129,11 +129,14 @@ class Session {
                 messageBox.hide();
                 elementsMenu.metadata.labelObj.hide();
                 ///for M1 that is in 5, 0, -5
-                camera.position = new BABYLON.Vector3( 5, 1.5, 0);
-                camera.setTarget(new BABYLON.Vector3( 5, 0, -5));
+                //camera.position = new BABYLON.Vector3( 5, 1.5, 0);
+                //camera.setTarget(new BABYLON.Vector3( 5, 0, -5));
                 //////for M4 and M3 that is in -5, 0, -5
                 //camera.position = new BABYLON.Vector3( -7, 1.5, 0);
                 //camera.setTarget(new BABYLON.Vector3( -5, 0, -5));
+                //////for _____ that is in 5, 0, 5
+                camera.position = new BABYLON.Vector3( 7, 1.5, 10);
+                camera.setTarget(new BABYLON.Vector3( 5, 0, 5));
 
                 elementsMenu.position.x = 100;
                 //if (this.userId == "w1") {
