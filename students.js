@@ -125,6 +125,18 @@ class Session {
                 currentModel = createModel("dog", "M3", -5, 0, 5);
                 modelData = this.trainingModelData.filter(x => x.modelName == currentModel.metadata.modelName);
                 reBuildModel(modelData, modelData.length + 1);
+                ////N1/5
+                messageBox.hide();
+                elementsMenu.metadata.labelObj.hide();
+                camera.position = new BABYLON.Vector3( 5, 1.5, 0);///5, 2, -1
+                camera.setTarget(new BABYLON.Vector3( 5, 0, -5));
+                elementsMenu.position.x = 100;
+                if (this.userId == "w1") {
+                    console.log("W1!!!");
+                    setWorld(this.userId);
+                }
+
+                ////N1/5
                 break;
             case "E":
                 elementsMenu.metadata.labelObj.hide();

@@ -91,6 +91,7 @@ class Messages {
                 } else {
                     if (id == "takePics") {
                         this.showModel2takePics();
+                        //currentSession.initSession();
                     } else {
                         this.showEditGroup();
                     }
@@ -325,28 +326,29 @@ class Messages {
     showSelectBlock() {
         this.currentScreen = "selectBlock";
         this.textField.text = "ניתן לבחור את אחת מאבני הבניין שמאחוריך\nעל ידי לחיצה (הקלקה) על אחת מן הבליטות\n המופיעות על גבי האבן\n לחיצה תצבע את הבליטה בצבע צהוב\n\nנא בחר/י את האבן הארוכה ביותר\n ואז לחצ/י על המשך"
-        this.nextButton.isEnabled = false;//////to allow only after clicking
+        ////N1/5 this.nextButton.isEnabled = false;//////to allow only after clicking
     }
 
     showColorButtons() {
         this.currentScreen = "colorButtons";
-        near = createNearMenu("no record");
+        ////N1/5 near = createNearMenu("no record");
+        near = {}; ////N1/5 
         near.isVisible = true;
-        //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
+                //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
         this.textField.text = "מעל אבני הבניין, מופיע לוח עם כפתורים שונים\n שישמשו אותך לאורך הניסוי\n\nנא לחצ/י על כפתור\n לבחירת צבע אדום לאבן\n [red] "
-        this.nextButton.isEnabled = false;
+        ////N1/5 this.nextButton.isEnabled = false;
     }
 
     showRotateButtons() {
         this.currentScreen = "rotateButtons";
         this.textField.text = "\n לרשותך גם כפתורים לסיבוב האבן\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n סובב/י את האבן למצב עומד על ידי בחירת כפתור מתאים \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
         //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
-        this.nextButton.isEnabled = false;
+        ////N1/5 this.nextButton.isEnabled = false;
     }
 
     showModelScreen() {
         this.currentScreen = "modelScreen";
-        this.nextButton.isEnabled = false;
+        ////N1/5 this.nextButton.isEnabled = false;
         /////
         this.textField.text = "משמאלך בסיס למודל\n\nבחר/י את המודל\n M1 \nעל ידי לחיצה (הקלקה) על הבליטה שבו\n כך שהיא תיצבע בצבע צהוב\n\nלאחר מכן לחצ/י המשך";
         /*
@@ -367,7 +369,7 @@ class Messages {
     }
 
     showTrainingScreen() {
-        this.nextButton.isEnabled = false;
+        ////N1/5 this.nextButton.isEnabled = false;
         this.currentScreen = "trainingScreen";
         this.textField.text = "לפני הוספת אבן למודל יש לבחור בליטה במודל\n ובליטה בחלק המתחבר כך שיצבעו בצבע צהוב\n לאחר מכן יש ללחוץ על כפתור [>>]. לאחר \nלחיצה על כפתור זה, האבן תוצמד למודל\n והנקודות שנבחרו יתלכדו\n\nלהסרת האבן האחרונה שנוספה למודל \nיש ללחוץ על כפתור [<<].כעת \nחבר/י מספר אבנים למודל על פי הנחיות המנחה"
     }
@@ -386,7 +388,7 @@ class Messages {
             default:
                 break;
         }
-        this.nextButton.isEnabled = false;
+        ////N1/5 this.nextButton.isEnabled = false;
         currentSession.part = "training"
     }
 
@@ -408,7 +410,9 @@ class Messages {
         this.nextButton.isEnabled = false;
     }
 
- 
+    hide() {
+        this.plane.isVisible = false;
+    }
 
 }
 

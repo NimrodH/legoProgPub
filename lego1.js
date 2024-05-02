@@ -25,6 +25,7 @@ const colorsObj = [
 ];
 var scene = window.scene;
 var connectionInProcess = false;
+var near;
 function rotationVector2Name(vector) {
     if (vector.y > 0) { return "Y" };
     if (vector.z > 0) { return "Z" };
@@ -154,7 +155,8 @@ function setVisibleModel(theMesh, setItVisible) {
 function createNearMenu(mode) {
     const manager = new BABYLON.GUI.GUI3DManager(scene);
     //let near = new BABYLON.GUI.NearMenu("near");
-    let near = new BABYLON.GUI.PlanePanel();
+    ////N1/5 let near = new BABYLON.GUI.PlanePanel();
+    near = new BABYLON.GUI.PlanePanel();
     manager.addControl(near);
     //let follower = near.defaultBehavior.followBehavior; //returns the followbehavior created by the 
     //near.defaultBehavior.followBehaviorEnabled = false;///false
@@ -394,7 +396,7 @@ function setWorld(worldName) {
             changeSky("textures/blue", colorName2Vector("blue"));
             break;
     }
-    visibleModelsByWorld(currentWorld);///show/hide relevent models
+    ////N1/5 visibleModelsByWorld(currentWorld);///show/hide relevent models
 }
 
 function changeSky(skyPath, groundColorName) {
