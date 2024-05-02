@@ -133,7 +133,7 @@ class Session {
                 //camera.setTarget(new BABYLON.Vector3( 5, 0, -5));
                 ///
                 camera.position = new BABYLON.Vector3( -7, 1.5, 0);
-                camera.setTarget(new BABYLON.Vector3(  -5, 0, -5));
+                camera.setTarget(new BABYLON.Vector3( -5, 0, -5));
 
                 elementsMenu.position.x = 100;
                 if (this.userId == "w1") {
