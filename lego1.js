@@ -12,6 +12,7 @@ const rotationX = new BABYLON.Vector3(1.5708, 0, 0);
 const rotationY = new BABYLON.Vector3(0, 1.5708, 0);
 const rotationZ = new BABYLON.Vector3(0, 0, 1.5708);//Math.PI / 2 get diferent value in its last digit here and when called from mesh
 
+const enforceTraining = false//for debug use false. when true disable the next button till user do instruction
 
 
 const colorsObj = [
@@ -396,7 +397,7 @@ function setWorld(worldName) {
             changeSky("textures/blue", colorName2Vector("blue"));
             break;
     }
-    ////N1/5 visibleModelsByWorld(currentWorld);///show/hide relevent models
+    visibleModelsByWorld(currentWorld);///show/hide relevent models. was comment////N1/5 to get screenshots 
 }
 
 function changeSky(skyPath, groundColorName) {
