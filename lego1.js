@@ -814,6 +814,19 @@ function doModelConnection(connectionSphere) {
     }
 }
 
+function colorButtonsIsVisible(isVisinle)
+ {
+    let redButton = (near.children).filter(b => b.name == "red")[0];
+    let greenButton = (near.children).filter(b => b.name == "green")[0];
+    let blueButton = (near.children).filter(b => b.name == "blue")[0];
+    let blackButton = (near.children).filter(b => b.name == "black")[0];
+    redButton.isVisible = isVisinle;
+    greenButton.isVisible = isVisinle;
+    blueButton.isVisible = isVisinle;
+    blackButton.isVisible = isVisinle;
+}
+
+
 ///CREATE ELEMENTS (USED FOR MENU)
 ///add sphere to Block/wheel 
 function addMeshContactSphere(meshParent, meshPosition) {

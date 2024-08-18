@@ -26,14 +26,19 @@ async function saveUserAction(actionType, ActionDetails, actionId, block, model,
 
 class Session {
     userId;
+    myPairId;
     actionId = 0;/// running number for any action (click) the user done - to be used on the database table
     connectedStage = 0;///the order number of true conection action (no matter which model) in the session
     group;///each group handle differant no. of models when training
+    startAutoColor; ///we set it here in the constructor (even id number will start with auto)
+    currAutoColor; ///init as startAutoColor but can be changed if deal done 
+    pairName;///will be in format (830_831) the first user ID _ and one number above it (that must be the other user in the pair)
     currentModelInArray = 0;///index in array of shown model
     fb;///one line message to the larner. usage: //this.fb = new FbMessages("בוקר אביבי ושמח");
     trainingModelData;///array item per line. each line is object with the following props:
     part = "learning"///learning, training, examA, examB
     modelInConnectedStage;///array: item i represent  the i correct connection that done (in any models). the value is the title of the model to use for it
+    modelInConnectedStage2///array for the second halth of the mition. parts 22-44
     worldByModel;///model Mn will be in the world that is the value of item n
     timer;
     msgNextBtn; ///the next button we will get from messages when it creat this session
@@ -50,6 +55,28 @@ class Session {
 
     constructor(id) {
         this.userId = id;
+        var number;
+        var pairStart;
+        var pairEnd;
+        if (!(isNaN(id))) {
+            console.log('Input was not a number we will convert it');
+            number = parseInt(id, 10);
+        }
+        let isODD = (number % 2 === 0);
+        this.startAutoColor = (number % 2 === 0);///the user with even id number will start with auto color
+        if (isODD) {
+            pairEnd = (number + 1).toString();
+            pairStart = id;
+            this.startAutoColor = "YES";
+            this.myPairId = pairEnd;
+        } else {
+            pairStart = (number - 1).toString();
+            pairEnd = id;
+            this.startAutoColor = "NO";
+            this.myPairId = pairStart;
+        }
+        this.currAutoColor = this.startAutoColor;
+        this.pairName = pairStart + "_" + pairEnd;
         addEventListener("reportClick", this.handleReportClick.bind(this))
     }
 
@@ -60,7 +87,7 @@ class Session {
             let modelMx = currentModel.metadata.modelTitle;
             if (e.detail.action != "connect") { ///connect handle seperatly in 
                 saveUserAction(e.detail.action, e.detail.details, this.actionId++, e.detail.newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
-            } 
+            }
         }
         // Handle the event
     }
@@ -77,10 +104,11 @@ class Session {
         ///we use it when comparing its selection in reportConnect
         ///the value of item i is the model name to use in overall stage i in this session
         ///the next stage number of spsific model is kept on the model
-        if (this.userId == 666) {
+        if (this.userId == 666 || this.userId == 667) {
             this.modelInConnectedStage = ["M1", "M1", "M4"];
         } else {
-            this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
+            this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1"]///, ["M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
+            this.modelInConnectedStage2 = ["M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
         }
         //this.worldByModel; ///model Mn will be in the world that is the value of item n
         let m1;
@@ -135,8 +163,8 @@ class Session {
                 //camera.position = new BABYLON.Vector3( -7, 1.5, 0);
                 //camera.setTarget(new BABYLON.Vector3( -5, 0, -5));
                 //////for _____ that is in 5, 0, 5
-                camera.position = new BABYLON.Vector3( 12, 1.0, 1);
-                camera.setTarget(new BABYLON.Vector3( 5, 0, 5));
+                camera.position = new BABYLON.Vector3(12, 1.0, 1);
+                camera.setTarget(new BABYLON.Vector3(5, 0, 5));
 
                 elementsMenu.position.x = 100;
                 //if (this.userId == "w1") {
@@ -171,8 +199,37 @@ class Session {
             this.doFbMessage(msg, pic);
             */
             this.runPart();
+            this.initUser();
+            colorButtonsIsVisible((this.currAutoColor == "NO"))///if it is "YES we get false = hide
         }
+        
     }
+
+    async  initUser() {
+        ///add record for user including its connectionId
+        const initialData = {
+            action: 'initUser',
+            userId: this.userId,
+            group: this.group,
+            startAutoColor: this.startAutoColor,
+            pairName: this.pairName,
+            myPairId: this.myPairId
+        };
+        socket.send(JSON.stringify(initialData));
+    }
+
+    async updateBuySellTime(secondsOffered) {
+        ///add buy\sell time to record for existing user 
+        console.log("in updateTime")
+        const initialData = {
+            action: 'offerSeconds',
+            userId: this.userId,
+            secondsOffered: secondsOffered,
+            startAutoColor: this.startAutoColor
+        };
+        socket.send(JSON.stringify(initialData));
+    }
+
 
     runPart() {
         let delButton = (near.children).filter(b => b.name == "delete")[0];
@@ -186,17 +243,30 @@ class Session {
         let pic = "textures/" + mName + "1.JPG";
         //console.log("pic: " + pic);
         this.doFbMessage(msg, pic);
+
+        ///autocolor
+        if (this.currAutoColor) {
+            ///TODO: we need to get the block type and color of the next model & step
+            ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
+            const nexstDataLine = this.trainingModelData.filter(el => (el.step == 1) && (el.modelName == mName))[0];
+            ///TODO: then to set the rlevant block in the menu to this color
+            ///          we have nestDataLine.type, nestDataLine.color
+            let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
+            let newColor = colorName2Vector(nexstDataLine.color);
+            menuBlock.material.diffuseColor = newColor;
+        }
     }
 
     nextStage() {
         console.log("nextStage");
         ///TODO: delete old models (they alreadtbuilt now)
-        disposeModels();
+        //disposeModels();
         ///TODO: must add "this.part" to the users records on the data base
         switch (this.part) {
             case "training":
-                this.doFbMessage("סיימת את שלב האימון. התבונן/י במסך הירוק מאחוריך להוראות");
-                messageBox.showExamA();///when he will click there "next" we will call initExamA
+                this.doFbMessage("סיימת את שלב ראשון. התבונן/י במסך הירוק מאחוריך להוראות");
+                ///messageBox.showExamA();///when he will click there "next" we will call initExamA
+                messageBox.showPart2();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam
                 break;
             case "examA":
                 this.timer.stopTimer();
@@ -215,11 +285,15 @@ class Session {
         }
     }
 
+    updateDB(theTime) {
+
+    }
+
     initExamA() {
         ///we will use the same this.trainingModelData because we use same models as in training
         this.part = "examA";
         let m1 = createModel("car", "M1", 5, 0, -5);
-        if (this.userId == 666) {
+        if (this.userId == 666 || this.userId == 667) {
             this.modelInConnectedStage = ["M1", "M1"];
         } else {
             this.modelInConnectedStage = ["M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1", "M1"];
@@ -235,7 +309,7 @@ class Session {
         this.part = "examB";
         let m2 = createModel("chair", "M2", -5, 0, -5);
         let m3 = createModel("dog", "M3", 5, 0, -5);
-        if (this.userId == 666) {
+        if (this.userId == 666 || this.userId == 667) {
             this.modelInConnectedStage = ["M3", "M3"];
         } else {
             this.modelInConnectedStage = ["M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M3", "M3", "M2", "M2", "M2"];
@@ -246,18 +320,18 @@ class Session {
         this.runPart();
     }
 
-///to be removed when all wil became by events
-/*
-    reportClick(action, details, newElement) {
-        if (currentModel) {
-            let modelMx = currentModel.metadata.modelTitle;
-            saveUserAction(action, details, this.actionId++, newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
+    ///to be removed when all wil became by events
+    /*
+        reportClick(action, details, newElement) {
+            if (currentModel) {
+                let modelMx = currentModel.metadata.modelTitle;
+                saveUserAction(action, details, this.actionId++, newElement.name, modelMx, currentModel.metadata.numOfBlocks + 1, Date.now(), this.userId, this.group, this.part)
+            }
         }
-    }
-*/
+    */
     reportConnect(newElement) {
         if (!allowReport) {
-            
+
             return;
         }
         //console.log("reportConnect");
@@ -340,6 +414,7 @@ class Session {
             this.connectedStage++;
 
             if (this.group == "A" || this.group == "B" || this.group == "C") {
+                let mName;
                 let modelMx = currentModel.metadata.modelTitle;
                 saveUserAction("connect", "CORRECT", this.actionId++, typeName, modelMx, step, Date.now(), this.userId, this.group, this.part);
                 //console.log("this.connectedStage: " + this.connectedStage);
@@ -352,7 +427,7 @@ class Session {
                 if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
                     //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
                     let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
-                    let mName = currentModel.metadata.modelName;
+                    mName = currentModel.metadata.modelName;
                     this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
                 } else {
                     let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
@@ -365,8 +440,19 @@ class Session {
                     //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
 
                     let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
-                    let mName = currentModel.metadata.modelName;
+                    mName = currentModel.metadata.modelName;
                     this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
+                }
+                ///TODO: if we in autoColor
+                if (this.currAutoColor) {
+                    ///TODO: we need to get the block type and color of the next model & step
+                    ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
+                    const nexstDataLine = this.trainingModelData.filter(el => (el.step == step + 1) && (el.modelName == mName))[0];
+                    ///TODO: then to set the rlevant block in the menu to this color
+                    ///          we have nestDataLine.type, nestDataLine.color
+                    let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
+                    let newColor = colorName2Vector(nexstDataLine.color);
+                    menuBlock.material.diffuseColor = newColor;
                 }
             } else {///E
                 let msg = this.doFbMessage((step + 1));

@@ -71,7 +71,7 @@ class Messages {
             if (e.detail.action == "connect") {
                 this.nextButton.isEnabled = true;
             }
-            
+
 
         }
     }
@@ -129,6 +129,12 @@ class Messages {
                 currentSession.initSession();
                 this.showConnect();
                 this.currentScreen = "end";
+                break;
+            case "part2":
+                let buyTime = this.donePart2();///donePart2 will send user answer to database but 
+                ///we don't know yet the answer (session will triger it later) so we dont call any screen
+                ////was currentSession.initExamA();
+                this.nextButton.isEnabled = false;
                 break;
             case "examA":
                 //this.showConnect();
@@ -329,7 +335,7 @@ class Messages {
         if (enforceTraining) {
             this.nextButton.isEnabled = false;//////to allow only after clicking
         }
-        
+
     }
 
     showColorButtons() {
@@ -337,7 +343,7 @@ class Messages {
         near = createNearMenu("no record"); //was ////N1/5 for screenshots
         //near = {}; ////N1/5 (=without comment)
         near.isVisible = true;
-                //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
+        //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים\n ניתן לגרור אותו לכל מקום במסך\n\nהכפתורים יפעלו על האבן שנבחרה:\n\n [ red ] כפתורים לבחירת צבע לדוגמא \n  אבן שוכבת אופקית [ / ]\nאבן עומדת [ | ]\nאבן שוכבת אנכית [ -- ] "
         this.textField.text = "מעל אבני הבניין, מופיע לוח עם כפתורים שונים\n שישמשו אותך לאורך הניסוי\n\nנא לחצ/י על כפתור\n לבחירת צבע אדום לאבן\n [red] "
         if (enforceTraining) {
             this.nextButton.isEnabled = false;
@@ -405,6 +411,50 @@ class Messages {
         currentSession.part = "training"
     }
 
+    showPart2() {
+        this.currentScreen = "part2";
+        this.textField.text = "רשום בכמה דקות תהיה מוכן לקנות את היכולת הזאת"
+
+        this.nextButton.isEnabled = false;
+
+        let inputTextArea = new BABYLON.GUI.InputText('time4Buy', "");
+        inputTextArea.height = "40px";
+        inputTextArea.color = "white";
+        inputTextArea.fontSize = 48;
+        inputTextArea.top = "-120px";
+        inputTextArea.height = "70px";
+        inputTextArea.width = "200px";
+        inputTextArea.onTextChangedObservable.add(() => this.nextButton.isEnabled = true);
+        this.advancedTexture.addControl(inputTextArea);
+
+        const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
+        keyboard.addKeysRow(["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\u2190"]);
+        keyboard.connect(inputTextArea);
+        keyboard.top = "-10px";
+        keyboard.scaleY = 2;
+        keyboard.scaleX = 2;
+        //keyboard.left = "10px";
+        this.advancedTexture.addControl(keyboard);
+
+    }
+
+    donePart2() {
+        let buyInputfield = this.advancedTexture.getControlByName("time4Buy");
+        let buyTime = buyInputfield.text;
+        console.log("part2 buyTime: " + buyTime);
+        ////was curentSession = new ASession(id)...
+        ///TODO: call curentSession to add answer (buyTime) to database 
+        ///      curentSession will call the next stage when it will get trigger from database
+        currentSession.updateBuySellTime(buyTime);
+        this.advancedTexture.removeControl(buyInputfield);
+        buyInputfield.dispose();
+        let buyKeyboard = this.advancedTexture.getControlByName("vkb");
+        this.advancedTexture.removeControl(buyKeyboard);
+        buyKeyboard.dispose();
+
+        this.textField.text = "Please wait to the answer from your partner";
+        return buyTime;
+    }
     showExamA() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examA";
@@ -418,6 +468,8 @@ class Messages {
     }
 
     showLastScreen() {
+        //this.currentScreen.
+        disconnectSocket();
         this.currentScreen = "lastScreen";
         this.textField.text = "תודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
         this.nextButton.isEnabled = false;

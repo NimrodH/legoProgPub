@@ -59,6 +59,13 @@
         var near = null;
         var camera = null;
 
+        const socketUrl = 'wss://8j2tm9v9f1.execute-api.us-east-1.amazonaws.com/production/';
+        var socket = new WebSocket(socketUrl);
+        var userId = null;
+        var userGroup = null;
+
+
+
         function getData(url = '', data = {}) {
             fullURL = url + '?' + new URLSearchParams(data)
             return fetch(fullURL)
@@ -79,6 +86,31 @@
                 .then(response => response.json())
                 .then(data2 => console.log("postData done"))
                 .catch(error => console.error("postData error: " + error));
+        }
+
+
+        socket.onopen = function(event) {
+            console.log('Connected to WebSocket Server');
+            // Send initial data to the server when a new connection is established
+        };
+
+        socket.onmessage = function(event) {
+        console.log('Message returns from server:', event.data);
+        };
+
+        socket.onclose = function(event) {
+        console.log('Disconnected from WebSocket Server');
+        };
+
+        socket.onerror = function(error) {
+        console.error('WebSocket Error:', error);
+        };
+        
+        // Function to disconnect from the WebSocket server
+        function disconnectSocket() {
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.close();
+        }
         }
 
         var canvas = document.getElementById("renderCanvas");
