@@ -63,7 +63,7 @@ class Session {
             number = parseInt(id, 10);
         }
         let isODD = (number % 2 === 0);
-        this.startAutoColor = (number % 2 === 0);///the user with even id number will start with auto color
+        ///the user with even id number will start with auto color
         if (isODD) {
             pairEnd = (number + 1).toString();
             pairStart = id;
@@ -245,7 +245,7 @@ class Session {
         this.doFbMessage(msg, pic);
 
         ///autocolor
-        if (this.currAutoColor) {
+        if (this.currAutoColor == "YES") {
             ///TODO: we need to get the block type and color of the next model & step
             ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
             const nexstDataLine = this.trainingModelData.filter(el => (el.step == 1) && (el.modelName == mName))[0];
@@ -444,7 +444,7 @@ class Session {
                     this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
                 }
                 ///TODO: if we in autoColor
-                if (this.currAutoColor) {
+                if (this.currAutoColor == "YES") {
                     ///TODO: we need to get the block type and color of the next model & step
                     ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
                     const nexstDataLine = this.trainingModelData.filter(el => (el.step == step + 1) && (el.modelName == mName))[0];
