@@ -95,8 +95,13 @@
         };
 
         socket.onmessage = function(event) {
-        console.log('Message returns from server:', event.data);
-        console.log("event.data.ansStatus: " + JSON.parse(event.data).ansStatus);///wait/continue
+            console.log('Message returns from server:', event.data);
+            console.log("event.data.ansStatus: " + JSON.parse(event.data).ansStatus);///missing/wait/continue
+            let eventData = JSON.parse(event.data)
+            if (JSON.parse(event.data).ansStatus == "continue") {
+
+                messageBox.showStartPart2(eventData.isdealDone, mySecondsOffered, pairSecondsOffered);
+            }
         };
 
         socket.onclose = function(event) {

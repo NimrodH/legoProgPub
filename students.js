@@ -42,6 +42,7 @@ class Session {
     worldByModel;///model Mn will be in the world that is the value of item n
     timer;
     msgNextBtn; ///the next button we will get from messages when it creat this session
+    endPart1 = false;
     //timer;//
     /*
     srcPoint
@@ -264,9 +265,11 @@ class Session {
         ///TODO: must add "this.part" to the users records on the data base
         switch (this.part) {
             case "training":
+                this.timer.stopTimer();
                 this.doFbMessage("סיימת את שלב ראשון. התבונן/י במסך הירוק מאחוריך להוראות");
                 ///messageBox.showExamA();///when he will click there "next" we will call initExamA
                 messageBox.showPart2();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam
+                elementsMenu.isVisible = false;
                 break;
             case "examA":
                 this.timer.stopTimer();
@@ -287,6 +290,13 @@ class Session {
 
     updateDB(theTime) {
 
+    }
+
+    initPart2() {
+        console.log("in initPart2")
+        this.timer.startTimer();
+        elementsMenu.isVisible = true;
+        this.reportConnect()
     }
 
     initExamA() {
@@ -409,51 +419,29 @@ class Session {
             wrongItems.push("model");
         }
         if (isCorect) {
+           
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
             this.connectedStage++;
+            if (this.connectedStage == 22) {
+                if ( !this.endPart1) {
+                    ///we here with step 22 for the first time
+                    this.endPart1 = true;
+                    this.connectedStage--;
+                } else {
+                    ///we here with step 22 for the second time
+                    this.endPart1 = false;
+                }
+            }
 
             if (this.group == "A" || this.group == "B" || this.group == "C") {
-                let mName;
+                //let mName;
                 let modelMx = currentModel.metadata.modelTitle;
                 saveUserAction("connect", "CORRECT", this.actionId++, typeName, modelMx, step, Date.now(), this.userId, this.group, this.part);
                 //console.log("this.connectedStage: " + this.connectedStage);
                 //console.log(this.modelInConnectedStage.length + 1);
-                if (this.connectedStage == this.modelInConnectedStage.length) {
-                    ///we have to start the exam stage
-                    this.nextStage();
-                    return;
-                }
-                if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
-                    //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
-                    let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
-                    mName = currentModel.metadata.modelName;
-                    this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
-                } else {
-                    let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
-                    currentModel = getModel(nextModelLabel);///connectedStage = 0
-                    let nextWorld = this.worldByModel[nextModelLabel];
-                    if (nextWorld !== currentWorld) {
-                        setWorld(nextWorld);///will update currentWorld in the function
-                    }
-                    step = currentModel.metadata.numOfBlocks;
-                    //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
-
-                    let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
-                    mName = currentModel.metadata.modelName;
-                    this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
-                }
-                ///TODO: if we in autoColor
-                if (this.currAutoColor == "YES") {
-                    ///TODO: we need to get the block type and color of the next model & step
-                    ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
-                    const nexstDataLine = this.trainingModelData.filter(el => (el.step == step + 1) && (el.modelName == mName))[0];
-                    ///TODO: then to set the rlevant block in the menu to this color
-                    ///          we have nestDataLine.type, nestDataLine.color
-                    let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
-                    let newColor = colorName2Vector(nexstDataLine.color);
-                    menuBlock.material.diffuseColor = newColor;
-                }
+                this.askToDoNextBlock(step); ///moved to function
+ 
             } else {///E
                 let msg = this.doFbMessage((step + 1));
             }
@@ -469,6 +457,45 @@ class Session {
             let delButton = (near.children).filter(b => b.name == "delete")[0];
             addButton.isVisible = false;
             delButton.isVisible = true;
+        }
+    }
+
+    askToDoNextBlock(step) {
+        if (this.connectedStage == this.modelInConnectedStage.length || this.endPart1) {
+            ///we have to start the exam stage
+            this.endPart1 = false;
+            this.nextStage();
+            return;
+        }
+        if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
+            //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
+            let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
+            let mName = currentModel.metadata.modelName;
+            this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
+        } else {
+            let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
+            currentModel = getModel(nextModelLabel);///connectedStage = 0
+            let nextWorld = this.worldByModel[nextModelLabel];
+            if (nextWorld !== currentWorld) {
+                setWorld(nextWorld);///will update currentWorld in the function
+            }
+            step = currentModel.metadata.numOfBlocks;
+            //this.doFbMessage(nextModelLabel + ":במודל  " + (step + 1) + " יפה מאד. בצע שלב");
+
+            let msg = "Very good. Please do step " + (step + 1) + " in Model " + nextModelLabel + " (located in other place)"
+            mName = currentModel.metadata.modelName;
+            this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
+        }
+        ///TODO: if we in autoColor
+        if (this.currAutoColor == "YES") {
+            ///TODO: we need to get the block type and color of the next model & step
+            ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
+            const nexstDataLine = this.trainingModelData.filter(el => (el.step == step + 1) && (el.modelName == mName))[0];
+            ///TODO: then to set the rlevant block in the menu to this color
+            ///          we have nestDataLine.type, nestDataLine.color
+            let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
+            let newColor = colorName2Vector(nexstDataLine.color);
+            menuBlock.material.diffuseColor = newColor;
         }
     }
 

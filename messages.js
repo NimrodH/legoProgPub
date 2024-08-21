@@ -136,6 +136,9 @@ class Messages {
                 ////was currentSession.initExamA();
                 this.nextButton.isEnabled = false;
                 break;
+            case "startPart2":
+                currentSession.initPart2();
+            break;
             case "examA":
                 //this.showConnect();
                 currentSession.initExamA();
@@ -455,6 +458,27 @@ class Messages {
         this.textField.text = "Please wait to the answer from your partner";
         return buyTime;
     }
+
+    showStartPart2(isDealdone, mySecondsOffered, pairSecondsOffered) { ///called when server  send "continue"
+        console.log("in showStartPart2. isDealdone= " + isDealdone + " startAutoColor: " + currentSession.startAutoColor);
+        let theMessage;
+        let timeAdded = Math.min(mySecondsOffered, pairSecondsOffered);
+        onsole.log("mySecondsOffered: " + mySecondsOffered + " + pairSecondsOffered" + "timeAdded: " + timeAdded);
+        if (isDealdone) {///מחליפים
+            if (startAutoColor == "YES") {///מוכר
+                theMessage = "העסקה התבצעה, ירדו לך " + "\n" + timeAdded + "\n" + "דקות מזמן המבחן לצורך חישוב הבונוס. " + "\n" + "כעת ימשיכו 22 הצעדים הבאים"
+                currentSession.currAutoColor = "NO";
+            } else { ///קונה
+                theMessage =  "העסקה התבצעה, התווספו לך " + "\n" + timeAdded + "\n" + "דקות לזמן המבחן לצורך חישוב הבונוס" + "\n" + "כעת ימשיכו 22 הצעדים הבאים"
+                currentSession.currAutoColor = "YES";
+            }
+        } else {///לא מחליפים
+            theMessage = "העסקה לא התבצעה. כעת ימשיכו 22 הצעדים הבאים" 
+        }
+        this.nextButton.isEnabled = true;
+        this.currentScreen = "startPart2"; 
+    }
+
     showExamA() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examA";
