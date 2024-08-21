@@ -96,6 +96,7 @@
 
         socket.onmessage = function(event) {
         console.log('Message returns from server:', event.data);
+        console.log("event.data.ansStatus: " + JSON.parse(event.data).ansStatus);///wait/continue
         };
 
         socket.onclose = function(event) {
