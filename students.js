@@ -266,7 +266,7 @@ class Session {
         switch (this.part) {
             case "training":
                 this.timer.stopTimer();
-                this.doFbMessage("סיימת את שלב ראשון. התבונן/י במסך הירוק מאחוריך להוראות");
+                this.doFbMessage("סיימתג את שלב ראשון. התבונן/י במסך הירוק מאחוריך להוראות");
                 ///messageBox.showExamA();///when he will click there "next" we will call initExamA
                 messageBox.showPart2();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam
                 elementsMenu.isVisible = false;
