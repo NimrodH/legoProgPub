@@ -100,7 +100,7 @@
             let eventData = JSON.parse(event.data)
             if (JSON.parse(event.data).ansStatus == "continue") {
 
-                messageBox.showStartPart2(eventData.isdealDone, mySecondsOffered, pairSecondsOffered);
+                messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
             }
         };
 

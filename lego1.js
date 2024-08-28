@@ -26,7 +26,7 @@ const colorsObj = [
 ];
 var scene = window.scene;
 var connectionInProcess = false;
-var near;
+/////var near;
 function rotationVector2Name(vector) {
     if (vector.y > 0) { return "Y" };
     if (vector.z > 0) { return "Z" };
@@ -164,7 +164,7 @@ function createNearMenu(mode) {
     near.columns = 10;
     near.margin = 0.1
     near.position = new BABYLON.Vector3(0, 1.6, 0);///1, 6, 1);///0 0.3 -5
-    near.isVisible = false;
+    /////near.isVisible = false;
     //near.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     //near.orientation = 1;
     near.backPlateMargin = 0.01;
@@ -826,6 +826,18 @@ function colorButtonsIsVisible(isVisinle)
     blackButton.isVisible = isVisinle;
 }
 
+function allButtonsIsVisible(isVisinle)
+ {
+    colorButtonsIsVisible(isVisinle)
+    let xButton = (near.children).filter(b => b.name == "flipX")[0];
+    let yButton = (near.children).filter(b => b.name == "flipY")[0];
+    let zButton = (near.children).filter(b => b.name == "flipZ")[0];
+    let connectButton = (near.children).filter(b => b.name == "connect")[0];
+    xButton.isVisible = isVisinle;
+    yButton.isVisible = isVisinle;
+    zButton.isVisible = isVisinle;
+    connectButton.isVisible = isVisinle;
+}
 
 ///CREATE ELEMENTS (USED FOR MENU)
 ///add sphere to Block/wheel 

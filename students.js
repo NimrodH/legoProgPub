@@ -106,10 +106,10 @@ class Session {
         ///the value of item i is the model name to use in overall stage i in this session
         ///the next stage number of spsific model is kept on the model
         if (this.userId == 666 || this.userId == 667) {
-            this.modelInConnectedStage = ["M1", "M1", "M4"];
+            this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2"];
         } else {
-            this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1"]///, ["M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
-            this.modelInConnectedStage2 = ["M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
+            this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
+            //this.modelInConnectedStage2 = ["M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
         }
         //this.worldByModel; ///model Mn will be in the world that is the value of item n
         let m1;
@@ -266,10 +266,11 @@ class Session {
         switch (this.part) {
             case "training":
                 this.timer.stopTimer();
-                this.doFbMessage("סיימתג את שלב ראשון. התבונן/י במסך הירוק מאחוריך להוראות");
+                this.doFbMessage("סיימת את השלב הראשון. התבונן/י במסך הירוק מאחוריך להוראות");
                 ///messageBox.showExamA();///when he will click there "next" we will call initExamA
-                messageBox.showPart2();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam
+                messageBox.showPart2_1();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam
                 elementsMenu.isVisible = false;
+                allButtonsIsVisible(false);
                 break;
             case "examA":
                 this.timer.stopTimer();
@@ -280,7 +281,7 @@ class Session {
                 this.timer.stopTimer();
                 this.doFbMessage("סיימת את הניסוי. התבונן/י במסך הירוק מאחוריך לפרידה");
                 messageBox.showLastScreen();
-                near.isVisible = false;
+                allButtonsIsVisible(false);
                 break;
 
             default:
@@ -297,6 +298,8 @@ class Session {
         this.timer.startTimer();
         elementsMenu.isVisible = true;
         this.reportConnect()
+        this.part = "examB";///the last part = part2 in our case now
+        //this.askToDoNextBlock(3);
     }
 
     initExamA() {
@@ -341,8 +344,20 @@ class Session {
     */
     reportConnect(newElement) {
         if (!allowReport) {
-
             return;
+        }
+        console.log("this.endPart1: "+ this.endPart1);
+        if(this.endPart1) {
+            ///we here with step 22 for the second time so its time to continue with stage 2
+            ///we already set this.currAutoColor in showStartPart2()
+            this.endPart1 = false;
+            ////
+            allButtonsIsVisible(true);
+            colorButtonsIsVisible(this.currAutoColor == "NO")///
+            ///
+            this.askToDoNextBlock(this.modelInConnectedStage.length/2-1);
+
+            return
         }
         //console.log("reportConnect");
         ///for each mode write the model/ write user time and error / create next automtic stage
@@ -423,15 +438,14 @@ class Session {
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
             this.connectedStage++;
-            if (this.connectedStage == 22) {
+            console.log("connectedStage in is corect: "+ this.connectedStage);
+            if (this.connectedStage == this.modelInConnectedStage.length/2) {
                 if ( !this.endPart1) {
                     ///we here with step 22 for the first time
                     this.endPart1 = true;
+                    console.log("this.endPart1 set to true")
                     this.connectedStage--;
-                } else {
-                    ///we here with step 22 for the second time
-                    this.endPart1 = false;
-                }
+                } 
             }
 
             if (this.group == "A" || this.group == "B" || this.group == "C") {
@@ -461,16 +475,17 @@ class Session {
     }
 
     askToDoNextBlock(step) {
+        let mName;
         if (this.connectedStage == this.modelInConnectedStage.length || this.endPart1) {
             ///we have to start the exam stage
-            this.endPart1 = false;
+            //this.endPart1 = false;will be done in reportConnect after ussing it
             this.nextStage();
             return;
         }
         if (this.modelInConnectedStage[this.connectedStage] == currentModel.metadata.modelTitle) {
             //this.doFbMessage(currentModel.metadata.modelTitle + ":במודל זה " + (step + 1) + " יפה מאד. המשך לשלב");
             let msg = "Very good. Please do next step " + (step + 1) + " in this Model (" + currentModel.metadata.modelTitle + ")";
-            let mName = currentModel.metadata.modelName;
+            mName = currentModel.metadata.modelName;
             this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
         } else {
             let nextModelLabel = this.modelInConnectedStage[this.connectedStage];
@@ -488,11 +503,13 @@ class Session {
         }
         ///TODO: if we in autoColor
         if (this.currAutoColor == "YES") {
+            console.log("step: " +step + " mName: " + mName)
             ///TODO: we need to get the block type and color of the next model & step
             ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
-            const nexstDataLine = this.trainingModelData.filter(el => (el.step == step + 1) && (el.modelName == mName))[0];
+            const nexstDataLine = this.trainingModelData.filter(el => (el.step == step +1) && (el.modelName == mName))[0];
             ///TODO: then to set the rlevant block in the menu to this color
             ///          we have nestDataLine.type, nestDataLine.color
+            console.log("step: " + step + "mName: " + mName)
             let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
             let newColor = colorName2Vector(nexstDataLine.color);
             menuBlock.material.diffuseColor = newColor;
