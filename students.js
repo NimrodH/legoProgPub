@@ -43,6 +43,8 @@ class Session {
     timer;
     msgNextBtn; ///the next button we will get from messages when it creat this session
     endPart1 = false;
+    lastStepInPart1;
+    timeOfPart1;
     //timer;//
     /*
     srcPoint
@@ -221,13 +223,36 @@ class Session {
 
     async updateBuySellTime(secondsOffered) {
         ///add buy\sell time to record for existing user 
-        console.log("in updateTime")
+        console.log("in updateBuySellTime")
         const initialData = {
             action: 'offerSeconds',
             userId: this.userId,
             secondsOffered: secondsOffered,
             startAutoColor: this.startAutoColor
         };
+        socket.send(JSON.stringify(initialData));
+    }
+
+    async updatePartTime(partTime, whichPart) {
+        ///add buy\sell time to record for existing user 
+        console.log("in updatePartTime")
+        let initialData;
+        if(whichPart == "1") {
+            initialData = {
+                action: 'updateTime',
+                userId: this.userId,
+                part1Time: partTime,
+                startAutoColor: this.startAutoColor
+            }
+        } else {
+            initialData = {
+                action: 'updateTime',
+                userId: this.userId,
+                part2Time: partTime,
+                startAutoColor: this.startAutoColor
+            };
+        }
+
         socket.send(JSON.stringify(initialData));
     }
 
@@ -266,6 +291,8 @@ class Session {
         switch (this.part) {
             case "training":
                 this.timer.stopTimer();
+                let timeOfpart1 = this.timer.secToTimeString(this.timer.currTime);
+                this.updatePartTime(timeOfpart1, "1")
                 this.doFbMessage("סיימת את השלב הראשון. התבונן/י במסך הירוק מאחוריך להוראות");
                 ///messageBox.showExamA();///when he will click there "next" we will call initExamA
                 messageBox.showPart2_1();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam
@@ -279,6 +306,9 @@ class Session {
                 break;
             case "examB":
                 this.timer.stopTimer();
+                let timeOfpart2 = this.timer.secToTimeString(this.timer.currTime);
+                this.updatePartTime(timeOfpart2, "2")
+
                 this.doFbMessage("סיימת את הניסוי. התבונן/י במסך הירוק מאחוריך לפרידה");
                 messageBox.showLastScreen();
                 allButtonsIsVisible(false);
@@ -296,6 +326,7 @@ class Session {
     initPart2() {
         console.log("in initPart2")
         this.timer.startTimer();
+        console.log("timer start from initPart2")
         elementsMenu.isVisible = true;
         this.reportConnect()
         this.part = "examB";///the last part = part2 in our case now
@@ -355,8 +386,7 @@ class Session {
             allButtonsIsVisible(true);
             colorButtonsIsVisible(this.currAutoColor == "NO")///
             ///
-            this.askToDoNextBlock(this.modelInConnectedStage.length/2-1);
-
+            this.askToDoNextBlock(this.lastStepInPart1);             
             return
         }
         //console.log("reportConnect");
@@ -366,6 +396,9 @@ class Session {
         let step = newElement.metadata.blockNum;
         let destModelLabel = this.modelInConnectedStage[this.connectedStage];
         let destModel = getModel(destModelLabel);
+        if (this.connectedStage == 1) {
+            this.timer.startTimer();
+        }
         //console.log("step: " + step);
         ////const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
         const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == destModel.metadata.modelName))[0];
@@ -440,11 +473,15 @@ class Session {
             this.connectedStage++;
             console.log("connectedStage in is corect: "+ this.connectedStage);
             if (this.connectedStage == this.modelInConnectedStage.length/2) {
-                if ( !this.endPart1) {
+                if ( !this.endPart1) {///can be canceled we have return when endPart1 is false
                     ///we here with step 22 for the first time
                     this.endPart1 = true;
                     console.log("this.endPart1 set to true")
-                    this.connectedStage--;
+                    //this.connectedStage--;//this will set .endPart1 to true again next time
+                    ///not needed becaus we did connectedStage work?
+                    this.lastStepInPart1 = step;
+                    //this.timer.stopTimer(); ///done in: nextStage -->  case "training"
+                    console.log("timer stopped from reportConnect")
                 } 
             }
 

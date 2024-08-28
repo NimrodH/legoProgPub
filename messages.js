@@ -451,8 +451,9 @@ class Messages {
 
     showPart2_1() {
         this.currentScreen = "part2_1";
+        let timeOfpart1 = currentSession.timer.secToTimeString(currentSession.timer.currTime);
         if (currentSession.startAutoColor == "NO") { ///קונה
-            const firstLine = " עד כה השקעתה " + String(77) +  " דקות בבנית 22 צעדים "
+            const firstLine = " עד כה השקעתה " + timeOfpart1 +  " דקות בבנית 22 צעדים "
             const initialText = firstLine + "\n" +
             "לבן זוג שלך לניסוי המערכת בחרה בכל צעד את הצבע לחלק באופן" + "\n" +
             "אוטומטי. כעת אתה עובר לשלב המבחן, שכולל גם הוא 22 צעדים" + "\n" +
@@ -466,7 +467,7 @@ class Messages {
     
             this.textField.text = initialText;
         } else {/// מוכר
-            const firstLine = " עד כה השקעתה " + String(77) +  " דקות בבנית 22 צעדים "
+            const firstLine = " עד כה השקעתה " + timeOfpart1 +  " דקות בבנית 22 צעדים "
             const initialText = "\n" + firstLine + "\n" +
             "לבן זוג שלך לניסוי לא הייתה את היכולת שהמערכת בוחרת את הצבע" + "\n" +
             "לחלק באופן אוטומטי ועליו היה לבחור את הצבע לחלק בכל צעד. כעת" + "\n" +
