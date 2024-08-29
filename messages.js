@@ -566,7 +566,7 @@ class Messages {
         this.advancedTexture.removeControl(buyKeyboard);
         buyKeyboard.dispose();
 
-        this.textField.text = "Please wait to the answer from your partner";
+        this.textField.text = "יש להמתין לתשובת בן הזוג";
         return buyTime;
     }
 
