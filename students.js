@@ -109,6 +109,7 @@ class Session {
         ///the next stage number of spsific model is kept on the model
         if (this.userId == 666 || this.userId == 667) {
             this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2"];
+            enforceTraining = true;///true = don't enable next button  each traning stage till done
         } else {
             this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
             //this.modelInConnectedStage2 = ["M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
