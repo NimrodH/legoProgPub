@@ -570,6 +570,8 @@ class Messages {
         return buyTime;
     }
 
+
+
     showStartPart2(isDealdone, mySecondsOffered, pairSecondsOffered) { ///called when server  send "continue"
         console.log("in showStartPart2. isDealdone= " + isDealdone + " startAutoColor: " + currentSession.startAutoColor);
         let theMessage;

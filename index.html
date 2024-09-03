@@ -95,12 +95,14 @@
         };
 
         socket.onmessage = function(event) {
-            console.log('Message returns from server:', event.data);
+            console.log('Message returns from server1:', event.data);
             console.log("event.data.ansStatus: " + JSON.parse(event.data).ansStatus);///missing/wait/continue
             let eventData = JSON.parse(event.data)
             if (JSON.parse(event.data).ansStatus == "continue") {
-
                 messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
+            }
+            if (JSON.parse(event.data).ansStatus == "missing") {
+                messageBox.textField.text = "ERROR - other user is not connected";
             }
         };
 

@@ -65,6 +65,7 @@ class Session {
             console.log('Input was not a number we will convert it');
             number = parseInt(id, 10);
         }
+        
         let isODD = (number % 2 === 0);
         ///the user with even id number will start with auto color
         if (isODD) {
@@ -77,6 +78,9 @@ class Session {
             pairEnd = id;
             this.startAutoColor = "NO";
             this.myPairId = pairStart;
+        }
+        if((this.userId == "666") || (this.userId == "667")) {
+            enforceTraining = false;
         }
         this.currAutoColor = this.startAutoColor;
         this.pairName = pairStart + "_" + pairEnd;
@@ -109,7 +113,6 @@ class Session {
         ///the next stage number of spsific model is kept on the model
         if (this.userId == 666 || this.userId == 667) {
             this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2"];
-            enforceTraining = true;///true = don't enable next button  each traning stage till done
         } else {
             this.modelInConnectedStage = ["M1", "M1", "M4", "M4", "M4", "M2", "M2", "M2", "M2", "M3", "M3", "M3", "M2", "M2", "M2", "M2", "M4", "M4", "M4", "M4", "M1", "M1", "M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
             //this.modelInConnectedStage2 = ["M1", "M3", "M3", "M3", "M1", "M1", "M1", "M4", "M4", "M4", "M4", "M2", "M2", "M2", "M3", "M3", "M3", "M1", "M1", "M1", "M3", "M3"];
