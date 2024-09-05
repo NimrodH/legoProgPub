@@ -47,7 +47,7 @@ class Messages {
         text1.top = "-300px";
         text1.height = "660px"
         this.advancedTexture.addControl(text1);
-
+        ///listen to this event and set the nextButton state
         addEventListener("reportClick", this.handleReportClick.bind(this))
         //this.advancedTexture.focusedControl = inputTextArea;///create bug
         //plane.isVisible = true;
@@ -292,8 +292,9 @@ class Messages {
         let idInputfield = this.advancedTexture.getControlByName("id");
         let theId = idInputfield.text;
 
-        currentModel = createModel(theId, " ", -3, 0, 0);
+        currentModel = createModel(theId, " ", -5, 0, 0);//-3
         rebuild4pics();
+        currentModel.metadata.labelObj.hide();
         this.advancedTexture.removeControl(idInputfield);
         idInputfield.dispose();
         let idKeyboard = this.advancedTexture.getControlByName("vkb");
