@@ -239,9 +239,10 @@ class Session {
 
     async updatePartTime(partTime, whichPart) {
         ///add buy\sell time to record for existing user 
-        console.log("in updatePartTime")
+        console.log("in updatePartTime whichPart: " + whichPart)
         let initialData;
         if(whichPart == "1") {
+            console.log("in whichPart == 1")
             initialData = {
                 action: 'updateTime',
                 userId: this.userId,
@@ -249,6 +250,7 @@ class Session {
                 startAutoColor: this.startAutoColor
             }
         } else {
+            console.log("in whichPart == 2")
             initialData = {
                 action: 'updateTime',
                 userId: this.userId,
@@ -316,6 +318,7 @@ class Session {
                 this.doFbMessage("סיימת את הניסוי. התבונן/י במסך הירוק מאחוריך לפרידה");
                 messageBox.showLastScreen();
                 allButtonsIsVisible(false);
+                
                 break;
 
             default:
@@ -597,6 +600,13 @@ class Session {
         }
         this.fb = new FbMessages(message, 0, 2.5, 2, pic)
     }
+
+    endSession() {
+        ///created in index at socket.onopen
+        disconnectSocket();
+        clearInterval(pingInterval);
+    }
+    
 }
 //this.fb = new FbMessages("בוקר אביבי ושמח");
 //let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);

@@ -63,7 +63,7 @@
         var socket = new WebSocket(socketUrl);
         var userId = null;
         var userGroup = null;
-
+        var pingInterval
 
 
         function getData(url = '', data = {}) {
@@ -91,7 +91,13 @@
 
         socket.onopen = function(event) {
             console.log('Connected to WebSocket Server');
-            // Send initial data to the server when a new connection is established
+            /// to remain the connection live more thaen 10 munutes
+            /// will be cleared on students at endSession
+            pingInterval = setInterval(() => {
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({ type: 'ping' }));
+                }
+            }, 300000); // Send a ping every 5 minutes (300 seconds)
         };
 
         socket.onmessage = function(event) {

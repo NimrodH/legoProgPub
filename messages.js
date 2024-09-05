@@ -615,10 +615,11 @@ class Messages {
     showLastScreen() {
         //this.currentScreen.
         //disconnectSocket();
-        socket.discco
+        socket.disconnectSocket();
         this.currentScreen = "lastScreen";
         this.textField.text = "תודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
         this.nextButton.isEnabled = false;
+        currentSession.endSession();
     }
 
     hide() {
