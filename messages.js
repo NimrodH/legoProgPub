@@ -35,7 +35,7 @@ class Messages {
         this.advancedTexture.addControl(this.nextButton);
 
 
-        const initialText = "במסך זה, יופיעו הנחיות" + "\n" + "\n" + 
+        const initialText = "במסך זה יופיעו הנחיות" + "\n" + "\n" + 
         "מאחוריך מספר לבנים לבניית המודל" + "\n" + "\n" + 
         "[אחרי שראינו את האבנים יש להקליק על כפתור [המשך" + "\n" +
          "הקלקה פרושה להצביע עם הקרן על הכפתור וללחוץ על ההדק";
