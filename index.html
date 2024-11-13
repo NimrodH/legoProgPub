@@ -64,7 +64,7 @@
         var userId = null;
         var userGroup = null;
         var pingInterval
-
+///////////////////// get/post to html api gateway - used only for steps on DB /////////////////////
 
         function getData(url = '', data = {}) {
             fullURL = url + '?' + new URLSearchParams(data)
@@ -88,7 +88,7 @@
                 .catch(error => console.error("postData error: " + error));
         }
 
-
+/////////////////////SOCKET //////////////////////////
         socket.onopen = function(event) {
             console.log('Connected to WebSocket Server');
             /// to remain the connection live more thaen 10 munutes
@@ -126,7 +126,7 @@
             socket.close();
         }
         }
-
+/////////////////////// VR stansdart issues ///////////////
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -181,8 +181,8 @@
             ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);///not needed
             ground.checkCollisions = true;///not needed
             ground.material = new BABYLON.GridMaterial("mat", scene);
-            ground.material.lineColor = colorName2Vector("base");
-            //ground.material.Color3 = new BABYLON.Color3(1, 0, 0);
+            ground.material.lineColor = colorName2Vector("base");///base
+            ground.material.mainColor = new BABYLON.Color3(0.2, 0.2, 0.2);///13/11/2024
             ///end GROUND///
 
             var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
@@ -267,8 +267,7 @@
             startRenderLoop(engine, canvas);
 
             window.scene = await createScene();
-
-            ///////////
+             ///////////
             // Assuming you have a WebXR experience set up
             window.scene.onBeforeRenderObservable.add(() => {
                 const xrInput = scene.activeCamera.inputs.attached.webVR || scene.activeCamera.inputs.attached.webXR;

@@ -7,6 +7,10 @@ const blueColor = new BABYLON.Color3(0, 0, 1);
 const redColor = new BABYLON.Color3(1, 0, 0);
 const blackColor = new BABYLON.Color3(0, 0, 0);
 const greenColor = new BABYLON.Color3(0, 1, 0);
+const world1Color = new BABYLON.Color3(0.2, 0.2, 0.2);;
+const world2Color = new BABYLON.Color3(0, 0.2, 0);
+const world3Color = new BABYLON.Color3(0, 0, 0.2);
+const world4Color = new BABYLON.Color3(0.2, 0, 0);
 const rotationO = new BABYLON.Vector3(0, 0, 0);//only for model
 const rotationX = new BABYLON.Vector3(1.5708, 0, 0);
 const rotationY = new BABYLON.Vector3(0, 1.5708, 0);
@@ -378,24 +382,25 @@ function visibleModelsByWorld(world) {
 function setWorld(worldName) {
     switch (worldName) {
         case "W1":
-            changeSky("textures/pink", colorName2Vector("base"));
+            //changeSky("textures/pink", colorName2Vector("base"));
+            changeSky("textures/pink", world1Color);
             currentWorld = "W1";
             break;
         case "W2":
-            changeSky("textures/green", colorName2Vector("green"));
+            changeSky("textures/green", world2Color);
             currentWorld = "W2"
             break;
         case "W3":
-            changeSky("textures/blue", colorName2Vector("blue"));
+            changeSky("textures/blue", world3Color);
             currentWorld = "W3"
             break;
         case "W4":
-            changeSky("textures/red", colorName2Vector("red"));
+            changeSky("textures/red", world4Color);
             currentWorld = "W4"
             break;
 
         default:
-            changeSky("textures/blue", colorName2Vector("blue"));
+            changeSky("textures/blue", world3Color);
             break;
     }
     visibleModelsByWorld(currentWorld);///show/hide relevent models. was comment////N1/5 to get screenshots 
@@ -414,7 +419,8 @@ function changeSky(skyPath, groundColorName) {
     //skyboxMaterial.dispose();
     // Dispose of skybox mesh
     //skybox.dispose();
-    ground.material.lineColor = groundColorName;
+    ///ground.material.lineColor = groundColorName;
+    ground.material.mainColor = groundColorName;
 }
 
 
