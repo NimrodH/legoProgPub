@@ -93,6 +93,14 @@ function getModel(modelLabel) {
 /////////////////// GAME FUNCTIONS //////////////////////////
 
 ///move block and connect it to model
+/**
+ * Animates the movement of a box from an old position to a new position within a scene.
+ *
+ * @param {BABYLON.Mesh} box - The box to animate.
+ * @param {BABYLON.Vector3} oldPos - The starting position of the box.
+ * @param {BABYLON.Vector3} newPos - The ending position of the box.
+ * @param {BABYLON.Scene} scene - The scene in which the animation takes place.
+ */
 function animate(box, oldPos, newPos, scene) {
     const frameRate = 40;
     const xSlide = new BABYLON.Animation("xSlide", "position", frameRate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
@@ -122,6 +130,12 @@ function animate(box, oldPos, newPos, scene) {
     }
 }
 
+/**
+ * Adjusts the position of the given element to ensure it is set on the ground.
+ *
+ * @param {Object} element - The element to be positioned on the ground. It is expected to have methods `refreshBoundingInfo`, `computeWorldMatrix`, and `getHierarchyBoundingVectors`, as well as a `position` property.
+ * @param {number} factor - The scale factor of the parent of the element. The element itself is assumed to have a scale of 1 within its parent.
+ */
 function setOnGround(element, factor) {
     ///factor is the scale of parent of element while elemnt scale in it is 1 (we need worldScale of element)
     element.refreshBoundingInfo();

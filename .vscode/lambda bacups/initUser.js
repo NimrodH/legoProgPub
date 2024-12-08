@@ -12,6 +12,7 @@ exports.handler = async (event) => {
     const startAutoColor = body.startAutoColor;
     const group = body.group;
     const pairName = body.pairName;
+    const myPairId = body.myPairId;
 
     const putParams = {
         TableName: CONNECTIONS_TABLE,
@@ -20,16 +21,17 @@ exports.handler = async (event) => {
             ID: userId,
             startAutoColor: startAutoColor,
             group: group,
-            pairName: pairName
+            pairName: pairName,
+            myPairId: myPairId
         },
     };
+    console.log("connectionId in initUser: " + connectionId);
 
     try {
+        //await dynamoDb.put(putParams).promise();
         await dynamoDb.put(putParams).promise();
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Data received and stored successfully' }),
-        };
+        /*
+        */
     } catch (error) {
         console.error('Error saving data:', error);
         return {
@@ -37,4 +39,11 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: 'Failed to save data' }),
         };
     }
+    
+    return {
+        
+        statusCode: 200,
+        body: JSON.stringify({ message: 'Data received and stored successfully' }),
+    };
+
 };

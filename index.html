@@ -89,13 +89,15 @@
         }
 
 /////////////////////SOCKET //////////////////////////
+        // This function is called when the WebSocket connection is successfully established.
+        // It logs a message to the console and sets up a ping interval to keep the connection alive.
         socket.onopen = function(event) {
             console.log('Connected to WebSocket Server');
             /// to remain the connection live more thaen 10 munutes
             /// will be cleared on students at endSession
             pingInterval = setInterval(() => {
                 if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(JSON.stringify({ type: 'ping' }));
+                    socket.send(JSON.stringify({ action: 'ping' }));
                 }
             }, 300000); // Send a ping every 5 minutes (300 seconds)
         };
