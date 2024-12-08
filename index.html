@@ -96,8 +96,10 @@
             /// to remain the connection live more thaen 10 munutes
             /// will be cleared on students at endSession
             pingInterval = setInterval(() => {
+                console.log('Sending ping to WebSocket Server');
                 if (socket.readyState === WebSocket.OPEN) {
                     socket.send(JSON.stringify({ action: 'ping' }));
+                    console.log('Ping sent to WebSocket Server');
                 }
             }, 300000); // Send a ping every 5 minutes (300 seconds)
         };
