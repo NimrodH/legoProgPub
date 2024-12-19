@@ -297,7 +297,9 @@ class Session {
         switch (this.part) {
             case "training":
                 this.timer.stopTimer();
-                let timeOfpart1 = this.timer.secToTimeString(this.timer.currTime);
+                let timeToShow = Math.floor((this.timer.currTime - this.timer.firstTime) / 1000);
+                console.log("timer stopped from nextStage" + timeToShow)
+                let timeOfpart1 = this.timer.secToTimeString(timeToShow);///was wrong currTime
                 this.updatePartTime(timeOfpart1, "1")
                 this.doFbMessage("סיימת את השלב הראשון. התבונן/י במסך הירוק מאחוריך להוראות");
                 ///messageBox.showExamA();///when he will click there "next" we will call initExamA
@@ -312,7 +314,8 @@ class Session {
                 break;
             case "examB":
                 this.timer.stopTimer();
-                let timeOfpart2 = this.timer.secToTimeString(this.timer.currTime);
+                timeToShow = Math.floor((this.timer.currTime - this.timer.firstTime) / 1000);
+                let timeOfpart2 = this.timer.secToTimeString(timeToShow);
                 this.updatePartTime(timeOfpart2, "2")
 
                 this.doFbMessage("סיימת את הניסוי. התבונן/י במסך הירוק מאחוריך לפרידה");

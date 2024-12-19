@@ -452,7 +452,10 @@ class Messages {
 
     showPart2_1() {
         this.currentScreen = "part2_1";
-        let timeOfpart1 = currentSession.timer.secToTimeString(currentSession.timer.currTime);
+        let timeToShow = Math.floor((currentSession.timer.currTime - currentSession.timer.firstTime) / 1000);
+        console.log("currentSession.timer.firstTime: " + currentSession.timer.firstTime);
+        console.log("timeToShow: " + timeToShow);
+        let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
         if (currentSession.startAutoColor == "NO") { ///קונה
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
             const initialText = firstLine + "\n" +
@@ -781,11 +784,11 @@ class Timer {
          if (this.currGap > 0 ) {
             let timeToShow = Math.floor((this.currTime - this.firstTime) / 1000);
             this.lastTime = this.currTime;
-            this.currGap = this
+            //this.currGap = this
             let newText = this.secToTimeString(timeToShow);
             const ctx = this.dynamicTexture.getContext();
             ctx.clearRect(0, 0, this.textureSize.width, this.textureSize.height);
-             this.dynamicTexture.drawText(newText, null, null, this.font, "#000000", "#ffffff", true);
+            this.dynamicTexture.drawText(newText, null, null, this.font, "#000000", "#ffffff", true);
             this.dynamicTexture.update();
         }
     }
