@@ -1,3 +1,4 @@
+///called by route: $Connect
 var AWS = require('aws-sdk');
 
 

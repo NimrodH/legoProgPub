@@ -1,3 +1,4 @@
+'use strict'
 console.log('Loading function');
 var AWS = require('aws-sdk');
 var dclient = new AWS.DynamoDB.DocumentClient();

@@ -2,13 +2,17 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // for running from the laptop with the path   "C:\\Users\\Nimrod\\OneDrive\\develope\\lego2023\\legoProgPub\\index.html"
+    //"C:\\Users\\User\\OneDrive\\develope\\lego2023\\legoProgPub\\index.html"
+    //C:\\develope_1\\legoProgPub\\index.html
+         
     "version": "0.2.0",
     "configurations": [
         {
             "type": "chrome",
             "request": "launch",
             "name": "Open index.html",
-            "file": "C:\\Users\\user\\OneDrive\\develope\\lego2023\\legoProgPub\\index.html"
+            "file": "C:\\Users\\User\\OneDrive\\develope\\lego2023\\legoProgPub\\index.html"
         }
     ]
 }

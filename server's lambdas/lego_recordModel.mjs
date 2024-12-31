@@ -1,3 +1,4 @@
+//caled by: getway logorest /model POST 
 'use strict'
 console.log('Loading function');
 var AWS = require('aws-sdk');

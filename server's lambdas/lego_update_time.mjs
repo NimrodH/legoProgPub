@@ -1,4 +1,5 @@
-////update time in tabel lego_Couples using environment variabe
+//called by route: updateTime
+////we will change it to update time in tabel lego_Couples using environment variabe
 console.log('Loading function');
 var AWS = require('aws-sdk');
 var dynamoDb = new AWS.DynamoDB.DocumentClient();

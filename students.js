@@ -57,6 +57,12 @@ class Session {
     */
 
     constructor(id) {
+        const firstChar = id.charAt(0);
+        if (firstChar == "9") { 
+            id = id.slice(1);
+            reRunningSession = true;
+            enforceTraining = false;
+        }
         this.userId = id;
         var number;
         var pairStart;
@@ -85,6 +91,17 @@ class Session {
         this.currAutoColor = this.startAutoColor;
         this.pairName = pairStart + "_" + pairEnd;
         addEventListener("reportClick", this.handleReportClick.bind(this))
+        if (reRunningSession) {
+            //let temp = this.reInitUser()
+            console.log("in session constructor reRunningSession")
+            this.reInitUser()
+            /*
+            .then((received) => {
+                console.log("reInitUser done")
+                console.log(JSON.parse(received.body).dealDone)
+            });
+            */
+        }
     }
 
     handleReportClick = (e) => {
@@ -225,6 +242,39 @@ class Session {
         socket.send(JSON.stringify(initialData));
     }
 
+    async reInitUser() {
+        /// we will reag data not by the socket but by the getData to succedd when socket is not connected 
+        /// then we will call showStartPart2 with the data we get for sDealdone, mySecondsOffered, pairSecondsOffered
+
+        let userDataObj = await getData(coupleURL, { 'userID': this.userId, 'startAutoColor' : this.startAutoColor});///
+        let userData = JSON.parse(userDataObj.body);
+        this.timeOfpart1 = userData.part1Time;
+        if(userData.secondsOffered) {
+            ///TODO: send by socket the new connectionId and set it on the server
+
+            await changeConnectionId();/// in index.html
+            this.updateBuySellTime(userData.secondsOffered);
+            //messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, userData.pairSecondsOffered);///if moveed initUser will overight the secondsOffered & pairSecondsOffered & timeOfpart1
+           
+        }
+        return userData;
+/*
+        let pairStartAutoColor;        
+        if (this.startAutoColor == "YES") {
+            pairStartAutoColor = "NO";        
+        } else {   
+            pairStartAutoColor = "YES";
+        }
+        let pairDataObj = await getData(coupleURL, { 'userID': this.myPairId, 'startAutoColor' : pairStartAutoColor});///
+        let pairData = pairDataObj.body;///
+        console.log("pairData: " + pairData);
+
+        messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, pairData.secondsOffered);
+        console.log("pairStartAutoColor: " + pairDataObj.body.secondsOffered);
+       
+        */
+    }
+
     async updateBuySellTime(secondsOffered) {
         ///add buy\sell time to record for existing user 
         console.log("in updateBuySellTime")
@@ -232,9 +282,11 @@ class Session {
             action: 'offerSeconds',
             userId: this.userId,
             secondsOffered: secondsOffered,
-            startAutoColor: this.startAutoColor
+            startAutoColor: this.startAutoColor,
+            part1Time: this.timeOfpart1
         };
         socket.send(JSON.stringify(initialData));
+        ///we update again in case the previous was not accepted
     }
 
     async updatePartTime(partTime, whichPart) {
@@ -258,7 +310,7 @@ class Session {
                 startAutoColor: this.startAutoColor
             };
         }
-
+        
         socket.send(JSON.stringify(initialData));
     }
 
@@ -298,9 +350,9 @@ class Session {
             case "training":
                 this.timer.stopTimer();
                 let timeToShow = Math.floor((this.timer.currTime - this.timer.firstTime) / 1000);
-                console.log("timer stopped from nextStage" + timeToShow)
-                let timeOfpart1 = this.timer.secToTimeString(timeToShow);///was wrong currTime
-                this.updatePartTime(timeOfpart1, "1")
+                //console.log("timer stopped from nextStage" + timeToShow)
+                this.timeOfpart1 = this.timer.secToTimeString(timeToShow);///was wrong currTime
+                this.updatePartTime(this.timeOfpart1, "1");
                 this.doFbMessage("סיימת את השלב הראשון. התבונן/י במסך הירוק מאחוריך להוראות");
                 ///messageBox.showExamA();///when he will click there "next" we will call initExamA
                 messageBox.showPart2_1();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam

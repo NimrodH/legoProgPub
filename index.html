@@ -64,10 +64,12 @@
         var userId = null;
         var userGroup = null;
         var pingInterval
-///////////////////// get/post to html api gateway - used only for steps on DB /////////////////////
+        var originalSocket = true;
+        ///////////////////// get/post to html api gateway - used only for steps on DB /////////////////////
 
         function getData(url = '', data = {}) {
             fullURL = url + '?' + new URLSearchParams(data)
+            //console.log("getData fullURL: " + fullURL)
             return fetch(fullURL)
                 .then((data1) => { return data1.json() });
         }
@@ -88,49 +90,124 @@
                 .catch(error => console.error("postData error: " + error));
         }
 
-/////////////////////SOCKET //////////////////////////
+        /////////////////////SOCKET //////////////////////////
         // This function is called when the WebSocket connection is successfully established.
         // It logs a message to the console and sets up a ping interval to keep the connection alive.
-        socket.onopen = function(event) {
-            console.log('Connected to WebSocket Server');
-            /// to remain the connection live more thaen 10 munutes
-            /// will be cleared on students at endSession
-            pingInterval = setInterval(() => {
-                console.log('Sending ping to WebSocket Server');
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(JSON.stringify({ action: 'ping' }));
-                    console.log('Ping sent to WebSocket Server');
-                }
-            }, 300000); // Send a ping every 5 minutes (300 seconds)
+        socket.onopen = function (event) {
+            if (originalSocket) {
+                console.log('onOpen: Connected to WebSocket Server in the original socket');
+                let originalSocket = false;
+                /// to remain the connection live more thaen 10 munutes
+                /// will be cleared on students at endSession
+                pingInterval = setInterval(() => {
+                    console.log('setInterval: Sending ping to WebSocket Server');
+                    if (socket && (socket.readyState === WebSocket.OPEN)) {
+                        socket.send(JSON.stringify({ action: 'ping' }));
+                        console.log('setInterval: Ping sent to WebSocket Server');
+                    } else {
+                        console.error('setInterval: WebSocket is not open. Unable to send ping');
+                        reconnect2server();
+                    }
+                }, 300000); // Send a ping every 5 minutes (300 seconds)
+            } else {
+                ///for now we are not here ever - we shuld be in  new socket
+                console.log('onOpen: Connected to WebSocket Server in the new socket');
+                changeConnectionId();
+            }
         };
 
-        socket.onmessage = function(event) {
-            console.log('Message returns from server1:', event.data);
-            console.log("event.data.ansStatus: " + JSON.parse(event.data).ansStatus);///missing/wait/continue
+        socket.onmessage = function (event) {
+            console.log('onmessage: Message returns from server1:', event.data);
+            let status = JSON.parse(event.data).ansStatus;
+            console.log("event.data.ansStatus: " + status);///missing/wait/continue
+
             let eventData = JSON.parse(event.data)
-            if (JSON.parse(event.data).ansStatus == "continue") {
-                messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
-            }
-            if (JSON.parse(event.data).ansStatus == "missing") {
-                messageBox.textField.text = "ERROR - other user is not connected";
+
+            switch (status) {
+                case "missing":
+                    console
+                    messageBox.textField.text = "onmessage: ERROR - other user is not connected";
+                    break;
+                case "continue":
+                    console.log('onmessage: Received continue from WebSocket Server: ' + eventData.connection_id);
+                    //messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
+                    break;
+                case "pong":
+
+                    console.log('onmessage: Received pong from WebSocket Server: ' + eventData.connection_id);
+                    break;
+                case "reconnected":
+                    console.log('onmessage: Received reconnect from WebSocket Server: ' + eventData.connection_id);
+                    break;
+                default:
+                    console.log("onmessage: ERROR - unknown status: " + status);
             }
         };
 
-        socket.onclose = function(event) {
-        console.log('Disconnected from WebSocket Server');
+        socket.onclose = function (event) {
+            console.log('onclose: Disconnected from WebSocket Server');
+            socket = null;
         };
 
-        socket.onerror = function(error) {
-        console.error('WebSocket Error:', error);
+        socket.onerror = function (error) {
+            console.error('onError: WebSocket Error:', error);
         };
-        
+
         // Function to disconnect from the WebSocket server
         function disconnectSocket() {
-        if (socket.readyState === WebSocket.OPEN) {
-            socket.close();
+            console.log('Disconnecting from WebSocket Server if open');
+            if (socket.readyState === WebSocket.OPEN) {
+                console.log('Closing WebSocket connection');
+                socket.close();
+            }
         }
+
+        // Function to reconnect to the WebSocket server
+        async function reconnect2server() {
+            console.log('reconnect2server: Reconnecting to WebSocket Server');
+
+            if (socket !== null) {
+                if (socket.readyState === WebSocket.OPEN) {
+                    console.log('reconnect2server: WebSocket is not closed . no need to reconnect')
+                } else {
+                    console.log('reconnect2server: WebSocket is not null. why it is not open? using it to reconnect');
+                    socket = await new WebSocket(socketUrl);
+                    ////////
+                    clearInterval(pingInterval);
+                    pingInterval = setInterval(() => {
+                        console.log('setInterval: Sending ping to WebSocket Server');
+                        if (socket && (socket.readyState === WebSocket.OPEN)) {
+                            socket.send(JSON.stringify({ action: 'ping' }));
+                            console.log('setInterval: Ping sent to WebSocket Server');
+                        } else {
+                            console.error('setInterval: WebSocket is not open. Unable to send ping');
+                            reconnect2server();
+                        }
+                        ////////
+                    }, 300000); // Send a ping every 5 minutes (300 seconds)
+
+
+                }
+            } else {
+                console.error('reconnect2server: WebSocket is null. opennibg new one');
+                socket = await new WebSocket(socketUrl);
+                console.log('reconnect2server: after new WebSocket');
+            }
         }
-/////////////////////// VR stansdart issues ///////////////
+
+        ///function to call the socket with the user connection info
+        async function changeConnectionId() {
+            console.log('Sending updateUserConnectionInfo to WebSocket Server: ', currentSession.userId);
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ action: 'updateUserConnectionInfo', userId: currentSession.userId, startAutoColor: currentSession.startAutoColor }));
+                console.log(' updateUserConnectionInfo sent to WebSocket Server');
+            } else {
+                console.error('WebSocket is not open. Unable to send updateUserConnectionInfo');
+                // reconnect2server()
+            }
+        }
+
+        /////////////////////// VR stansdart issues + messageBox = new Messages();///////////////
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -144,7 +221,7 @@
         var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
 
         var sceneToRender = null;
-         
+
         /////////// CREATE SCENE ///////////////////////////
         var createScene = async function () {
             const scene = new BABYLON.Scene(engine);
@@ -271,7 +348,7 @@
             startRenderLoop(engine, canvas);
 
             window.scene = await createScene();
-             ///////////
+            ///////////
             // Assuming you have a WebXR experience set up
             window.scene.onBeforeRenderObservable.add(() => {
                 const xrInput = scene.activeCamera.inputs.attached.webVR || scene.activeCamera.inputs.attached.webXR;

@@ -17,6 +17,7 @@ const rotationY = new BABYLON.Vector3(0, 1.5708, 0);
 const rotationZ = new BABYLON.Vector3(0, 0, 1.5708);//Math.PI / 2 get diferent value in its last digit here and when called from mesh
 
 let enforceTraining = true;//for debug use false. when true disable the next button till user do instruction
+let reRunningSession=false;///set to true when we want to rerun the session by the same user if its id now start with 9
 ///now it set to true for 666 & 667 in students
 
 
@@ -70,6 +71,7 @@ function fullName2Private(theFullName) {
 }
 
 const tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
+const coupleURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/couple';
 ////const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/foo';;///wrong for debug
 const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/users';
 let selectedConnection;///the sphere that was clicked on one of the elements outside the model

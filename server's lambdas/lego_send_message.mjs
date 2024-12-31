@@ -1,4 +1,5 @@
-/// get the user secondsOffered, save it to the user record and to the couple's one
+///called by route offerSeconds
+///we will change it to get the user secondsOffered, save it to the user record and to the couple's one
 ///check if other user already answer. IF YES:
 ///evaluate if deal done and write to the relevent records
 ///send message to the other user ( tell him if the deal done and maybe the offered seconds)
@@ -18,6 +19,7 @@ exports.handler = async (event) => {
     const userId = body.userId;
     const startAutoColor = body.startAutoColor;
     const secondsOffered  = body.secondsOffered;
+    const psrtTime1 = body.part1Time;
     /// update table with seconfOffered
     const params = {
         TableName: CONNECTIONS_TABLE,
@@ -25,11 +27,12 @@ exports.handler = async (event) => {
             ID: userId,
             startAutoColor: startAutoColor
         },
-        UpdateExpression: "set secondsOffered = :seconds",
+        UpdateExpression: "set secondsOffered = :seconds, part1Time = :psrtTime",
         ExpressionAttributeValues: {
-            ":seconds": secondsOffered ,
+            ":seconds": secondsOffered,
+            ":psrtTime": psrtTime1
         },
-        ReturnValues: "ALL_NEW",        
+        ReturnValues: "ALL_NEW",
     };
 
     try {

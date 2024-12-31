@@ -23,13 +23,13 @@ class Messages {
 
 
         this.nextButton = BABYLON.GUI.Button.CreateSimpleButton("but1", "המשך");
-        this.nextButton.width = 1;
+        this.nextButton.width = 0.5;
         this.nextButton.height = 0.4;
         this.nextButton.color = "white";
         this.nextButton.fontSize = 50;
         this.nextButton.background = "green";
         this.nextButton.onPointerUpObservable.add(this.screenDone.bind(this));
-        this.nextButton.top = "90px";//90
+        this.nextButton.top = "120px";//90
         this.nextButton.left = "10px";
         this.nextButton.height = "70px";
         this.advancedTexture.addControl(this.nextButton);
@@ -138,10 +138,15 @@ class Messages {
                 this.showPart2_2()
                 break;
             case "part2_2":
-                let buyTime = this.donePart2();///donePart2 will send user answer to database but 
-                ///we don't know yet the answer (session will triger it later) so we dont call any screen
-                ////was currentSession.initExamA();
-                this.nextButton.isEnabled = false;
+                if (socket.readyState !== WebSocket.OPEN) {
+                    console.log("socket.readyState: " + socket.readyState);
+                    this.textField.text = "אין חיבור לשרת. לחץ על התחבר מחדש, ואז על המשך";
+                } else {
+                    let buyTime = this.donePart2();///donePart2 will send user answer to database but 
+                    ///we don't know yet the answer (session will triger it later) so we dont call any screen
+                    ////was currentSession.initExamA();
+                    this.nextButton.isEnabled = false;    
+                }
                 break;
             case "startPart2":
                 currentSession.initPart2();
@@ -453,8 +458,8 @@ class Messages {
     showPart2_1() {
         this.currentScreen = "part2_1";
         let timeToShow = Math.floor((currentSession.timer.currTime - currentSession.timer.firstTime) / 1000);
-        console.log("currentSession.timer.firstTime: " + currentSession.timer.firstTime);
-        console.log("timeToShow: " + timeToShow);
+        //console.log("currentSession.timer.firstTime: " + currentSession.timer.firstTime);
+        //console.log("timeToShow: " + timeToShow);
         let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
         if (currentSession.startAutoColor == "NO") { ///קונה
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
@@ -487,7 +492,6 @@ class Messages {
             this.textField.text = initialText
         }
 
-
         this.nextButton.isEnabled = true;
         /*
                 let inputTextArea = new BABYLON.GUI.InputText('time4Buy', "");
@@ -513,6 +517,21 @@ class Messages {
 
     showPart2_2() {
         this.currentScreen = "part2_2";
+
+        this.reconnectButton = BABYLON.GUI.Button.CreateSimpleButton("but1", "התחבר מחדש");
+        this.reconnectButton.width = 0.3;
+        this.reconnectButton.height = 0.4;
+        this.reconnectButton.color = "white";
+        this.reconnectButton.fontSize = 50;
+        this.reconnectButton.background = "green";
+        this.reconnectButton.onPointerUpObservable.add(reconnect2server.bind(this));
+        this.reconnectButton.top = "35px";//90
+        this.reconnectButton.left = 2;
+        this.reconnectButton.height = "70px";
+        this.advancedTexture.addControl(this.reconnectButton);
+
+
+
         if (currentSession.startAutoColor == "NO") {///קונה
             const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים ללא צורך" + "\n" +
                 "לבחור צבע לחלקים. אם תציע ערך נמוך ממה שיבקש בן הזוג, לא" + "\n" +
@@ -777,11 +796,11 @@ class Timer {
         clearInterval(this.timerInterval);
     }
 
-///interval run in differend speed on different devices so we need to calculate the time gap
+    ///interval run in differend speed on different devices so we need to calculate the time gap
     updateTimeGap() {
         this.currTime = new Date();
         this.currGap = Math.floor((this.currTime - this.lastTime) / 1000);
-         if (this.currGap > 0 ) {
+        if (this.currGap > 0) {
             let timeToShow = Math.floor((this.currTime - this.firstTime) / 1000);
             this.lastTime = this.currTime;
             //this.currGap = this

@@ -1,3 +1,4 @@
+///called bt route: /initUser
 var AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
