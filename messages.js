@@ -338,12 +338,18 @@ class Messages {
         let idInputfield = this.advancedTexture.getControlByName("group");
         let theGroup = idInputfield.text;
         currentSession.group = theGroup;
+        this.clearEditGroupScreen()
+        return theGroup;
+    }
+
+    clearEditGroupScreen() { 
+        this.textField.text = "ממתין מחדש לבן הזוג";///needed for return with 9
+        let idInputfield = this.advancedTexture.getControlByName("group");
         this.advancedTexture.removeControl(idInputfield);
-        idInputfield.dispose();
-        let idKeyboard = this.advancedTexture.getControlByName("vkb");
+        idInputfield.dispose(); 
+        let idKeyboard = this.advancedTexture.getControlByName("vkb"); 
         this.advancedTexture.removeControl(idKeyboard);
         idKeyboard.dispose();
-        return theGroup;
     }
 
     showSelectBlock() {

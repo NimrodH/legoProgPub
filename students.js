@@ -250,7 +250,8 @@ class Session {
         let userData = JSON.parse(userDataObj.body);
         this.timeOfpart1 = userData.part1Time;
         if(userData.secondsOffered) {
-            ///I cleared the screen before calling this function
+            ///cleared the screen 
+            messageBox.clearEditGroupScreen()
 
             ///send by socket the new connectionId and set it on the server
             await changeConnectionId();/// in index.html
@@ -261,21 +262,6 @@ class Session {
             console.log("no secondsOffered in reInitUser");
         }
         return userData;
-/*
-        let pairStartAutoColor;        
-        if (this.startAutoColor == "YES") {
-            pairStartAutoColor = "NO";        
-        } else {   
-            pairStartAutoColor = "YES";
-        }
-        let pairDataObj = await getData(coupleURL, { 'userID': this.myPairId, 'startAutoColor' : pairStartAutoColor});///
-        let pairData = pairDataObj.body;///
-        console.log("pairData: " + pairData);
-
-        messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, pairData.secondsOffered);
-        console.log("pairStartAutoColor: " + pairDataObj.body.secondsOffered);
-       
-        */
     }
 
     async updateBuySellTime(secondsOffered) {
