@@ -125,12 +125,12 @@
 
             switch (status) {
                 case "missing":
-                    console
+                console.log('onmessage: Received missing from WebSocket Server');
                     messageBox.textField.text = "onmessage: ERROR - other user is not connected";
                     break;
                 case "continue":
-                    console.log('onmessage: Received continue from WebSocket Server: ' + eventData.connection_id);
-                    //messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
+                    console.log('onmessage: Received continue from WebSocket Server');
+                    messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
                     break;
                 case "pong":
 

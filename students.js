@@ -250,12 +250,15 @@ class Session {
         let userData = JSON.parse(userDataObj.body);
         this.timeOfpart1 = userData.part1Time;
         if(userData.secondsOffered) {
-            ///TODO: send by socket the new connectionId and set it on the server
+            ///I cleared the screen before calling this function
 
+            ///send by socket the new connectionId and set it on the server
             await changeConnectionId();/// in index.html
+            ///resend leg_send_message to the server to clculate deal and send continue message to both users
             this.updateBuySellTime(userData.secondsOffered);
             //messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, userData.pairSecondsOffered);///if moveed initUser will overight the secondsOffered & pairSecondsOffered & timeOfpart1
-           
+        } else {
+            console.log("no secondsOffered in reInitUser");
         }
         return userData;
 /*

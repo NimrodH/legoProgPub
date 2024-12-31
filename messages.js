@@ -210,17 +210,17 @@ class Messages {
         let idInputfield = this.advancedTexture.getControlByName("id");
         let theId = idInputfield.text;
         //console.log("theId: " + theId);
+        this.advancedTexture.removeControl(idInputfield);
+        idInputfield.dispose();
+        let idKeyboard = this.advancedTexture.getControlByName("vkb");
+        this.advancedTexture.removeControl(idKeyboard);
+        idKeyboard.dispose();
         if (theId == "record") {
             ///no session. will continue in showModel2record when we will return "record"
         }
         else {
             currentSession = new Session(theId);
         }
-        this.advancedTexture.removeControl(idInputfield);
-        idInputfield.dispose();
-        let idKeyboard = this.advancedTexture.getControlByName("vkb");
-        this.advancedTexture.removeControl(idKeyboard);
-        idKeyboard.dispose();
         return theId;
     }
     /////RECORD MODE without session
@@ -576,6 +576,7 @@ class Messages {
 
     }
     donePart2() {
+        this.textField.text = "יש להמתין לתשובת בן הזוג"; ///will be ovrighten by server if needed
         let buyInputfield = this.advancedTexture.getControlByName("time4Buy");
         let buyTime = buyInputfield.text;
         console.log("part2 buyTime: " + buyTime);
@@ -588,8 +589,6 @@ class Messages {
         let buyKeyboard = this.advancedTexture.getControlByName("vkb");
         this.advancedTexture.removeControl(buyKeyboard);
         buyKeyboard.dispose();
-
-        this.textField.text = "יש להמתין לתשובת בן הזוג";
         return buyTime;
     }
 
