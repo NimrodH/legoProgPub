@@ -10,10 +10,12 @@ apigatewaymanagementapi = boto3.client('apigatewaymanagementapi', endpoint_url=o
 
 
 def lambda_handler(event, context):
+    print("apigatewaymanagementapi", apigatewaymanagementapi)
     # Parse the incoming message
        # if we want to return a message to the user, we need explicitly to send a response not just return
     connection_id = event['requestContext']['connectionId']
-    the_body = { "action" : "pong", "connection_id" : connection_id , "ansStatus" : "pong"}
+    print("connection_id" , connection_id)
+    the_body = { "action" : "pong", "connection_id" : connection_id, "ansStatus" : "pong"}
     send2client(connection_id, the_body)
     return {
         'statusCode': 200,
@@ -21,6 +23,7 @@ def lambda_handler(event, context):
     }
 
 def send2client(connection_id, the_body):
+    print("send2client, connection_id: ", connection_id)
     if connection_id:
         try:
             response = apigatewaymanagementapi.post_to_connection(
