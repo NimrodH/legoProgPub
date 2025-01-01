@@ -34,6 +34,18 @@ class Messages {
         this.nextButton.height = "70px";
         this.advancedTexture.addControl(this.nextButton);
 
+        this.reconnectButton = BABYLON.GUI.Button.CreateSimpleButton("but1", "התחבר מחדש");
+        this.reconnectButton.width = 0.3;
+        this.reconnectButton.height = 0.4;
+        this.reconnectButton.color = "white";
+        this.reconnectButton.fontSize = 50;
+        this.reconnectButton.background = "green";
+        this.reconnectButton.onPointerUpObservable.add(this.doReInitUser.bind());//////////////
+        this.reconnectButton.top = "35px";//90
+        this.reconnectButton.left = 2;
+        this.reconnectButton.height = "70px";
+        this.advancedTexture.addControl(this.reconnectButton);
+
 
         const initialText = "במסך זה יופיעו הנחיות" + "\n" + "\n" +
             "מאחוריך מספר לבנים לבניית המודל" + "\n" + "\n" +
@@ -53,6 +65,31 @@ class Messages {
         //plane.isVisible = true;
         //plane.dispose();
     }
+
+    async doReInitUser() {
+        console.log("doReInitUser");
+        //currentSession.reInitUser();
+           /// we will reag data not by the socket but by the getData to succedd when socket is not connected 
+        /// then we will call showStartPart2 with the data we get for sDealdone, mySecondsOffered, pairSecondsOffered
+        
+        let userDataObj = await getData(coupleURL, { 'userID': currentSession.userId, 'startAutoColor' : currentSession.startAutoColor});///
+        let userData = JSON.parse(userDataObj.body);
+        currentSession.timeOfpart1 = userData.part1Time;
+        if(userData.secondsOffered) {
+            ///cleared the screen 
+            //this.clearEditGroupScreen()
+            //console.log("after clearEditGroupScreen");
+            ///send by socket the new connectionId and set it on the server
+            ////await changeConnectionId();/// in index.html
+            ///resend leg_send_message to the server to clculate deal and send continue message to both users
+            currentSession.updateBuySellTime(userData.secondsOffered);
+            //messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, userData.pairSecondsOffered);///if moveed initUser will overight the secondsOffered & pairSecondsOffered & timeOfpart1
+        } else {
+            console.log("no secondsOffered in reInitUser");
+        }
+        return userData;
+    }
+
 
     handleReportClick(e) {
         if (currentSession && currentSession.part == "learning") {
@@ -523,18 +560,6 @@ class Messages {
 
     showPart2_2() {
         this.currentScreen = "part2_2";
-
-        this.reconnectButton = BABYLON.GUI.Button.CreateSimpleButton("but1", "התחבר מחדש");
-        this.reconnectButton.width = 0.3;
-        this.reconnectButton.height = 0.4;
-        this.reconnectButton.color = "white";
-        this.reconnectButton.fontSize = 50;
-        this.reconnectButton.background = "green";
-        this.reconnectButton.onPointerUpObservable.add(reconnect2server.bind(this));
-        this.reconnectButton.top = "35px";//90
-        this.reconnectButton.left = 2;
-        this.reconnectButton.height = "70px";
-        this.advancedTexture.addControl(this.reconnectButton);
 
 
 

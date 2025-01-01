@@ -245,7 +245,7 @@ class Session {
     async reInitUser() {
         /// we will reag data not by the socket but by the getData to succedd when socket is not connected 
         /// then we will call showStartPart2 with the data we get for sDealdone, mySecondsOffered, pairSecondsOffered
-
+        console.log("in reInitUser")
         let userDataObj = await getData(coupleURL, { 'userID': this.userId, 'startAutoColor' : this.startAutoColor});///
         let userData = JSON.parse(userDataObj.body);
         this.timeOfpart1 = userData.part1Time;
@@ -376,6 +376,10 @@ class Session {
 
     initPart2() {
         console.log("in initPart2")
+        if (!this.timer) {
+            this.timer = new Timer();
+        }
+        
         this.timer.startTimer();
         console.log("timer start from initPart2")
         elementsMenu.isVisible = true;

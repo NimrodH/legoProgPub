@@ -199,7 +199,7 @@
         async function changeConnectionId() {
             console.log('Sending updateUserConnectionInfo to WebSocket Server: ', currentSession.userId);
             if (socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({ action: 'updateUserConnectionInfo', userId: currentSession.userId, startAutoColor: currentSession.startAutoColor }));
+                await socket.send(JSON.stringify({ action: 'updateUserConnectionInfo', userId: currentSession.userId, startAutoColor: currentSession.startAutoColor }));
                 console.log(' updateUserConnectionInfo sent to WebSocket Server');
             } else {
                 console.error('WebSocket is not open. Unable to send updateUserConnectionInfo');
