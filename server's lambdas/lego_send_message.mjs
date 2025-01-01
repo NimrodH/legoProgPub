@@ -1,4 +1,3 @@
-///called by route offerSeconds
 ///we will change it to get the user secondsOffered, save it to the user record and to the couple's one
 ///check if other user already answer. IF YES:
 ///evaluate if deal done and write to the relevent records
@@ -13,266 +12,147 @@ const apigatewaymanagementapi = new AWS.ApiGatewayManagementApi({
 const CONNECTIONS_TABLE = process.env.TABLE_NAME;
 
 exports.handler = async (event) => {
-///write the time offered in the table
+    console.log("send message");
     const body = JSON.parse(event.body);
 
     const userId = body.userId;
     const startAutoColor = body.startAutoColor;
-    const secondsOffered  = body.secondsOffered;
-    const psrtTime1 = body.part1Time;
-    /// update table with seconfOffered
+    const secondsOffered = body.secondsOffered;
+    const part1Time = body.part1Time;
+
+    try {
+        ///update my record in the database with my offer and mypart1time
+        await updateTableWithSecondsOffered(userId, startAutoColor, secondsOffered, part1Time);
+        ///get my record to use myConnectionId later and ID of myPair to allowreding its record 
+        const { myConnectionId, myPair, pairAutoColor } = await getMyPairInfo(userId, startAutoColor);
+        ///get the record of my pair to use know if he live (connected) and his offer and connectionId from DB
+        const { pairConnectionId, pairSecondsOffered, pairLive } = await getPairInfo(myPair, pairAutoColor);
+
+        ///this not send message to client and exit the lambda (we will stay with default message to wait that client created  )
+        ///(if pair is not connected we act in the same wa. he need to reconnect and end part1 - we will handle it elsewhere
+        if (!pairSecondsOffered) {
+            return respondWithMessage('pair is still playing', 'wait');
+        }
+       
+        if (!pairLive) { 
+             ////we know now that pairSecondsOffered exsists so pair disconnected after he end patr 1
+             ///we could not send him our answer and he must reconnect using 9, when he will do it we will get message so we dont do anithing now and wait
+             ///TODO: we can send to me message that game will continue after othe uset will restart using 9
+             ///anyway we don't continue
+             return;
+        }
+
+        ///we have now the pair connected after he end part1
+        const doDeal = calculateDeal(startAutoColor, secondsOffered, pairSecondsOffered);
+        await updateDealDone(userId, startAutoColor, doDeal);///update deal result in MY record on table lego_couple
+        await updateDealDone(myPair, pairAutoColor, doDeal);///update deal result in PAIR record on table lego_couple
+        
+        ///send deal results with continue to both 
+        const theBody = createResponseBody(doDeal, pairSecondsOffered, secondsOffered);
+        console.log("before sendMessageToClients")
+        await sendMessageToClients(myConnectionId, pairConnectionId, pairLive, theBody);
+
+        return { statusCode: 200, body: JSON.stringify({ message: 'Message sent successfully' }) };
+    } catch (error) {
+        console.error('Error:', error);
+        return { statusCode: 500, body: JSON.stringify({ message: 'Failed to process request' }) };
+    }
+};
+
+async function updateTableWithSecondsOffered(userId, startAutoColor, secondsOffered, part1Time) {
     const params = {
         TableName: CONNECTIONS_TABLE,
-        Key: {
-            ID: userId,
-            startAutoColor: startAutoColor
-        },
+        Key: { ID: userId, startAutoColor: startAutoColor },
         UpdateExpression: "set secondsOffered = :seconds, part1Time = :psrtTime",
-        ExpressionAttributeValues: {
-            ":seconds": secondsOffered,
-            ":psrtTime": psrtTime1
-        },
+        ExpressionAttributeValues: { ":seconds": secondsOffered, ":psrtTime": part1Time },
         ReturnValues: "ALL_NEW",
     };
+    await dynamoDb.update(params).promise();
+}
 
-    try {
-        const result = await dynamoDb.update(params).promise();
-        console.log('Updated item:', JSON.stringify(result.Attributes, null, 2));
-    } catch (error) {
-        console.error('Error saving data:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Failed to save data' }),
-        };
-    }
-    
-    ///now, if my pair already answer we will compare the secondsOffered and update dealDone and will send messageto each of them
-    /// if we will have situationthat both dont have data in the pair we will have to trigger the message from event in the DB
-
-    var myPair;///id of other user
-    var pairAutoColor/// autoColer of other user
-    var pairSecondsOffered;///what the other user offered 
-    var myConnectionId;
-    var pairConnectionId;
- 
- ///get the myPair id (and my connectionId for later use)   
-    const params4get = {
-    TableName: CONNECTIONS_TABLE,
-        Key: {
-            ID: userId,
-            startAutoColor: startAutoColor
-        },
-    };
-
-    try {
-        
-        const response = await dynamoDb.get(params4get).promise();
-        if (response.Item) {
-          console.log('Retrieved item:', response.Item);
-          myConnectionId = response.Item.connectionId;
-          myPair = response.Item.myPairId;
-          if (startAutoColor == "YES") {
-              pairAutoColor = "NO";
-          } else {
-              pairAutoColor = "YES";
-          }
-          //return response.Item;
-        } else {
-          console.log('Item not found');
-          return null;
-        }
-    
-    } catch (error) {
-        console.error('Error retrieving item:', error);
-        throw error;
-    }
-    
-/// get item of pair to read its secondsOffered
-    const params4getPair = {
-    TableName: CONNECTIONS_TABLE,
-        Key: {
-            ID: myPair,
-            startAutoColor: pairAutoColor
-        },
-    };
-
-    try {
-        ///get what the other user offered (and its connectionId for later)
-        const response = await dynamoDb.get(params4getPair).promise();
-        ///TODO: verify the connection itself is live
-        if (response.Item) {
-          console.log('Retrieved pair_item:', response.Item);
-          pairConnectionId = response.Item.connectionId;
-          pairSecondsOffered = response.Item.secondsOffered;
-          console.log('Retrieved pair_item connectioId:', pairConnectionId);
-          console.log('Retrieved pair_item:', response.Item.secondsOffered);
-          const isLive = await isConnectionLive(pairConnectionId);
-          if (!isLive) {
-            const theBody = {
-                message: 'pair is not connected anymore', 
-                ansStatus: 'missing'
-            };
-             return {
-                statusCode: 410,
-                body: JSON.stringify(theBody),
-            };
-
-              
-          }
-          //return response.Item;
-        } else {
-            ///the other user not start to play or play with wrong id number
-            console.log('Item_pair not found');
-            const theBody = {
-                message: 'pair not CREATED yet', 
-                ansStatus: 'missing'
-            };
-             return {
-                statusCode: 200,
-                body: JSON.stringify(theBody),
-            };
-        }
-    } catch (error) {
-        console.error('Error retrieving item:', error);
-        throw error;
-    }
-///use what other user offered (if already offered) to decide about the value of doDeal
-    var doDeal;
-    
-    if (!pairSecondsOffered) {
-        ///pair is still playing. he will trigger this function when done.
-        console.log("pair is still playing.");
-        const theBody = {
-            message: 'pair is still playing', 
-            ansStatus: 'wait'
-        };
-        return {
-            statusCode: 200,
-            body: JSON.stringify(theBody),
-        };
-    } else {///pairSecondsOffered set. we have to compare it to the startSecondsOffered
-        console.log("startAutoColor in get other offer 118: " + startAutoColor);
-        if (startAutoColor == "YES") {///we sell
-            doDeal = (parseInt(secondsOffered) <= parseInt(pairSecondsOffered)); 
-        } else {
-            doDeal = (parseInt(secondsOffered) >= parseInt(pairSecondsOffered));
-        }
-        console.log("doDeal: " + doDeal);
-    }
-    
-///update both with doDeal value (we have return earlier if we dont have the other use answer yet)
-        /// updating my record in table with the doDeal value
-    const paramsMyDoDeal = {
+async function getMyPairInfo(userId, startAutoColor) {
+    const params = {
         TableName: CONNECTIONS_TABLE,
-        Key: {
-            ID: userId,
-            startAutoColor: startAutoColor
-        },
-        UpdateExpression: "set dealDone = :seconds",
-        ExpressionAttributeValues: {
-            ":seconds": doDeal,
-        },
-        ReturnValues: "ALL_NEW",        
+        Key: { ID: userId, startAutoColor: startAutoColor },
     };
+    const response = await dynamoDb.get(params).promise();
+    if (!response.Item) throw new Error('Item not found');
 
-    try {
-        const result = await dynamoDb.update(paramsMyDoDeal).promise();
-        console.log('Updated item:', JSON.stringify(result.Attributes, null, 2));
-    } catch (error) {
-        console.error('Error saving data:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Failed to save data to my dealDone' }),
-        };
-    }
- 
-    
-/// updating pair record in table with the doDeal value
-    const paramsPairDoDeal = {
+    const myConnectionId = response.Item.connectionId;
+    const myPair = response.Item.myPairId;
+    const pairAutoColor = startAutoColor === "YES" ? "NO" : "YES";
+    return { myConnectionId, myPair, pairAutoColor };
+}
+
+async function getPairInfo(myPair, pairAutoColor) {
+    ///read from data base the record of pair
+    const params = {
         TableName: CONNECTIONS_TABLE,
-        Key: {
-            ID: myPair,
-            startAutoColor: pairAutoColor
-        },
-        UpdateExpression: "set dealDone = :todeal",
-        ExpressionAttributeValues: {
-            ":todeal": doDeal,
-        },
-        ReturnValues: "ALL_NEW",        
+        Key: { ID: myPair, startAutoColor: pairAutoColor },
     };
+    const response = await dynamoDb.get(params).promise();
+    if (!response.Item) throw new Error('Item_pair not found');
 
-    try {
-        const result = await dynamoDb.update(paramsPairDoDeal).promise();
-        console.log('Updated item:', JSON.stringify(result.Attributes, null, 2));
-    } catch (error) {
-        console.error('Error saving data:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Failed to save data to pair dealDone' }),
-        };
+    const pairConnectionId = response.Item.connectionId;
+    const pairSecondsOffered = response.Item.secondsOffered;
+    const pairLive = await isConnectionLive(pairConnectionId);
+    if (!pairLive) throw new Error('pair is not connected anymore');
+
+    return { pairConnectionId, pairSecondsOffered, pairLive };
+}
+
+function calculateDeal(startAutoColor, secondsOffered, pairSecondsOffered) {
+    if (startAutoColor === "YES") {
+        return parseInt(secondsOffered) <= parseInt(pairSecondsOffered);
+    } else {
+        return parseInt(secondsOffered) >= parseInt(pairSecondsOffered);
     }
-    
-/// send message to both clients
-/// thay have open connection  with ids myConectionId & pairConnectionId
-    //const message = {isDealDone: doDeal};
-         
-    const theBody = {
-        message: 'deal results are' + doDeal, 
+}
+
+async function updateDealDone(userId, startAutoColor, doDeal) {
+    const params = {
+        TableName: CONNECTIONS_TABLE,
+        Key: { ID: userId, startAutoColor: startAutoColor },
+        UpdateExpression: "set dealDone = :deal",
+        ExpressionAttributeValues: { ":deal": doDeal },
+        ReturnValues: "ALL_NEW",
+    };
+    await dynamoDb.update(params).promise();
+}
+
+function createResponseBody(doDeal, pairSecondsOffered, mySecondsOffered) {
+    return {
+        message: 'deal results are ' + doDeal,
         ansStatus: 'continue',
         isdealDone: doDeal,
         pairSecondsOffered: pairSecondsOffered,
-        mySecondsOffered: secondsOffered
+        mySecondsOffered: mySecondsOffered
     };
+}
 
-
-    
-    console.log("myConnectionId: " + myConnectionId);
-    console.log(JSON.stringify({ theBody }));
-    console.log("process.env.API_GATEWAY_ENDPOINT: " + process.env.API_GATEWAY_ENDPOINT);
-  ///send message to me
+async function sendMessageToClients(myConnectionId, pairConnectionId, pairLive, theBody) {
     if (myConnectionId) {
-        try {
-            await apigatewaymanagementapi.postToConnection({
-                ConnectionId: myConnectionId,
-                Data: JSON.stringify(theBody)
-            }).promise();
-            ///send message to my pair
-            if (pairConnectionId) {
-                await apigatewaymanagementapi.postToConnection({
-                    ConnectionId: pairConnectionId,
-                    Data: JSON.stringify(theBody)
-                }).promise();
-            }
-            
-            return { statusCode: 200, body: JSON.stringify({ message: 'Message sent successfully' }) };///Message sent successfully
-        } catch (error) {
-            console.error('Error sending message:', error);
-            return { statusCode: 500,body: JSON.stringify({ message: 'Failed to send message' }) }; ///Failed to send message
-        }
+        console.log("sendMessageToClients me: " + myConnectionId);
+        await apigatewaymanagementapi.postToConnection({
+            ConnectionId: myConnectionId,
+            Data: JSON.stringify(theBody)
+        }).promise();
     }
-   /* send message to my pair
-     console.log("before sending message to the pair. pairConnectionId: " + pairConnectionId )
-     if (pairConnectionId) {
-        try {
-            await apigatewaymanagementapi.postToConnection({
-                ConnectionId: pairConnectionId,
-                Data: JSON.stringify(theBody)
-            }).promise();
-            return { statusCode: 200, body: JSON.stringify({ message: 'Message for pair sent successfully' }) };///Message for pair sent successfully
-        } catch (error) {
-            console.error('Error sending message:', error);
-            return { statusCode: 500, body: JSON.stringify({ message: 'Failed to send message to pair' }) };///'Failed to send message to pair.
-        }
+    if (pairLive && pairConnectionId) {
+        console.log("sendMessageToClients pair: " + pairConnectionId)
+        await apigatewaymanagementapi.postToConnection({
+            ConnectionId: pairConnectionId,
+            Data: JSON.stringify(theBody)
+        }).promise();
     }
- */   
+}
 
-    
+function respondWithMessage(message, status) {
     return {
         statusCode: 200,
-        body: JSON.stringify({ message: 'shuld not be sent. we have returns before for all ' }),
+        body: JSON.stringify({ message: message, ansStatus: status }),
     };
-    
-};
+}
 
 async function isConnectionLive(connectionId) {
     try {
@@ -287,7 +167,7 @@ async function isConnectionLive(connectionId) {
     } catch (err) {
         // If an error occurs, it usually means the connection is closed
         if (err.statusCode === 410) { // 410 Gone indicates the connection is no longer present
-            console.log(`Connection ${connectionId} is no longer live.`);
+            console.log(`Connection ${connectionId} is no longer live. (server ERROR will be seen on client and its not a problem ).`);
             return false;
         }
         // Handle other potential errors
