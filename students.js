@@ -335,10 +335,11 @@ class Session {
         ///TODO: delete old models (they alreadtbuilt now)
         //disposeModels();
         ///TODO: must add "this.part" to the users records on the data base
+        let timeToShow;
         switch (this.part) {
             case "training":
                 this.timer.stopTimer();
-                let timeToShow = Math.floor((this.timer.currTime - this.timer.firstTime) / 1000);
+                timeToShow = Math.floor((this.timer.currTime - this.timer.firstTime) / 1000);
                 //console.log("timer stopped from nextStage" + timeToShow)
                 this.timeOfpart1 = this.timer.secToTimeString(timeToShow);///was wrong currTime
                 this.updatePartTime(this.timeOfpart1, "1");
