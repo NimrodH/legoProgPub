@@ -637,18 +637,8 @@ class Session {
 
     endSession() {
         ///created in index at socket.onopen
-        disconnectSocket();
         clearInterval(pingInterval);
-        if (messageBox) {
-            messageBox.reconnectButton.isVisible = false;
-            messageBox.dispose();
-        }
-        if (this.fb) {
-            this.fb.dispose();
-        }
-        if (this.timer) {
-            this.timer.stopTimer();
-        }
+        disconnectSocket();
 
     }
     
