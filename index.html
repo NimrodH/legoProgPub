@@ -60,7 +60,7 @@
         var camera = null;
 
         const socketUrl = 'wss://8j2tm9v9f1.execute-api.us-east-1.amazonaws.com/production/';
-        var socket = new WebSocket(socketUrl);
+        let socket
         var userId = null;
         var userGroup = null;
         var pingInterval
@@ -91,12 +91,17 @@
         }
 
         /////////////////////SOCKET //////////////////////////
-        // This function is called when the WebSocket connection is successfully established.
-        // It logs a message to the console and sets up a ping interval to keep the connection alive.
-        socket.onopen = function (event) {
-            if (originalSocket) {
-                console.log('onOpen: Connected to WebSocket Server in the original socket');
-                let originalSocket = false;
+
+        // Function to connect to the WebSocket server
+        async function connectSocket() {
+            console.log('Connecting to WebSocket Server');
+            socket = await new WebSocket(socketUrl);
+
+            // This function is called when the WebSocket connection is successfully established.
+            // It logs a message to the console and sets up a ping interval to keep the connection alive.
+            socket.onopen = function (event) {
+                console.log('onOpen: Connected to WebSocket Server');
+
                 /// to remain the connection live more thaen 10 munutes
                 /// will be cleared on students at endSession
                 pingInterval = setInterval(() => {
@@ -106,104 +111,85 @@
                         console.log('setInterval: Ping sent to WebSocket Server');
                     } else {
                         console.error('setInterval: WebSocket is not open. Unable to send ping');
-                        reconnect2server();
+                        //reconnect2server();
+                        if (messageBox) {
+                            messageBox.reconnectButton.isVisible = true;
+                        }
                     }
                 }, 300000); // Send a ping every 5 minutes (300 seconds)
-            } else {
-                ///for now we are not here ever - we shuld be in  new socket
-                console.log('onOpen: Connected to WebSocket Server in the new socket');
-                changeConnectionId();
-            }
-        };
+            };
 
-        socket.onmessage = function (event) {
-            console.log('onmessage: Message returns from server1:', event.data);
-            let status = JSON.parse(event.data).ansStatus;
-            console.log("event.data.ansStatus: " + status);///missing/wait/continue
+            socket.onmessage = function (event) {
+                console.log('onmessage: Message returns from server1:', event.data);
+                let status = JSON.parse(event.data).ansStatus;
+                console.log("event.data.ansStatus: " + status);///missing/wait/continue/reconnected
 
-            let eventData = JSON.parse(event.data)
+                let eventData = JSON.parse(event.data)
 
-            switch (status) {
-                case "missing":
-                console.log('onmessage: Received missing from WebSocket Server');
-                    messageBox.textField.text = "onmessage: ERROR - other user is not connected";
-                    break;
-                case "continue":
-                    console.log('onmessage: Received continue from WebSocket Server');
-                    messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
-                    break;
-                case "pong":
+                switch (status) {
+                    case "missing":
+                        console.log('onmessage: Received missing from WebSocket Server');
+                        messageBox.textField.text = "onmessage: ERROR - other user is not connected";
+                        break;
+                    case "continue":
+                        console.log('onmessage: Received continue from WebSocket Server');
+                        messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
+                        break;
+                    case "pong":
 
-                    console.log('onmessage: Received pong from WebSocket Server: ' + eventData.connection_id);
-                    break;
-                case "reconnected":
-                    console.log('onmessage: Received reconnect from WebSocket Server: ' + eventData.connection_id);
-                    break;
-                default:
-                    console.log("onmessage: ERROR - unknown status: " + status);
-            }
-        };
+                        console.log('onmessage: Received pong from WebSocket Server: ' + eventData.connection_id);
+                        break;
+                    case "reconnected":
+                        console.log('onmessage: Received reconnect from WebSocket Server: ' + eventData.connection_id);
+                        messageBox.reconnectButton.isVisible = false;
+                        break;
+                    default:
+                        console.log("onmessage: ERROR - unknown status: " + status);
+                }
+            };
 
-        socket.onclose = function (event) {
-            console.log('onclose: Disconnected from WebSocket Server');
-            socket = null;
-        };
+            socket.onclose = function (event) {
+                console.log('onclose: Disconnected from WebSocket Server');
+                messageBox.reconnectButton.isVisible = true;
+                socket = null;
+            };
 
-        socket.onerror = function (error) {
-            console.error('onError: WebSocket Error:', error);
-        };
+            socket.onerror = function (error) {
+                console.error('onError: WebSocket Error:', error);
+            };
+        }
+
+        connectSocket();
 
         // Function to disconnect from the WebSocket server
         function disconnectSocket() {
             console.log('Disconnecting from WebSocket Server if open');
-            if (socket.readyState === WebSocket.OPEN) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
                 console.log('Closing WebSocket connection');
                 socket.close();
             }
         }
 
-        // Function to reconnect to the WebSocket server
+        // Function to reconnect to the WebSocket server if its not open, then call changeConnectionId
         async function reconnect2server() {
             console.log('reconnect2server: Reconnecting to WebSocket Server');
-
-            if (socket !== null) {
-                if (socket.readyState === WebSocket.OPEN) {
-                    console.log('reconnect2server: WebSocket is not closed . no need to reconnect')
-                } else {
-                    console.log('reconnect2server: WebSocket is not null. why it is not open? using it to reconnect');
-                    socket = await new WebSocket(socketUrl);
-                    ////////
-                    clearInterval(pingInterval);
-                    pingInterval = setInterval(() => {
-                        console.log('setInterval: Sending ping to WebSocket Server');
-                        if (socket && (socket.readyState === WebSocket.OPEN)) {
-                            socket.send(JSON.stringify({ action: 'ping' }));
-                            console.log('setInterval: Ping sent to WebSocket Server');
-                        } else {
-                            console.error('setInterval: WebSocket is not open. Unable to send ping');
-                            reconnect2server();
-                        }
-                        ////////
-                    }, 300000); // Send a ping every 5 minutes (300 seconds)
-
-
-                }
-            } else {
-                console.error('reconnect2server: WebSocket is null. opennibg new one');
-                socket = await new WebSocket(socketUrl);
-                console.log('reconnect2server: after new WebSocket');
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                console.log('reconnect2server: WebSocket is not closed . no need to reconnect')
+                await changeConnectionId()///if we reopen the socket and it don't was open mean while we need to send the connection info again
+                return; // WebSocket is already open, no need to reconnect
             }
+            console.log('reconnect2server: opennibg new WebSocket');
+            connectSocket();
         }
 
         ///function to call the socket with the user connection info
         async function changeConnectionId() {
             console.log('Sending updateUserConnectionInfo to WebSocket Server: ', currentSession.userId);
-            if (socket.readyState === WebSocket.OPEN) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
                 await socket.send(JSON.stringify({ action: 'updateUserConnectionInfo', userId: currentSession.userId, startAutoColor: currentSession.startAutoColor }));
                 console.log(' updateUserConnectionInfo sent to WebSocket Server');
             } else {
                 console.error('WebSocket is not open. Unable to send updateUserConnectionInfo');
-                // reconnect2server()
             }
         }
 

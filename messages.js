@@ -39,12 +39,13 @@ class Messages {
         this.reconnectButton.height = 0.4;
         this.reconnectButton.color = "white";
         this.reconnectButton.fontSize = 50;
-        this.reconnectButton.background = "green";
-        this.reconnectButton.onPointerUpObservable.add(this.doReInitUser.bind());//////////////
+        this.reconnectButton.background = "red";
+        this.reconnectButton.onPointerUpObservable.add(this.doReconnectToServer.bind());//////////////
         this.reconnectButton.top = "35px";//90
         this.reconnectButton.left = 2;
         this.reconnectButton.height = "70px";
         this.advancedTexture.addControl(this.reconnectButton);
+        this.reconnectButton.isVisible = false;
 
 
         const initialText = "במסך זה יופיעו הנחיות" + "\n" + "\n" +
@@ -66,26 +67,23 @@ class Messages {
         //plane.dispose();
     }
 
+    async doReconnectToServer() {
+        await reconnect2server(); ///in index.html
+    }
+
+    ///not in use now - we may use it if socket fails
+    /// we will read data not by the socket but by the getData to succedd when socket is not connected 
+    /// then we will call showStartPart2 with the data we get for sDealdone, mySecondsOffered, pairSecondsOffered
     async doReInitUser() {
         console.log("doReInitUser");
-        //currentSession.reInitUser();
-           /// we will reag data not by the socket but by the getData to succedd when socket is not connected 
-        /// then we will call showStartPart2 with the data we get for sDealdone, mySecondsOffered, pairSecondsOffered
-        
         let userDataObj = await getData(coupleURL, { 'userID': currentSession.userId, 'startAutoColor' : currentSession.startAutoColor});///
         let userData = JSON.parse(userDataObj.body);
         currentSession.timeOfpart1 = userData.part1Time;
         if(userData.secondsOffered) {
-            ///cleared the screen 
-            //this.clearEditGroupScreen()
-            //console.log("after clearEditGroupScreen");
-            ///send by socket the new connectionId and set it on the server
-            ////await changeConnectionId();/// in index.html
-            ///resend leg_send_message to the server to clculate deal and send continue message to both users
-            currentSession.updateBuySellTime(userData.secondsOffered);
+               currentSession.updateBuySellTime(userData.secondsOffered);
             //messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, userData.pairSecondsOffered);///if moveed initUser will overight the secondsOffered & pairSecondsOffered & timeOfpart1
         } else {
-            console.log("no secondsOffered in reInitUser");
+            console.log("no secondsOffered in doreInitUser");
         }
         return userData;
     }
@@ -175,14 +173,14 @@ class Messages {
                 this.showPart2_2()
                 break;
             case "part2_2":
-                if (socket.readyState !== WebSocket.OPEN) {
+                if (socket && socket.readyState !== WebSocket.OPEN) {
                     console.log("socket.readyState: " + socket.readyState);
                     this.textField.text = "אין חיבור לשרת. לחץ על התחבר מחדש, ואז על המשך";
                 } else {
                     let buyTime = this.donePart2();///donePart2 will send user answer to database but 
                     ///we don't know yet the answer (session will triger it later) so we dont call any screen
                     ////was currentSession.initExamA();
-                    this.nextButton.isEnabled = false;    
+                    this.nextButton.isEnabled = true;///false;  true: we want to allow retry   
                 }
                 break;
             case "startPart2":
@@ -615,17 +613,32 @@ class Messages {
         ///TODO: call curentSession to add answer (buyTime) to database 
         ///      curentSession will call the next stage when it will get trigger from database
         currentSession.updateBuySellTime(buyTime);
+        /* moved to showStartPart2
         this.advancedTexture.removeControl(buyInputfield);
         buyInputfield.dispose();
         let buyKeyboard = this.advancedTexture.getControlByName("vkb");
         this.advancedTexture.removeControl(buyKeyboard);
         buyKeyboard.dispose();
+        */
         return buyTime;
     }
 
 
 
     showStartPart2(isDealdone, mySecondsOffered, pairSecondsOffered) { ///called when server  send "continue"
+        let buyInputfield = this.advancedTexture.getControlByName("time4Buy");
+        if (buyInputfield) {
+            this.advancedTexture.removeControl(buyInputfield);
+            buyInputfield.dispose();
+        }
+            let buyKeyboard = this.advancedTexture.getControlByName("vkb");
+        if (buyKeyboard) {
+            this.advancedTexture.removeControl(buyKeyboard);
+            buyKeyboard.dispose();
+        }
+       buyKeyboard.dispose();
+
+
         console.log("in showStartPart2. isDealdone= " + isDealdone + " startAutoColor: " + currentSession.startAutoColor);
         let theMessage;
         let timeAdded = Math.min(mySecondsOffered, pairSecondsOffered);

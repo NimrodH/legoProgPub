@@ -90,18 +90,7 @@ class Session {
         }
         this.currAutoColor = this.startAutoColor;
         this.pairName = pairStart + "_" + pairEnd;
-        addEventListener("reportClick", this.handleReportClick.bind(this))
-        if (reRunningSession) {
-            //let temp = this.reInitUser()
-            console.log("in session constructor reRunningSession")
-            this.reInitUser()
-            /*
-            .then((received) => {
-                console.log("reInitUser done")
-                console.log(JSON.parse(received.body).dealDone)
-            });
-            */
-        }
+        addEventListener("reportClick", this.handleReportClick.bind(this));
     }
 
     handleReportClick = (e) => {
@@ -242,27 +231,7 @@ class Session {
         socket.send(JSON.stringify(initialData));
     }
 
-    async reInitUser() {
-        /// we will reag data not by the socket but by the getData to succedd when socket is not connected 
-        /// then we will call showStartPart2 with the data we get for sDealdone, mySecondsOffered, pairSecondsOffered
-        console.log("in reInitUser")
-        let userDataObj = await getData(coupleURL, { 'userID': this.userId, 'startAutoColor' : this.startAutoColor});///
-        let userData = JSON.parse(userDataObj.body);
-        this.timeOfpart1 = userData.part1Time;
-        if(userData.secondsOffered) {
-            ///cleared the screen 
-            messageBox.clearEditGroupScreen()
 
-            ///send by socket the new connectionId and set it on the server
-            await changeConnectionId();/// in index.html
-            ///resend leg_send_message to the server to clculate deal and send continue message to both users
-            this.updateBuySellTime(userData.secondsOffered);
-            //messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, userData.pairSecondsOffered);///if moveed initUser will overight the secondsOffered & pairSecondsOffered & timeOfpart1
-        } else {
-            console.log("no secondsOffered in reInitUser");
-        }
-        return userData;
-    }
 
     async updateBuySellTime(secondsOffered) {
         ///add buy\sell time to record for existing user 
