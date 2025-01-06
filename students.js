@@ -228,7 +228,13 @@ class Session {
             pairName: this.pairName,
             myPairId: this.myPairId
         };
-        socket.send(JSON.stringify(initialData));
+        if (socket && (socket.readyState === WebSocket.OPEN)) {
+            socket.send(JSON.stringify(initialData));
+        } else {
+            if (messageBox) {
+                messageBox.reconnectButton.isVisible = true;
+            }
+        }
     }
 
 
@@ -243,8 +249,14 @@ class Session {
             startAutoColor: this.startAutoColor,
             part1Time: this.timeOfpart1
         };
-        socket.send(JSON.stringify(initialData));
-        ///we update again in case the previous was not accepted
+        if (socket && (socket.readyState === WebSocket.OPEN)) {
+            socket.send(JSON.stringify(initialData));
+                    ///we update again in case the previous was not accepted
+        } else {
+            if (messageBox) {
+                messageBox.reconnectButton.isVisible = true;
+            }
+        }
     }
 
     async updatePartTime(partTime, whichPart) {
@@ -268,10 +280,14 @@ class Session {
                 startAutoColor: this.startAutoColor
             };
         }
-        
-        socket.send(JSON.stringify(initialData));
+        if (socket && (socket.readyState === WebSocket.OPEN)) {
+            socket.send(JSON.stringify(initialData));
+        } else {
+            if (messageBox) {
+                messageBox.reconnectButton.isVisible = true;
+            }
+        }
     }
-
 
     runPart() {
         let delButton = (near.children).filter(b => b.name == "delete")[0];
@@ -623,6 +639,17 @@ class Session {
         ///created in index at socket.onopen
         disconnectSocket();
         clearInterval(pingInterval);
+        if (messageBox) {
+            messageBox.reconnectButton.isVisible = false;
+            messageBox.dispose();
+        }
+        if (this.fb) {
+            this.fb.dispose();
+        }
+        if (this.timer) {
+            this.timer.stopTimer();
+        }
+
     }
     
 }

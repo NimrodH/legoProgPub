@@ -92,7 +92,7 @@
 
         /////////////////////SOCKET //////////////////////////
 
-        // Function to connect to the WebSocket server
+        // Function to connect to the WebSocket server must include all socket.on... functions
         async function connectSocket() {
             console.log('Connecting to WebSocket Server');
             socket = await new WebSocket(socketUrl);
@@ -109,7 +109,7 @@
                     if (socket && (socket.readyState === WebSocket.OPEN)) {
                         socket.send(JSON.stringify({ action: 'ping' }));
                         console.log('setInterval: Ping sent to WebSocket Server');
-                    } else {
+                    } else {///can't be here
                         console.error('setInterval: WebSocket is not open. Unable to send ping');
                         //reconnect2server();
                         if (messageBox) {
@@ -167,10 +167,12 @@
             if (socket && socket.readyState === WebSocket.OPEN) {
                 console.log('Closing WebSocket connection');
                 socket.close();
+                ///TODO: ??set socked to null///???
             }
         }
 
         // Function to reconnect to the WebSocket server if its not open, then call changeConnectionId
+        ///sent only from messageBox.reconnectButton (the red button)
         async function reconnect2server() {
             console.log('reconnect2server: Reconnecting to WebSocket Server');
             if (socket && socket.readyState === WebSocket.OPEN) {

@@ -71,23 +71,6 @@ class Messages {
         await reconnect2server(); ///in index.html
     }
 
-    ///not in use now - we may use it if socket fails
-    /// we will read data not by the socket but by the getData to succedd when socket is not connected 
-    /// then we will call showStartPart2 with the data we get for sDealdone, mySecondsOffered, pairSecondsOffered
-    async doReInitUser() {
-        console.log("doReInitUser");
-        let userDataObj = await getData(coupleURL, { 'userID': currentSession.userId, 'startAutoColor' : currentSession.startAutoColor});///
-        let userData = JSON.parse(userDataObj.body);
-        currentSession.timeOfpart1 = userData.part1Time;
-        if(userData.secondsOffered) {
-               currentSession.updateBuySellTime(userData.secondsOffered);
-            //messageBox.showStartPart2(userData.dealDone, userData.secondsOffered, userData.pairSecondsOffered);///if moveed initUser will overight the secondsOffered & pairSecondsOffered & timeOfpart1
-        } else {
-            console.log("no secondsOffered in doreInitUser");
-        }
-        return userData;
-    }
-
 
     handleReportClick(e) {
         if (currentSession && currentSession.part == "learning") {
@@ -174,8 +157,7 @@ class Messages {
                 break;
             case "part2_2":
                 if (socket && socket.readyState !== WebSocket.OPEN) {
-                    console.log("socket.readyState: " + socket.readyState);
-                    this.textField.text = "אין חיבור לשרת. לחץ על התחבר מחדש, ואז על המשך";
+                    this.reconnectButton.isVisible = true;
                 } else {
                     let buyTime = this.donePart2();///donePart2 will send user answer to database but 
                     ///we don't know yet the answer (session will triger it later) so we dont call any screen
