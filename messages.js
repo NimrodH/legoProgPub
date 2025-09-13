@@ -11,9 +11,10 @@ class Messages {
     advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this.plane);
     currentScreen = "init";
     nextButton;///also sent as parameter in new session and called from there
-    constructor() {
+    constructor(messageType = null) {
+        this.messageType = messageType;
         this.plane.position.z = -25;
-        this.plane.position.y = 2;/////2
+        this.plane.position.y = 2.7;/////2
         this.plane.position.x = 0;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;///without iא its mirror
 
@@ -34,19 +35,37 @@ class Messages {
         this.nextButton.height = "70px";
         this.advancedTexture.addControl(this.nextButton);
 
-        this.reconnectButton = BABYLON.GUI.Button.CreateSimpleButton("but1", "התחבר מחדש");
-        this.reconnectButton.width = 0.3;
-        this.reconnectButton.height = 0.4;
-        this.reconnectButton.color = "white";
-        this.reconnectButton.fontSize = 50;
-        this.reconnectButton.background = "red";
-        this.reconnectButton.onPointerUpObservable.add(this.doReconnectToServer.bind());//////////////
-        this.reconnectButton.top = "35px";//90
-        this.reconnectButton.left = 2;
-        this.reconnectButton.height = "70px";
-        this.advancedTexture.addControl(this.reconnectButton);
-        this.reconnectButton.isVisible = false;
+        if (this.messageType === "colerOptions") {
+            this.nextButton.isVisible = false;
 
+            this.autoColorButton = BABYLON.GUI.Button.CreateSimpleButton(
+                "autoColorBtn",
+                "שהמערכת תבחר את הצבעים עבורי "
+            );
+            this.autoColorButton.width = 0.8;
+            this.autoColorButton.height = "70px";
+            this.autoColorButton.color = "white";
+            this.autoColorButton.fontSize = 44;
+            this.autoColorButton.background = "green";
+            this.autoColorButton.top = "120px";
+            this.autoColorButton.left = "10px";
+            this.autoColorButton.onPointerUpObservable.add(this.handleAutoColorClick.bind(this));
+            this.advancedTexture.addControl(this.autoColorButton);
+
+            this.manualColorButton = BABYLON.GUI.Button.CreateSimpleButton(
+                "manualColorBtn",
+                "מעדיף/ה לבחור את הצבעים בעצמי"
+            );
+            this.manualColorButton.width = 0.8;
+            this.manualColorButton.height = "70px";
+            this.manualColorButton.color = "white";
+            this.manualColorButton.fontSize = 44;
+            this.manualColorButton.background = "green";
+            this.manualColorButton.top = "210px";
+            this.manualColorButton.left = "10px";
+            this.manualColorButton.onPointerUpObservable.add(this.handleManualColorClick.bind(this));
+            this.advancedTexture.addControl(this.manualColorButton);
+        }
 
         const initialText = "במסך זה יופיעו הנחיות" + "\n" + "\n" +
             "מאחוריך מספר לבנים לבניית המודל" + "\n" + "\n" +
@@ -66,11 +85,6 @@ class Messages {
         //plane.isVisible = true;
         //plane.dispose();
     }
-
-    async doReconnectToServer() {
-        await reconnect2server(); ///in index.html
-    }
-
 
     handleReportClick(e) {
         if (currentSession && currentSession.part == "learning") {
@@ -156,14 +170,10 @@ class Messages {
                 this.showPart2_2()
                 break;
             case "part2_2":
-                if (socket && socket.readyState !== WebSocket.OPEN) {
-                    this.reconnectButton.isVisible = true;
-                } else {
-                    let buyTime = this.donePart2();///donePart2 will send user answer to database but 
-                    ///we don't know yet the answer (session will triger it later) so we dont call any screen
-                    ////was currentSession.initExamA();
-                    this.nextButton.isEnabled = true;///false;  true: we want to allow retry   
-                }
+                let buyTime = this.donePart2();///donePart2 will send user answer to database but 
+                ///we don't know yet the answer (session will triger it later) so we dont call any screen
+                ////was currentSession.initExamA();
+                this.nextButton.isEnabled = true;///false;  true: we want to allow retry   
                 break;
             case "startPart2":
                 currentSession.initPart2();
@@ -326,31 +336,12 @@ class Messages {
     }
     /////END TAKEPICS MODE without session
     showEditGroup() {
-        this.currentScreen = "editGroup";
-        this.textField.text = "יש להזין את אות הקבוצה שקיבלת ממנהלת הניסוי" + "\n" + "בסיום לחצ/י המשך"
+        ///every one use group B now
 
-        this.nextButton.isEnabled = false;
-
-        let inputTextArea = new BABYLON.GUI.InputText('group', "");
-        inputTextArea.height = "40px";
-        inputTextArea.color = "white";
-        inputTextArea.fontSize = 48;
-        inputTextArea.top = "-120px";
-        inputTextArea.height = "70px";
-        inputTextArea.width = "200px";
-        inputTextArea.onTextChangedObservable.add(() => this.nextButton.isEnabled = true);
-        this.advancedTexture.addControl(inputTextArea);
-
-        const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
-        keyboard.addKeysRow(["A", "B", "C", "D", "E", "F", "\u2190"]);
-        keyboard.connect(inputTextArea);
-        keyboard.top = "-10px";
-        keyboard.scaleY = 2;
-        keyboard.scaleX = 2;
-        //keyboard.left = "10px";
-        this.advancedTexture.addControl(keyboard);
+        currentSession.group = "B";
+        this.showSelectBlock()
     }
-
+/*
     doneEditGroup() {
         let idInputfield = this.advancedTexture.getControlByName("group");
         let theGroup = idInputfield.text;
@@ -359,16 +350,16 @@ class Messages {
         return theGroup;
     }
 
-    clearEditGroupScreen() { 
+    clearEditGroupScreen() {
         this.textField.text = "ממתין מחדש לבן הזוג";///needed for return with 9
         let idInputfield = this.advancedTexture.getControlByName("group");
         this.advancedTexture.removeControl(idInputfield);
-        idInputfield.dispose(); 
-        let idKeyboard = this.advancedTexture.getControlByName("vkb"); 
+        idInputfield.dispose();
+        let idKeyboard = this.advancedTexture.getControlByName("vkb");
         this.advancedTexture.removeControl(idKeyboard);
         idKeyboard.dispose();
     }
-
+*/
     showSelectBlock() {
         this.currentScreen = "selectBlock";
         this.textField.text = "ניתן לבחור את אחת מאבני הבניין שמאחוריך" + "\n" + "על ידי לחיצה (הקלקה) על אחת מן הבליטות" + "\n" + " המופיעות על גבי האבן" + "\n" + " לחיצה תצבע את הבליטה בצבע צהוב" + "\n" + "" + "\n" + "נא בחר/י את האבן הארוכה ביותר" + "\n" + " ואז לחצ/י על המשך"
@@ -437,7 +428,7 @@ class Messages {
     showConnect() {
         this.currentScreen = "connect";
         let msgBuySell;
-        if (currentSession.startAutoColor == "NO") {
+        if (currentSession.startAutoColor == "Forced to manual") {
             msgBuySell = "נבחרת להיות משתתף מסוג קונה ולכן לא קיבלת יכולת חדשה" + "\n" +
                 "עליך לבחור את צבע החלק בכל צעד"
         } else {
@@ -484,7 +475,7 @@ class Messages {
         //console.log("currentSession.timer.firstTime: " + currentSession.timer.firstTime);
         //console.log("timeToShow: " + timeToShow);
         let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
-        if (currentSession.startAutoColor == "NO") { ///קונה
+        if (currentSession.startAutoColor == "Forced to manual") { ///קונה
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
             const initialText = firstLine + "\n" +
                 "לבן זוג שלך לניסוי המערכת בחרה בכל צעד את הצבע לחלק באופן" + "\n" +
@@ -543,7 +534,7 @@ class Messages {
 
 
 
-        if (currentSession.startAutoColor == "NO") {///קונה
+        if (currentSession.startAutoColor == "Forced to manual") {///קונה
             const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים ללא צורך" + "\n" +
                 "לבחור צבע לחלקים. אם תציע ערך נמוך ממה שיבקש בן הזוג, לא" + "\n" +
                 "תתבצע העסקה. לדוגמא: אם תציע לבן זוג שלך לקנות ממנו את" + "\n" +
@@ -594,7 +585,7 @@ class Messages {
         ////was curentSession = new ASession(id)...
         ///TODO: call curentSession to add answer (buyTime) to database 
         ///      curentSession will call the next stage when it will get trigger from database
-        currentSession.updateBuySellTime(buyTime);
+        //////////////////////////currentSession.updateBuySellTime(buyTime);///comment in 12_9_25
         /* moved to showStartPart2
         this.advancedTexture.removeControl(buyInputfield);
         buyInputfield.dispose();
@@ -613,12 +604,12 @@ class Messages {
             this.advancedTexture.removeControl(buyInputfield);
             buyInputfield.dispose();
         }
-            let buyKeyboard = this.advancedTexture.getControlByName("vkb");
+        let buyKeyboard = this.advancedTexture.getControlByName("vkb");
         if (buyKeyboard) {
             this.advancedTexture.removeControl(buyKeyboard);
             buyKeyboard.dispose();
         }
-       buyKeyboard.dispose();
+        buyKeyboard.dispose();
 
 
         console.log("in showStartPart2. isDealdone= " + isDealdone + " startAutoColor: " + currentSession.startAutoColor);
@@ -626,7 +617,7 @@ class Messages {
         let timeAdded = Math.min(mySecondsOffered, pairSecondsOffered);
         console.log("mySecondsOffered: " + mySecondsOffered + "pairSecondsOffered: " + pairSecondsOffered + "timeAdded: " + timeAdded);
         if (isDealdone) {///מחליפים
-            if (currentSession.startAutoColor == "YES") {///היה מוכר
+            if (currentSession.startAutoColor == "Allowed to choose") {///היה מוכר
                 theMessage = "העסקה התבצעה, ירדו לך " + "\n" +
                     "" + timeAdded + "" + "\n" +
                     "דקות מזמן המבחן לצורך חישוב הבונוס. " + "\n" +
@@ -641,7 +632,8 @@ class Messages {
                 currentSession.currAutoColor = "YES";
             }
         } else {///לא מחליפים
-            theMessage = "העסקה לא התבצעה. כעת ימשיכו 22 הצעדים הבאים"
+            theMessage = "העסקה לא התבצעה. כעת ימשיכו 22 הצעדים הבאים" + "\n" +
+                "לחץ המשך כדי להתחיל"
         }
         this.textField.text = theMessage;
         this.nextButton.isEnabled = true;
@@ -662,7 +654,6 @@ class Messages {
 
     showLastScreen() {
         //this.currentScreen.
-        //disconnectSocket();
         this.currentScreen = "lastScreen";
         this.textField.text = "תודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
         this.nextButton.isEnabled = false;
@@ -672,6 +663,11 @@ class Messages {
     hide() {
         this.plane.isVisible = false;
     }
+
+    handleAutoColorClick() { }
+
+    handleManualColorClick() { }
+
 
 }
 

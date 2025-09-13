@@ -3,7 +3,6 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
     <title>Babylon.js sample code</title>
 
     <!-- Babylon.js -->
@@ -46,12 +45,12 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script>
-        ///CAMERA//////LIGHT//////SKYBOX//////GROUND///ELEMENTS MENU///MODEL//////NEAR MENU///messages
-        //////////////////// Ort MODE FUNCTIONS/////////////////////////////////
-        const menuX = 1;//1;
-        const menuY = 0.5;//abselut position before seting it as child of elementsMenu
-        const modelX = -1;//-15;
-        const elementsMenuY = 0;//-1;///sphere position that is parent of all menu meshes.
+        /// CAMERA //// LIGHT //// SKYBOX //// GROUND /// ELEMENTS MENU /// MODEL //// NEAR MENU /// messages
+        //////////////////// Ort MODE FUNCTIONS //////////////////////////////////
+        const menuX = 1;
+        const menuY = 0.5;
+        const modelX = -1;
+        const elementsMenuY = 0;
         const scaleFactor = 0.25;
         const scailingMenuModel = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
         var ground = null;
@@ -59,21 +58,11 @@
         var near = null;
         var camera = null;
 
-        const socketUrl = 'wss://8j2tm9v9f1.execute-api.us-east-1.amazonaws.com/production/';
-        let socket
-        var userId = null;
-        var userGroup = null;
-        var pingInterval
-        var originalSocket = true;
-        ///////////////////// get/post to html api gateway - used only for steps on DB /////////////////////
-
+        ///////////////////// HTTP helpers (model read + action write) /////////////////////
         function getData(url = '', data = {}) {
-            fullURL = url + '?' + new URLSearchParams(data)
-            //console.log("getData fullURL: " + fullURL)
-            return fetch(fullURL)
-                .then((data1) => { return data1.json() });
+            const fullURL = url + '?' + new URLSearchParams(data);
+            return fetch(fullURL).then((r) => r.json());
         }
-
 
         async function postData(url = '', data = {}) {
             //console.log(JSON.stringify(data))
@@ -90,112 +79,21 @@
                 .catch(error => console.error("postData error: " + error));
         }
 
-        /////////////////////SOCKET //////////////////////////
-
-        // Function to connect to the WebSocket server must include all socket.on... functions
-        async function connectSocket() {
-            console.log('Connecting to WebSocket Server');
-            socket = await new WebSocket(socketUrl);
-
-            // This function is called when the WebSocket connection is successfully established.
-            // It logs a message to the console and sets up a ping interval to keep the connection alive.
-            socket.onopen = function (event) {
-                console.log('onOpen: Connected to WebSocket Server');
-
-                /// to remain the connection live more thaen 10 munutes
-                /// will be cleared on students at endSession
-                pingInterval = setInterval(() => {
-                    console.log('setInterval: Sending ping to WebSocket Server');
-                    if (socket && (socket.readyState === WebSocket.OPEN)) {
-                        socket.send(JSON.stringify({ action: 'ping' }));
-                        console.log('setInterval: Ping sent to WebSocket Server');
-                    } else {///can't be here
-                        console.error('setInterval: WebSocket is not open. Unable to send ping');
-                        //reconnect2server();
-                        if (messageBox) {
-                            messageBox.reconnectButton.isVisible = true;
-                        }
-                    }
-                }, 300000); // Send a ping every 5 minutes (300 seconds)
-            };
-
-            socket.onmessage = function (event) {
-                console.log('onmessage: Message returns from server1:', event.data);
-                let status = JSON.parse(event.data).ansStatus;
-                console.log("event.data.ansStatus: " + status);///missing/wait/continue/reconnected
-
-                let eventData = JSON.parse(event.data)
-
-                switch (status) {
-                    case "missing":
-                        console.log('onmessage: Received missing from WebSocket Server');
-                        messageBox.textField.text = "onmessage: ERROR - other user is not connected";
-                        break;
-                    case "continue":
-                        console.log('onmessage: Received continue from WebSocket Server');
-                        messageBox.showStartPart2(eventData.isdealDone, eventData.mySecondsOffered, eventData.pairSecondsOffered);
-                        break;
-                    case "pong":
-
-                        console.log('onmessage: Received pong from WebSocket Server: ' + eventData.connection_id);
-                        break;
-                    case "reconnected":
-                        console.log('onmessage: Received reconnect from WebSocket Server: ' + eventData.connection_id);
-                        messageBox.reconnectButton.isVisible = false;
-                        break;
-                    default:
-                        console.log("onmessage: ERROR - unknown status: " + status);
-                }
-            };
-
-            socket.onclose = function (event) {
-                console.log('onclose: Disconnected from WebSocket Server');
-                messageBox.reconnectButton.isVisible = true;
-                socket = null;
-            };
-
-            socket.onerror = function (error) {
-                console.error('onError: WebSocket Error:', error);
-            };
+        async function postDataFuncURL(fullURL, bodyData) {
+            fetch(fullURL, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                body: JSON.stringify(bodyData)
+            })
+                .then(response => response.json())
+                .then(data2 => console.log("postData done"))
+                .catch(error => console.error("postData error: " + error));
         }
 
-        connectSocket();
 
-        // Function to disconnect from the WebSocket server
-        function disconnectSocket() {
-            console.log('Disconnecting from WebSocket Server if open');
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                console.log('Closing WebSocket connection');
-                socket.close();
-                ///TODO: ??set socked to null///???
-            }
-        }
 
-        // Function to reconnect to the WebSocket server if its not open, then call changeConnectionId
-        ///sent only from messageBox.reconnectButton (the red button)
-        async function reconnect2server() {
-            console.log('reconnect2server: Reconnecting to WebSocket Server');
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                console.log('reconnect2server: WebSocket is not closed . no need to reconnect')
-                await changeConnectionId()///if we reopen the socket and it don't was open mean while we need to send the connection info again
-                return; // WebSocket is already open, no need to reconnect
-            }
-            console.log('reconnect2server: opennibg new WebSocket');
-            connectSocket();
-        }
 
-        ///function to call the socket with the user connection info
-        async function changeConnectionId() {
-            console.log('Sending updateUserConnectionInfo to WebSocket Server: ', currentSession.userId);
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                await socket.send(JSON.stringify({ action: 'updateUserConnectionInfo', userId: currentSession.userId, startAutoColor: currentSession.startAutoColor }));
-                console.log(' updateUserConnectionInfo sent to WebSocket Server');
-            } else {
-                console.error('WebSocket is not open. Unable to send updateUserConnectionInfo');
-            }
-        }
-
-        /////////////////////// VR stansdart issues + messageBox = new Messages();///////////////
+        /////////////////////// VR standard + messageBox /////////////////////
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -206,33 +104,37 @@
             });
         }
 
-        var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
+        var createDefaultEngine = function () {
+            return new BABYLON.Engine(canvas, true, {
+                preserveDrawingBuffer: true,
+                stencil: true,
+                disableWebGL2Support: false
+            });
+        };
 
         var sceneToRender = null;
 
         /////////// CREATE SCENE ///////////////////////////
         var createScene = async function () {
             const scene = new BABYLON.Scene(engine);
-            ///not in use?
+
+            // Physics (present but not required for networking)
             const gravityVector = new BABYLON.Vector3(0, -9.8, 0);
             const physicsPlugin = new BABYLON.CannonJSPlugin();
             scene.enablePhysics(gravityVector, physicsPlugin);
 
-            ///CAMERA///
-            ///////const camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 2, 1, BABYLON.Vector3.Zero());///used only for taking pics
-            camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);///used for VR
-            camera.setTarget(new BABYLON.Vector3(0, 4, -15));///used for VR
-            camera.attachControl(canvas, true);///used always
-            ///end camera///
+            /// CAMERA ///
+            camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -7), scene);
+            camera.setTarget(new BABYLON.Vector3(0, 4, -15));
+            camera.attachControl(canvas, true);
 
-            ///LIGHT///
-            const light1 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 1));
-            const light2 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0));
+            /// LIGHT ///
+            const light1 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 1), scene);
+            const light2 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
             light1.intensity = 0.75;
             light2.intensity = 0.5;
-            ///END LIGHT///
 
-            ///SKYBOX///
+            /// SKYBOX ///
             let startSkyFiles = "textures/pink";
             const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
             const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
@@ -242,87 +144,56 @@
             skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
             skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
             skybox.material = skyboxMaterial;
-            ///end SKYBOX///
 
-            ///GROUND///
-            ///ground is global to allow changing its line color in changeSky()
+            /// GROUND ///
             ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
-            ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true }, scene);///not needed
-            ground.checkCollisions = true;///not needed
+            ground.physicsImpostor = new BABYLON.PhysicsImpostor(
+                ground,
+                BABYLON.PhysicsImpostor.BoxImpostor,
+                { mass: 0, friction: 0.8, restitution: 0.5, disableBidirectionalTransformation: true },
+                scene
+            );
+            ground.checkCollisions = true;
             ground.material = new BABYLON.GridMaterial("mat", scene);
-            ground.material.lineColor = colorName2Vector("base");///base
-            ground.material.mainColor = new BABYLON.Color3(0.2, 0.2, 0.2);///13/11/2024
-            ///end GROUND///
+            ground.material.lineColor = colorName2Vector("base");
+            ground.material.mainColor = new BABYLON.Color3(0.2, 0.2, 0.2);
 
-            var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });////V
+            var environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 1000 });
             environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"));
 
-            ///ELEMENTS MENU///
-            elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0.01 });
-
+            /// ELEMENTS MENU ///
+            elementsMenu = BABYLON.MeshBuilder.CreateSphere("elementsMenu", { diameter: 0.01 }, scene);
             elementsMenu.position.x = menuX;
-            elementsMenu.position.y = elementsMenuY;///position of center of B1X3 TODO:we need to replace it with virtual mesh
-            elementsMenu.metadata = {
-                labelObj: new FbMessages("תפריט אבני בניין", 1, 1, 0)
-            }
+            elementsMenu.position.y = elementsMenuY;
+            elementsMenu.metadata = { labelObj: new FbMessages("תפריט אבני בניין", 1, 1, 0) };
 
-
-            const b1X5 = meshBlock(scene, 5);
-            b1X5.setParent(elementsMenu);
-            b1X5.position.x = -7;//
-            const b1X3 = meshBlock(scene, 3);
-            b1X3.setParent(elementsMenu);
-            b1X3.position.x = -1;
-
-            const b1X2 = meshBlock(scene, 2);
-            b1X2.setParent(elementsMenu);
-            b1X2.position.x = 3;
-
-            const c1 = meshWheel(scene, 1);
-            c1.setParent(elementsMenu);
-            c1.position.x = 6;
-
+            const b1X5 = meshBlock(scene, 5); b1X5.setParent(elementsMenu); b1X5.position.x = -7;
+            const b1X3 = meshBlock(scene, 3); b1X3.setParent(elementsMenu); b1X3.position.x = -1;
+            const b1X2 = meshBlock(scene, 2); b1X2.setParent(elementsMenu); b1X2.position.x = 3;
+            const c1 = meshWheel(scene, 1); c1.setParent(elementsMenu); c1.position.x = 6;
             elementsMenu.scaling = scailingMenuModel;
-            ///end ELEMENTS MENU///
+            /// END ELEMENTS MENU ///
 
-            ///MODEL///
-            //currentModel = createModel("one", -5, 0 ,-5 );
-            ///end MODEL///
+            /// MODEL (initially none) ///
 
-            ///NEAR MENU///
-            //near = createNearMenu();///called now from messages. implemented in lego 1
+            /// NEAR MENU ///
+            // near = createNearMenu(); // created later via messages/flow
 
-            ///end NEAR MENU///
-            /*////////////////////
-            var newPlane = BABYLON.Mesh.CreatePlane("plane", 10);
-              //newPlane.position.y = 1;
-              newPlane.position.z = -25;
-                    newPlane.position.y = 2;/////2
-                    newPlane.position.x = 0;
-              var newADT = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(newPlane);
-              var newImage = new BABYLON.GUI.Image("erji", "textures/pink_py.png");
-              newADT.addControl(newImage);
-            *////////////////////
-            messageBox = new Messages();
+            messageBox = new Messages();///temp remove "colerOptions" - only for test
 
-            const xr = await scene.createDefaultXRExperienceAsync({
-                floorMeshes: [ground]
-            });
-            //console.log("xr"); 
-            //console.log(xr); 
-            xr.pointerSelection.laserPointerDefaultColor = new BABYLON.Color3(1, 1, 0); //....
+            const xr = await scene.createDefaultXRExperienceAsync({ floorMeshes: [ground] });
+            xr.pointerSelection.laserPointerDefaultColor = new BABYLON.Color3(1, 1, 0);
 
             /*
-            scene.debugLayer.show({
-                embedMode: true,
-            });
+            scene.debugLayer.show({ embedMode: true });
             */
-            ////scene.debugLayer.show();
+
             return scene;
         };
+
         /////// END CREATE SCENE ////////////
         window.initFunction = async function () {
-            var asyncEngineCreation = async function () {
+            const asyncEngineCreation = async function () {
                 try {
                     return createDefaultEngine();
                 } catch (e) {
@@ -336,37 +207,27 @@
             startRenderLoop(engine, canvas);
 
             window.scene = await createScene();
-            ///////////
-            // Assuming you have a WebXR experience set up
+
+            // Sample XR/gamepad tick (unchanged)
             window.scene.onBeforeRenderObservable.add(() => {
                 const xrInput = scene.activeCamera.inputs.attached.webVR || scene.activeCamera.inputs.attached.webXR;
-
                 if (xrInput) {
                     xrInput.controllers.forEach(controller => {
                         if (controller.inputSource.gamepad) {
                             camera.position = new BABYLON.Vector3(0, 5, -7);
                             const buttons = controller.inputSource.gamepad.buttons;
-
-                            // Check if button A is pressed
                             if (buttons[0].pressed) {
-                                // React to button A being pressed
                                 console.log("Button A pressed");
                                 camera.position = new BABYLON.Vector3(0, 5, -7);
-                                // Add your action here
                             }
                         }
                     });
                 }
             });
-
-
-            /////////////            
-
         };
 
-
         initFunction().then(() => {
-            sceneToRender = scene
+            sceneToRender = scene;
         });
 
         // Resize

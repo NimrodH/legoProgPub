@@ -26,13 +26,12 @@ async function saveUserAction(actionType, ActionDetails, actionId, block, model,
 
 class Session {
     userId;
-    myPairId;
     actionId = 0;/// running number for any action (click) the user done - to be used on the database table
     connectedStage = 0;///the order number of true conection action (no matter which model) in the session
     group;///each group handle differant no. of models when training
     startAutoColor; ///we set it here in the constructor (even id number will start with auto)
     currAutoColor; ///init as startAutoColor but can be changed if deal done 
-    pairName;///will be in format (830_831) the first user ID _ and one number above it (that must be the other user in the pair)
+    //pairName;///will be in format (830_831) the first user ID _ and one number above it (that must be the other user in the pair)
     currentModelInArray = 0;///index in array of shown model
     fb;///one line message to the larner. usage: //this.fb = new FbMessages("בוקר אביבי ושמח");
     trainingModelData;///array item per line. each line is object with the following props:
@@ -77,19 +76,22 @@ class Session {
         if (isODD) {
             pairEnd = (number + 1).toString();
             pairStart = id;
-            this.startAutoColor = "YES";
-            this.myPairId = pairEnd;
+            this.startAutoColor = "Allowed to choose";
         } else {
             pairStart = (number - 1).toString();
             pairEnd = id;
-            this.startAutoColor = "NO";
-            this.myPairId = pairStart;
+            this.startAutoColor = "Forced to manual";
         }
         if((this.userId == "666") || (this.userId == "667")) {
             enforceTraining = false;
         }
-        this.currAutoColor = this.startAutoColor;
-        this.pairName = pairStart + "_" + pairEnd;
+        /////this.currAutoColor = this.startAutoColor;
+        if (this.startAutoColor == "Allowed to choose") {
+            this.currAutoColor = "YES";///he will change it when he choose from dialog
+        } else {
+            this.currAutoColor = "NO";///in the other group we force to statrt with manual
+        }
+        //this.pairName = pairStart + "_" + pairEnd;
         addEventListener("reportClick", this.handleReportClick.bind(this));
     }
 
@@ -184,7 +186,7 @@ class Session {
                 //    console.log("W1!!!");
                 setWorld(this.userId);
                 //}
-
+                
                 ////N1/5
                 break;
             case "E":
@@ -224,17 +226,10 @@ class Session {
             action: 'initUser',
             userId: this.userId,
             group: this.group,
-            startAutoColor: this.startAutoColor,
-            pairName: this.pairName,
-            myPairId: this.myPairId
+            startAutoColor: this.startAutoColor
         };
-        if (socket && (socket.readyState === WebSocket.OPEN)) {
-            socket.send(JSON.stringify(initialData));
-        } else {
-            if (messageBox) {
-                messageBox.reconnectButton.isVisible = true;
-            }
-        }
+        /// replaced WebSocket send with REST call
+        await postDataFuncURL("https://my7pm4ntu45jm3vvdiwpf6rwky0ghibm.lambda-url.us-east-1.on.aws/", initialData);
     }
 
 
@@ -249,14 +244,8 @@ class Session {
             startAutoColor: this.startAutoColor,
             part1Time: this.timeOfpart1
         };
-        if (socket && (socket.readyState === WebSocket.OPEN)) {
-            socket.send(JSON.stringify(initialData));
-                    ///we update again in case the previous was not accepted
-        } else {
-            if (messageBox) {
-                messageBox.reconnectButton.isVisible = true;
-            }
-        }
+        /// replaced WebSocket send with REST call
+        await postData(coupleURL, initialData);
     }
 
     async updatePartTime(partTime, whichPart) {
@@ -280,13 +269,8 @@ class Session {
                 startAutoColor: this.startAutoColor
             };
         }
-        if (socket && (socket.readyState === WebSocket.OPEN)) {
-            socket.send(JSON.stringify(initialData));
-        } else {
-            if (messageBox) {
-                messageBox.reconnectButton.isVisible = true;
-            }
-        }
+        /// replaced WebSocket send with REST call
+        await postData(coupleURL, initialData);
     }
 
     runPart() {
@@ -451,7 +435,7 @@ class Session {
             return
         }
         let colorName = colorVector2Name(newElement.material.diffuseColor);
-        //console.log("colorName: " + colorName + "  " + dataLine.color);
+        console.log("colorName: " + colorName + "  " + dataLine.color);
         if (colorName !== dataLine.color) {
             isCorect = false;
             wrongItems.push("color");
@@ -637,9 +621,7 @@ class Session {
 
     endSession() {
         ///created in index at socket.onopen
-        clearInterval(pingInterval);
-        disconnectSocket();
-
+        //clearInterval(pingInterval);
     }
     
 }
