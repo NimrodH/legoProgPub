@@ -87,7 +87,7 @@ class Session {
         }
         /////this.currAutoColor = this.startAutoColor;
         if (this.startAutoColor == "Allowed to choose") {
-            this.currAutoColor = "YES";///he will change it when he choose from dialog
+            this.currAutoColor = "NO";///he will change it when he choose from dialog
         } else {
             this.currAutoColor = "NO";///in the other group we force to statrt with manual
         }
@@ -229,7 +229,7 @@ class Session {
             startAutoColor: this.startAutoColor
         };
         /// replaced WebSocket send with REST call
-        await postDataFuncURL("https://my7pm4ntu45jm3vvdiwpf6rwky0ghibm.lambda-url.us-east-1.on.aws/", initialData);
+        await postDataFuncURL(coupleURL, initialData);
     }
 
 
@@ -245,7 +245,7 @@ class Session {
             part1Time: this.timeOfpart1
         };
         /// replaced WebSocket send with REST call
-        await postData(coupleURL, initialData);
+        await postDataFuncURL(coupleURL, initialData);
     }
 
     async updatePartTime(partTime, whichPart) {
@@ -255,7 +255,7 @@ class Session {
         if(whichPart == "1") {
             console.log("in whichPart == 1")
             initialData = {
-                action: 'updateTime',
+                action: 'update1Time',
                 userId: this.userId,
                 part1Time: partTime,
                 startAutoColor: this.startAutoColor
@@ -263,17 +263,18 @@ class Session {
         } else {
             console.log("in whichPart == 2")
             initialData = {
-                action: 'updateTime',
+                action: 'update2Time',
                 userId: this.userId,
                 part2Time: partTime,
                 startAutoColor: this.startAutoColor
             };
         }
         /// replaced WebSocket send with REST call
-        await postData(coupleURL, initialData);
+        await postDataFuncURL(coupleURL, initialData);
     }
 
     runPart() {
+        console.log("in runPart this.currAutoColor: " + this.currAutoColor);
         let delButton = (near.children).filter(b => b.name == "delete")[0];
         delButton.isVisible = false;///if we allow to delete correct block we will get connectedStage++ twice
         let modelLabel = this.modelInConnectedStage[this.connectedStage];

@@ -71,7 +71,7 @@ function fullName2Private(theFullName) {
 }
 
 const tableURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/model';
-const coupleURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/couple';
+const coupleURL = "https://my7pm4ntu45jm3vvdiwpf6rwky0ghibm.lambda-url.us-east-1.on.aws/";
 ////const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/foo';;///wrong for debug
 const usersURL = 'https://9ewp86ps3e.execute-api.us-east-1.amazonaws.com/development/users';
 let selectedConnection;///the sphere that was clicked on one of the elements outside the model

@@ -35,41 +35,13 @@ class Messages {
         this.nextButton.height = "70px";
         this.advancedTexture.addControl(this.nextButton);
 
-        if (this.messageType === "colerOptions") {
-            this.nextButton.isVisible = false;
-
-            this.autoColorButton = BABYLON.GUI.Button.CreateSimpleButton(
-                "autoColorBtn",
-                "שהמערכת תבחר את הצבעים עבורי "
-            );
-            this.autoColorButton.width = 0.8;
-            this.autoColorButton.height = "70px";
-            this.autoColorButton.color = "white";
-            this.autoColorButton.fontSize = 44;
-            this.autoColorButton.background = "green";
-            this.autoColorButton.top = "120px";
-            this.autoColorButton.left = "10px";
-            this.autoColorButton.onPointerUpObservable.add(this.handleAutoColorClick.bind(this));
-            this.advancedTexture.addControl(this.autoColorButton);
-
-            this.manualColorButton = BABYLON.GUI.Button.CreateSimpleButton(
-                "manualColorBtn",
-                "מעדיף/ה לבחור את הצבעים בעצמי"
-            );
-            this.manualColorButton.width = 0.8;
-            this.manualColorButton.height = "70px";
-            this.manualColorButton.color = "white";
-            this.manualColorButton.fontSize = 44;
-            this.manualColorButton.background = "green";
-            this.manualColorButton.top = "210px";
-            this.manualColorButton.left = "10px";
-            this.manualColorButton.onPointerUpObservable.add(this.handleManualColorClick.bind(this));
-            this.advancedTexture.addControl(this.manualColorButton);
+        if (this.messageType === "colorOptions") {
+            this.showColorChooseButtons();
         }
 
         const initialText = "במסך זה יופיעו הנחיות" + "\n" + "\n" +
             "מאחוריך מספר לבנים לבניית המודל" + "\n" + "\n" +
-            "[אחרי שראינו את האבנים יש להקליק על כפתור [המשך" + "\n" +
+            "[אחרי שראינו את האבנים יש להקליק על כפתור [המשך" + "\n" + "\n" +
             "הקלקה פרושה להצביע עם הקרן על הכפתור וללחוץ על ההדק";
 
         let text1 = this.textField;
@@ -84,6 +56,40 @@ class Messages {
         //this.advancedTexture.focusedControl = inputTextArea;///create bug
         //plane.isVisible = true;
         //plane.dispose();
+    }
+
+    showColorChooseButtons() {
+        // Create and show color choice buttons
+        this.nextButton.isVisible = false;
+
+        this.autoColorButton = BABYLON.GUI.Button.CreateSimpleButton(
+            "autoColorBtn",
+            "שהמערכת תבחר את הצבעים עבורי "
+        );
+        this.autoColorButton.width = 0.8;
+        this.autoColorButton.height = "70px";
+        this.autoColorButton.color = "white";
+        this.autoColorButton.fontSize = 44;
+        this.autoColorButton.background = "green";
+        this.autoColorButton.top = "120px";
+        this.autoColorButton.left = "10px";
+        this.autoColorButton.onPointerUpObservable.add(this.handleAutoColorClick.bind(this));
+        this.advancedTexture.addControl(this.autoColorButton);
+
+        this.manualColorButton = BABYLON.GUI.Button.CreateSimpleButton(
+            "manualColorBtn",
+            "מעדיף/ה לבחור את הצבעים בעצמי"
+        );
+        this.manualColorButton.width = 0.8;
+        this.manualColorButton.height = "70px";
+        this.manualColorButton.color = "white";
+        this.manualColorButton.fontSize = 44;
+        this.manualColorButton.background = "green";
+        this.manualColorButton.top = "210px";
+        this.manualColorButton.left = "10px";
+        this.manualColorButton.onPointerUpObservable.add(this.handleManualColorClick.bind(this));
+        this.advancedTexture.addControl(this.manualColorButton);
+
     }
 
     handleReportClick(e) {
@@ -209,7 +215,10 @@ class Messages {
 
     showEditID() {
         this.currentScreen = "editID";
-        this.textField.text = "יש ללחוץ (להקליק) בתוך השדה השחור" + "\n" + "" + "\n" + "לאחר שנפתחה המקלדת, יש להזין את " + "\n" + "המספר שקיבלת ממנהלת הניסוי " + "\n" + "" + "\n" + "לסיום לחצ/י המשך"
+        this.textField.text = "יש ללחוץ (להקליק) בתוך השדה השחור" + "\n" + "" + "\n" +
+         "לאחר שנפתחה המקלדת, יש להזין את " + "\n" + "\n" +
+          "המספר שקיבלת ממנהלת הניסוי " + "\n" + "" + "\n" + 
+          "לסיום לחצ/י המשך"
 
         this.nextButton.isEnabled = false;
 
@@ -341,28 +350,28 @@ class Messages {
         currentSession.group = "B";
         this.showSelectBlock()
     }
-/*
-    doneEditGroup() {
-        let idInputfield = this.advancedTexture.getControlByName("group");
-        let theGroup = idInputfield.text;
-        currentSession.group = theGroup;
-        this.clearEditGroupScreen()
-        return theGroup;
-    }
-
-    clearEditGroupScreen() {
-        this.textField.text = "ממתין מחדש לבן הזוג";///needed for return with 9
-        let idInputfield = this.advancedTexture.getControlByName("group");
-        this.advancedTexture.removeControl(idInputfield);
-        idInputfield.dispose();
-        let idKeyboard = this.advancedTexture.getControlByName("vkb");
-        this.advancedTexture.removeControl(idKeyboard);
-        idKeyboard.dispose();
-    }
-*/
+    /*
+        doneEditGroup() {
+            let idInputfield = this.advancedTexture.getControlByName("group");
+            let theGroup = idInputfield.text;
+            currentSession.group = theGroup;
+            this.clearEditGroupScreen()
+            return theGroup;
+        }
+    
+        clearEditGroupScreen() {
+            this.textField.text = "ממתין מחדש לבן הזוג";///needed for return with 9
+            let idInputfield = this.advancedTexture.getControlByName("group");
+            this.advancedTexture.removeControl(idInputfield);
+            idInputfield.dispose();
+            let idKeyboard = this.advancedTexture.getControlByName("vkb");
+            this.advancedTexture.removeControl(idKeyboard);
+            idKeyboard.dispose();
+        }
+    */
     showSelectBlock() {
         this.currentScreen = "selectBlock";
-        this.textField.text = "ניתן לבחור את אחת מאבני הבניין שמאחוריך" + "\n" + "על ידי לחיצה (הקלקה) על אחת מן הבליטות" + "\n" + " המופיעות על גבי האבן" + "\n" + " לחיצה תצבע את הבליטה בצבע צהוב" + "\n" + "" + "\n" + "נא בחר/י את האבן הארוכה ביותר" + "\n" + " ואז לחצ/י על המשך"
+        this.textField.text = "ניתן לבחור את אחת מאבני הבניין שמאחוריך" + "\n" + "\n" + "על ידי לחיצה (הקלקה) על אחת מן הבליטות" + "\n" + "\n" + " המופיעות על גבי האבן" + "\n" + "\n" + " לחיצה תצבע את הבליטה בצבע צהוב" + "\n" + "" + "\n" + "נא בחר/י את האבן הארוכה ביותר" + "\n" + "\n" + " ואז לחצ/י על המשך"
         if (enforceTraining) {
             this.nextButton.isEnabled = false;//////to allow only after clicking
         }
@@ -375,7 +384,7 @@ class Messages {
         //near = {}; ////N1/5 (=without comment)
         /////near.isVisible = true;
         //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים" + "\n" + " ניתן לגרור אותו לכל מקום במסך" + "\n" + "" + "\n" + "הכפתורים יפעלו על האבן שנבחרה:" + "\n" + "" + "\n" + " [ red ] כפתורים לבחירת צבע לדוגמא " + "\n" + "  אבן שוכבת אופקית [ / ]" + "\n" + "אבן עומדת [ | ]" + "\n" + "אבן שוכבת אנכית [ -- ] "
-        this.textField.text = "מעל אבני הבניין, מופיע לוח עם כפתורים שונים" + "\n" + " שישמשו אותך לאורך הניסוי" + "\n" + "" + "\n" + "נא לחצ/י על כפתור" + "\n" + " לבחירת צבע אדום לאבן" + "\n" + " [red] "
+        this.textField.text = "מעל אבני הבניין, מופיע לוח עם כפתורים שונים" + "\n" + "\n" + " שישמשו אותך לאורך הניסוי" + "\n" + "" + "\n" + "נא לחצ/י על כפתור" + "\n" + "\n" + " לבחירת צבע אדום לאבן" + "\n" + "\n" + " [red] "
         if (enforceTraining) {
             this.nextButton.isEnabled = false;
         }
@@ -383,7 +392,7 @@ class Messages {
 
     showRotateButtons() {
         this.currentScreen = "rotateButtons";
-        this.textField.text = "" + "\n" + " לרשותך גם כפתורים לסיבוב האבן" + "\n" + "" + "\n" + "הכפתורים יפעלו על האבן שנבחרה:" + "\n" + "" + "\n" + " סובב/י את האבן למצב עומד על ידי בחירת כפתור מתאים " + "\n" + "  אבן שוכבת אופקית [ / ]" + "\n" + "אבן עומדת [ | ]" + "\n" + "אבן שוכבת אנכית [ -- ] "
+        this.textField.text = "" + "\n" + "\n" + " לרשותך גם כפתורים לסיבוב האבן" + "\n" + "" + "\n" + "הכפתורים יפעלו על האבן שנבחרה:" + "\n" + "" + "\n" + "\n" + " סובב/י את האבן למצב עומד על ידי בחירת כפתור מתאים " + "\n" + "\n" + "  אבן שוכבת אופקית [ / ]" + "\n" + "\n" + "אבן עומדת [ | ]" + "\n" + "\n" + "אבן שוכבת אנכית [ -- ] "
         //    this.textField.text = "מעל האבנים מופיע עכשיו מאחוריך פאנל כחול עם כפתורים" + "\n" + " ניתן לגרור אותו לכל מקום במסך" + "\n" + "" + "\n" + "הכפתורים יפעלו על האבן שנבחרה:" + "\n" + "" + "\n" + " [ red ] כפתורים לבחירת צבע לדוגמא " + "\n" + "  אבן שוכבת אופקית [ / ]" + "\n" + "אבן עומדת [ | ]" + "\n" + "אבן שוכבת אנכית [ -- ] "
         if (enforceTraining) {
             this.nextButton.isEnabled = false;
@@ -396,7 +405,11 @@ class Messages {
             this.nextButton.isEnabled = false;
         }
         /////
-        this.textField.text = "משמאלך בסיס למודל" + "\n" + "" + "\n" + "בחר/י את המודל" + "\n" + " M1 " + "\n" + "על ידי לחיצה (הקלקה) על הבליטה שבו" + "\n" + " כך שהיא תיצבע בצבע צהוב" + "\n" + "" + "\n" + "לאחר מכן לחצ/י המשך";
+        this.textField.text = "משמאלך בסיס למודל" + "\n" + "" + "\n" +
+          "בחר/י את המודל" + "\n" + "\n" + " M1 " + "\n" + "\n" +
+          "על ידי לחיצה (הקלקה) על הבליטה שבו" + "\n" + "\n" +
+           " כך שהיא תיצבע בצבע צהוב" + "\n" + "\n" + "" + "\n" +
+            "לאחר מכן לחצ/י המשך";
         /*
         switch (currentSession.group) {
             case "A":
@@ -423,41 +436,44 @@ class Messages {
             this.nextButton.isEnabled = false;
         }
         this.currentScreen = "trainingScreen";
-        this.textField.text = "לפני הוספת אבן למודל יש לבחור בליטה במודל" + "\n" + " ובליטה בחלק המתחבר כך שיצבעו בצבע צהוב" + "\n" + " לאחר מכן יש ללחוץ על כפתור [>>]. לאחר " + "\n" + "לחיצה על כפתור זה, האבן תוצמד למודל" + "\n" + " והנקודות שנבחרו יתלכדו" + "\n" + "" + "\n" + "להסרת האבן האחרונה שנוספה למודל " + "\n" + "יש ללחוץ על כפתור [<<].כעת " + "\n" + "חבר/י מספר אבנים למודל על פי הנחיות המנחה"
+        this.textField.text = "לפני הוספת אבן למודל יש לבחור בליטה במודל" + "\n" + "\n" + " ובליטה בחלק המתחבר כך שיצבעו בצבע צהוב" + "\n" + "\n" + " לאחר מכן יש ללחוץ על כפתור [>>]. לאחר " + "\n" + "\n" + "לחיצה על כפתור זה, האבן תוצמד למודל" + "\n" + "\n" + " והנקודות שנבחרו יתלכדו" + "\n" + "" + "\n" + "להסרת האבן האחרונה שנוספה למודל " + "\n" + "\n" + "יש ללחוץ על כפתור [<<].כעת " + "\n" + "\n" + "חבר/י מספר אבנים למודל על פי הנחיות המנחה"
     }
     showConnect() {
         this.currentScreen = "connect";
         let msgBuySell;
-        if (currentSession.startAutoColor == "Forced to manual") {
-            msgBuySell = "נבחרת להיות משתתף מסוג קונה ולכן לא קיבלת יכולת חדשה" + "\n" +
-                "עליך לבחור את צבע החלק בכל צעד"
-        } else {
-            msgBuySell = "נבחרת להיות משתתף מסוג מוכר ולכן קיבלת יכולת חדשה" + "\n" +
-                "בחירת צבע החלק בכל צעד תיעשה באופן אוטומטי על ידי המערכת"
-        }
         switch (currentSession.group) {
             case "A":
-                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" +
+                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" + "\n" +
                     "מאחורי אבני הבניין ישנם שני בסיסים נוספים" + "\n\n" +
                     msgBuySell + "\n\n" +
-                    "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
-                    "להתחיל לבנות את המודלים בהתאם" + "\n" +
+                    "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" + "\n" +
+                    "להתחיל לבנות את המודלים בהתאם" + "\n" + "\n" +
                     "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
                 break;
             case "B":
+                console.log("in showConnect B, part: " + currentSession.part);
+                if (currentSession.startAutoColor == "Allowed to choose") {
+                    this.showColorChooseButtons();
+                    this.textField.text = "אתה יכול לבחור אם המערכת תבחר עבורך את הצבעים"
+                } else {
+                    this.textField.text = "אתה חייב לבחור את הצבעים בעצמך"
+                }
+                /*
                 this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" +
                     "שני מודלים נוספים יוצגו לפניך בהמשך" + "\n" + "\n" +
                     msgBuySell + "\n\n" +
                     "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
                     "להתחיל לבנות את המודלים בהתאם" + "\n" +
                     "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
+                */
                 break;
+
             case "C":
-                this.textField.text = "משמאלך שוב הבסיס למודל" + "\n" +
+                this.textField.text = "משמאלך שוב הבסיס למודל" + "\n" + "\n" +
                     "שלושה מודלים נוספים יוצגו לפניך בהמשך" + "\n\n" +
                     msgBuySell + "\n\n" +
-                    "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
-                    "להתחיל לבנות את המודלים בהתאם" + "\n" +
+                    "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" + "\n" +
+                    "להתחיל לבנות את המודלים בהתאם" + "\n" + "\n" +
                     "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
                 break;
             default:
@@ -477,30 +493,30 @@ class Messages {
         let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
         if (currentSession.startAutoColor == "Forced to manual") { ///קונה
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
-            const initialText = firstLine + "\n" +
-                "לבן זוג שלך לניסוי המערכת בחרה בכל צעד את הצבע לחלק באופן" + "\n" +
-                "אוטומטי. כעת אתה עובר לשלב המבחן, שכולל גם הוא 22 צעדים" + "\n" +
-                "כזכור, הנבדק שיסיים את שלב המבחן במספר הדקות הכי נמוך בכל" + "\n" +
-                "קבוצה יזכה בבונוס נוסף" + "\n" +
-                "אתה יכול להציע לבן הזוג שלך לקנות ממנו את היכולת שיש לו," + "\n" +
-                "שהמערכת בוחרת את הצבע לחלק באופן אוטומטי. זאת תמורת מספר " + "\n" +
-                "דקות שיתווספו לזמן שלך בשלב המבחן לצורך חישוב הבונוס" + "\n" +
-                "בן הזוג שלך מבקש עבור עסקה זו מספר דקות שירדו מהזמן שלו" + "\n" +
+            const initialText = firstLine + "\n" + "\n" +
+                "לבן זוג שלך לניסוי המערכת בחרה בכל צעד את הצבע לחלק באופן" + "\n" + "\n" +
+                "אוטומטי. כעת אתה עובר לשלב המבחן, שכולל גם הוא 22 צעדים" + "\n" + "\n" +
+                "כזכור, הנבדק שיסיים את שלב המבחן במספר הדקות הכי נמוך בכל" + "\n" + "\n" +
+                "קבוצה יזכה בבונוס נוסף" + "\n" + "\n" +
+                "אתה יכול להציע לבן הזוג שלך לקנות ממנו את היכולת שיש לו," + "\n" + "\n" +
+                "שהמערכת בוחרת את הצבע לחלק באופן אוטומטי. זאת תמורת מספר " + "\n" + "\n" +
+                "דקות שיתווספו לזמן שלך בשלב המבחן לצורך חישוב הבונוס" + "\n" + "\n" +
+                "בן הזוג שלך מבקש עבור עסקה זו מספר דקות שירדו מהזמן שלו" + "\n" + "\n" +
                 "בשלב המבחן (לחץ המשך)"
 
             this.textField.text = initialText;
         } else {/// מוכר
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
-            const initialText = "\n" + firstLine + "\n" +
-                "לבן זוג שלך לניסוי לא הייתה את היכולת שהמערכת בוחרת את הצבע" + "\n" +
-                "לחלק באופן אוטומטי ועליו היה לבחור את הצבע לחלק בכל צעד. כעת" + "\n" +
-                "אתה עובר לשלב המבחן, שכולל גם הוא 22 צעדים. כזכור, הנבדק" + "\n" +
-                " שיסיים את שלב המבחן במספר הדקות הכי נמוך בכל קבוצה יזכה" + "\n" +
-                "בבונוס נוסף" + "\n" +
-                "אתה יכול לוותר על היכולת שלך ולהציע אותה לבן הזוג שלך תמורת" + "\n" +
-                "מספר דקות שירדו מהזמן שלך בזמן המבחן לצורך חישוב הבונוס ולבצע" + "\n" +
-                "את 22 הצעדים הבאים עם הצורך לבחור צבע לכל חלק. בן הזוג שלך" + "\n" +
-                "מציע עבור עסקה זו מספר דקות שיתווספו לזמן שלו בשלב המבחן" + "\n" +
+            const initialText = "\n" + firstLine + "\n" + "\n" +
+                "לבן זוג שלך לניסוי לא הייתה את היכולת שהמערכת בוחרת את הצבע" + "\n" + "\n" +
+                "לחלק באופן אוטומטי ועליו היה לבחור את הצבע לחלק בכל צעד. כעת" + "\n" + "\n" +
+                "אתה עובר לשלב המבחן, שכולל גם הוא 22 צעדים. כזכור, הנבדק" + "\n" + "\n" +
+                " שיסיים את שלב המבחן במספר הדקות הכי נמוך בכל קבוצה יזכה" + "\n" + "\n" +
+                "בבונוס נוסף" + "\n" + "\n" +
+                "אתה יכול לוותר על היכולת שלך ולהציע אותה לבן הזוג שלך תמורת" + "\n" + "\n" +
+                "מספר דקות שירדו מהזמן שלך בזמן המבחן לצורך חישוב הבונוס ולבצע" + "\n" + "\n" +
+                "את 22 הצעדים הבאים עם הצורך לבחור צבע לכל חלק. בן הזוג שלך" + "\n" + "\n" +
+                "מציע עבור עסקה זו מספר דקות שיתווספו לזמן שלו בשלב המבחן" + "\n" + "\n" +
                 "(לחץ המשך)"
 
             this.textField.text = initialText
@@ -535,19 +551,19 @@ class Messages {
 
 
         if (currentSession.startAutoColor == "Forced to manual") {///קונה
-            const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים ללא צורך" + "\n" +
-                "לבחור צבע לחלקים. אם תציע ערך נמוך ממה שיבקש בן הזוג, לא" + "\n" +
-                "תתבצע העסקה. לדוגמא: אם תציע לבן זוג שלך לקנות ממנו את" + "\n" +
-                "היכולת ב-5 דקות, והעסקה תתקבל, ותבצע את שלב המבחן" + "\n" +
-                "ב-18 דקות, הזמן הסופי שלך לצורך חישוב הבונוס יהיה 23 דקות" + "\n" +
+            const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים ללא צורך" + "\n" + "\n" +
+                "לבחור צבע לחלקים. אם תציע ערך נמוך ממה שיבקש בן הזוג, לא" + "\n" + "\n" +
+                "תתבצע העסקה. לדוגמא: אם תציע לבן זוג שלך לקנות ממנו את" + "\n" + "\n" +
+                "היכולת ב-5 דקות, והעסקה תתקבל, ותבצע את שלב המבחן" + "\n" + "\n" +
+                "ב-18 דקות, הזמן הסופי שלך לצורך חישוב הבונוס יהיה 23 דקות" + "\n" + "\n" +
                 "רשום בכמה דקות תהיה מוכן לקנות את היכולת הזאת"
             this.textField.text = initialText;
         } else {///מוכר
-            const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים כאשר עליך גם" + "\n" +
-                "לבחור צבע לחלקים. אם תבקש ערך גבוה ממה שיציע בן הזוג, לא " + "\n" +
-                "תתבצע העסקה. לדוגמא: אם תציע לבן הזוג שלך לקנות ממך את היכולת" + "\n" +
-                " ב-5 דקות, והעסקה תתקבל, ותבצע  את שלב המבחן ב-23 דקות, הזמן" + "\n" +
-                "הסופי שלך לצורך חישוב הבונוס יהיה 18 דקות" + "\n" +
+            const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים כאשר עליך גם" + "\n" + "\n" +
+                "לבחור צבע לחלקים. אם תבקש ערך גבוה ממה שיציע בן הזוג, לא " + "\n" + "\n" +
+                "תתבצע העסקה. לדוגמא: אם תציע לבן הזוג שלך לקנות ממך את היכולת" + "\n" + "\n" +
+                " ב-5 דקות, והעסקה תתקבל, ותבצע  את שלב המבחן ב-23 דקות, הזמן" + "\n" + "\n" +
+                "הסופי שלך לצורך חישוב הבונוס יהיה 18 דקות" + "\n" + "\n" +
                 "רשום בכמה דקות תהיה מוכן למכור את היכולת הזאת"
 
             this.textField.text = initialText;
@@ -618,21 +634,21 @@ class Messages {
         console.log("mySecondsOffered: " + mySecondsOffered + "pairSecondsOffered: " + pairSecondsOffered + "timeAdded: " + timeAdded);
         if (isDealdone) {///מחליפים
             if (currentSession.startAutoColor == "Allowed to choose") {///היה מוכר
-                theMessage = "העסקה התבצעה, ירדו לך " + "\n" +
-                    "" + timeAdded + "" + "\n" +
-                    "דקות מזמן המבחן לצורך חישוב הבונוס. " + "\n" +
-                    "כעת ימשיכו 22 הצעדים הבאים" + "\n" +
+                theMessage = "העסקה התבצעה, ירדו לך " + "\n" + "\n" +
+                    "" + timeAdded + "" + "\n" + "\n" +
+                    "דקות מזמן המבחן לצורך חישוב הבונוס. " + "\n" + "\n" +
+                    "כעת ימשיכו 22 הצעדים הבאים" + "\n" + "\n" +
                     "לחץ המשך כדי להתחיל"
                 currentSession.currAutoColor = "NO";
             } else { ///היה קונה
-                theMessage = "העסקה התבצעה, התווספו לך " + "\n" + timeAdded + "\n" +
-                    "דקות לזמן המבחן לצורך חישוב הבונוס" + "\n" +
-                    "כעת ימשיכו 22 הצעדים הבאים" + "\n" +
+                theMessage = "העסקה התבצעה, התווספו לך " + "\n" + "\n" + timeAdded + "\n" + "\n" +
+                    "דקות לזמן המבחן לצורך חישוב הבונוס" + "\n" + "\n" +
+                    "כעת ימשיכו 22 הצעדים הבאים" + "\n" + "\n" +
                     "לחץ המשך כדי להתחיל"
                 currentSession.currAutoColor = "YES";
             }
         } else {///לא מחליפים
-            theMessage = "העסקה לא התבצעה. כעת ימשיכו 22 הצעדים הבאים" + "\n" +
+            theMessage = "העסקה לא התבצעה. כעת ימשיכו 22 הצעדים הבאים" + "\n" + "\n" +
                 "לחץ המשך כדי להתחיל"
         }
         this.textField.text = theMessage;
@@ -643,13 +659,13 @@ class Messages {
     showExamA() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examA";
-        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן" + "\n" + "מי שיסיים את הבנייה בשלב זה ובשלב" + "\n" + "הבא בזמן המהיר ביותר, יקבל בונוס" + "\n" + "נא לחצ/י המשך ואז הסתובב/י והתחל/י בבנייה"
+        this.textField.text = "בשלב הבא יש לבנות מודל במינימום זמן" + "\n" + "\n" + "מי שיסיים את הבנייה בשלב זה ובשלב" + "\n" + "\n" + "הבא בזמן המהיר ביותר, יקבל בונוס" + "\n" + "\n" + "נא לחצ/י המשך ואז הסתובב/י והתחל/י בבנייה"
     }
 
     showExamB() {
         this.nextButton.isEnabled = true;
         this.currentScreen = "examB";
-        this.textField.text = "הגעת לשלב האחרון בו יש לבנות שני מודלים במינימום זמן" + "\n" + "מי שיסיים את הבנייה של השלב הזה והשלב" + "\n" + " הקודם בזמן הקצר ביותר יקבל בונוס" + "\n" + "נא לחצ/י המשך ואז הסתובב/י והתחל/י בבנייה"
+        this.textField.text = "הגעת לשלב האחרון בו יש לבנות שני מודלים במינימום זמן" + "\n" + "\n" + "מי שיסיים את הבנייה של השלב הזה והשלב" + "\n" + "\n" + " הקודם בזמן הקצר ביותר יקבל בונוס" + "\n" + "\n" + "נא לחצ/י המשך ואז הסתובב/י והתחל/י בבנייה"
     }
 
     showLastScreen() {
@@ -664,9 +680,46 @@ class Messages {
         this.plane.isVisible = false;
     }
 
-    handleAutoColorClick() { }
+handleAutoColorClick() {
+    currentSession.currAutoColor = "YES";
+    colorButtonsIsVisible(false);
 
-    handleManualColorClick() { }
+    // get current model name and step
+    let mName = currentModel.metadata.modelName;
+    let nextStep = currentModel.metadata.numOfBlocks + 1;
+
+    const nexstDataLine = currentSession.trainingModelData
+        .filter(el => (el.step == nextStep) && (el.modelName == mName))[0];
+
+    if (nexstDataLine) {
+        let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
+        let newColor = colorName2Vector(nexstDataLine.color);
+        menuBlock.material.diffuseColor = newColor;
+    }
+        //---------
+        const initialData = {
+            action: 'autoColorClick',
+            userId: this.userId,
+            startAutoColor: this.startAutoColor,
+            firstColorState: "auto"
+        };
+        /// replaced WebSocket send with REST call
+        postDataFuncURL(coupleURL, initialData);
+    }
+
+    handleManualColorClick() {
+        //console.log("in handleManualColorClick part: " + currentSession.part);
+        currentSession.currAutoColor = "NO";
+        colorButtonsIsVisible(true)
+        const initialData = {
+            action: 'autoColorClick',
+            userId: this.userId,
+            startAutoColor: this.startAutoColor,
+            firstColorState: "manual"
+        };
+        /// replaced WebSocket send with REST call
+        postDataFuncURL(coupleURL, initialData);
+    }
 
 
 }
