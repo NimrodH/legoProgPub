@@ -35,9 +35,9 @@ class Messages {
         this.nextButton.height = "70px";
         this.advancedTexture.addControl(this.nextButton);
 
-        if (this.messageType === "colorOptions") {
-            this.showColorChooseButtons();
-        }
+
+        this.addColorChooseButtons();
+
 
         const initialText = "במסך זה יופיעו הנחיות" + "\n" + "\n" +
             "מאחוריך מספר לבנים לבניית המודל" + "\n" + "\n" +
@@ -59,8 +59,26 @@ class Messages {
     }
 
     showColorChooseButtons() {
-        // Create and show color choice buttons
+        this.hideNextButton();
+        this.autoColorButton.isVisible = true;
+        this.manualColorButton.isVisible = true;
+    }
+
+    hideColorChooseButtons() {
+        this.autoColorButton.isVisible = false;
+        this.manualColorButton.isVisible = false;
+    }
+
+    hideNextButton() {
         this.nextButton.isVisible = false;
+    }
+
+    showNextButton() {
+        this.nextButton.isVisible = true;
+    }
+
+    addColorChooseButtons() {
+        // Create and hide color choice buttons
 
         this.autoColorButton = BABYLON.GUI.Button.CreateSimpleButton(
             "autoColorBtn",
@@ -90,6 +108,8 @@ class Messages {
         this.manualColorButton.onPointerUpObservable.add(this.handleManualColorClick.bind(this));
         this.advancedTexture.addControl(this.manualColorButton);
 
+        this.autoColorButton.isVisible = false;
+        this.manualColorButton.isVisible = false;
     }
 
     handleReportClick(e) {
@@ -176,10 +196,12 @@ class Messages {
                 this.showPart2_2()
                 break;
             case "part2_2":
-                let buyTime = this.donePart2();///donePart2 will send user answer to database but 
+                currentSession.initPart2();//////////////
+                ////////////////let buyTime = this.donePart2();///donePart2 will send user answer to database but 
                 ///we don't know yet the answer (session will triger it later) so we dont call any screen
                 ////was currentSession.initExamA();
-                this.nextButton.isEnabled = true;///false;  true: we want to allow retry   
+                //////////////////this.nextButton.isEnabled = true;///false;  true: we want to allow retry 
+                this.hideNextButton();
                 break;
             case "startPart2":
                 currentSession.initPart2();
@@ -216,9 +238,9 @@ class Messages {
     showEditID() {
         this.currentScreen = "editID";
         this.textField.text = "יש ללחוץ (להקליק) בתוך השדה השחור" + "\n" + "" + "\n" +
-         "לאחר שנפתחה המקלדת, יש להזין את " + "\n" + "\n" +
-          "המספר שקיבלת ממנהלת הניסוי " + "\n" + "" + "\n" + 
-          "לסיום לחצ/י המשך"
+            "לאחר שנפתחה המקלדת, יש להזין את " + "\n" + "\n" +
+            "המספר שקיבלת ממנהלת הניסוי " + "\n" + "" + "\n" +
+            "לסיום לחצ/י המשך"
 
         this.nextButton.isEnabled = false;
 
@@ -406,9 +428,9 @@ class Messages {
         }
         /////
         this.textField.text = "משמאלך בסיס למודל" + "\n" + "" + "\n" +
-          "בחר/י את המודל" + "\n" + "\n" + " M1 " + "\n" + "\n" +
-          "על ידי לחיצה (הקלקה) על הבליטה שבו" + "\n" + "\n" +
-           " כך שהיא תיצבע בצבע צהוב" + "\n" + "\n" + "" + "\n" +
+            "בחר/י את המודל" + "\n" + "\n" + " M1 " + "\n" + "\n" +
+            "על ידי לחיצה (הקלקה) על הבליטה שבו" + "\n" + "\n" +
+            " כך שהיא תיצבע בצבע צהוב" + "\n" + "\n" + "" + "\n" +
             "לאחר מכן לחצ/י המשך";
         /*
         switch (currentSession.group) {
@@ -456,7 +478,8 @@ class Messages {
                     this.showColorChooseButtons();
                     this.textField.text = "אתה יכול לבחור אם המערכת תבחר עבורך את הצבעים"
                 } else {
-                    this.textField.text = "אתה חייב לבחור את הצבעים בעצמך"
+                    this.textField.text = "אתה חייב לבחור את הצבעים בעצמך. ניתן להתחיל"
+                    this.hideNextButton();
                 }
                 /*
                 this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" +
@@ -503,8 +526,7 @@ class Messages {
                 "דקות שיתווספו לזמן שלך בשלב המבחן לצורך חישוב הבונוס" + "\n" + "\n" +
                 "בן הזוג שלך מבקש עבור עסקה זו מספר דקות שירדו מהזמן שלו" + "\n" + "\n" +
                 "בשלב המבחן (לחץ המשך)"
-
-            this.textField.text = initialText;
+            this.textField.text = initialText///to take it out we need declare initialText before as variable
         } else {/// מוכר
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
             const initialText = "\n" + firstLine + "\n" + "\n" +
@@ -518,11 +540,12 @@ class Messages {
                 "את 22 הצעדים הבאים עם הצורך לבחור צבע לכל חלק. בן הזוג שלך" + "\n" + "\n" +
                 "מציע עבור עסקה זו מספר דקות שיתווספו לזמן שלו בשלב המבחן" + "\n" + "\n" +
                 "(לחץ המשך)"
-
             this.textField.text = initialText
         }
 
-        this.nextButton.isEnabled = true;
+        this.showNextButton();
+
+        //this.nextButton.isEnabled = true;
         /*
                 let inputTextArea = new BABYLON.GUI.InputText('time4Buy', "");
                 inputTextArea.height = "40px";
@@ -548,8 +571,6 @@ class Messages {
     showPart2_2() {
         this.currentScreen = "part2_2";
 
-
-
         if (currentSession.startAutoColor == "Forced to manual") {///קונה
             const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים ללא צורך" + "\n" + "\n" +
                 "לבחור צבע לחלקים. אם תציע ערך נמוך ממה שיבקש בן הזוג, לא" + "\n" + "\n" +
@@ -557,7 +578,7 @@ class Messages {
                 "היכולת ב-5 דקות, והעסקה תתקבל, ותבצע את שלב המבחן" + "\n" + "\n" +
                 "ב-18 דקות, הזמן הסופי שלך לצורך חישוב הבונוס יהיה 23 דקות" + "\n" + "\n" +
                 "רשום בכמה דקות תהיה מוכן לקנות את היכולת הזאת"
-            this.textField.text = initialText;
+            this.textField.text = initialText;///to take it out we need declare initialText before as variable
         } else {///מוכר
             const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים כאשר עליך גם" + "\n" + "\n" +
                 "לבחור צבע לחלקים. אם תבקש ערך גבוה ממה שיציע בן הזוג, לא " + "\n" + "\n" +
@@ -565,33 +586,34 @@ class Messages {
                 " ב-5 דקות, והעסקה תתקבל, ותבצע  את שלב המבחן ב-23 דקות, הזמן" + "\n" + "\n" +
                 "הסופי שלך לצורך חישוב הבונוס יהיה 18 דקות" + "\n" + "\n" +
                 "רשום בכמה דקות תהיה מוכן למכור את היכולת הזאת"
-
             this.textField.text = initialText;
-
         }
 
 
-        this.nextButton.isEnabled = false;
+        this.showNextButton();///to init part 2
+        this.showColorChooseButtons();
 
-        let inputTextArea = new BABYLON.GUI.InputText('time4Buy', "");
-        inputTextArea.height = "40px";
-        inputTextArea.color = "white";
-        inputTextArea.fontSize = 48;
-        inputTextArea.top = "-120px";
-        inputTextArea.height = "70px";
-        inputTextArea.width = "200px";
-        inputTextArea.onTextChangedObservable.add(() => this.nextButton.isEnabled = true);
-        this.advancedTexture.addControl(inputTextArea);
-
-        const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
-        keyboard.addKeysRow(["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\u2190"]);
-        keyboard.connect(inputTextArea);
-        keyboard.top = "-10px";
-        keyboard.scaleY = 2;
-        keyboard.scaleX = 2;
-        //keyboard.left = "10px";
-        this.advancedTexture.addControl(keyboard);
-
+        this.nextButton.isEnabled = true;
+        /*
+                let inputTextArea = new BABYLON.GUI.InputText('time4Buy', "");
+                inputTextArea.height = "40px";
+                inputTextArea.color = "white";
+                inputTextArea.fontSize = 48;
+                inputTextArea.top = "-120px";
+                inputTextArea.height = "70px";
+                inputTextArea.width = "200px";
+                inputTextArea.onTextChangedObservable.add(() => this.nextButton.isEnabled = true);
+                this.advancedTexture.addControl(inputTextArea);
+        
+                const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
+                keyboard.addKeysRow(["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\u2190"]);
+                keyboard.connect(inputTextArea);
+                keyboard.top = "-10px";
+                keyboard.scaleY = 2;
+                keyboard.scaleX = 2;
+                //keyboard.left = "10px";
+                this.advancedTexture.addControl(keyboard);
+        */
     }
     donePart2() {
         this.textField.text = "יש להמתין לתשובת בן הזוג"; ///will be ovrighten by server if needed
@@ -680,31 +702,48 @@ class Messages {
         this.plane.isVisible = false;
     }
 
-handleAutoColorClick() {
-    currentSession.currAutoColor = "YES";
-    colorButtonsIsVisible(false);
+    handleAutoColorClick() {
+        currentSession.currAutoColor = "YES";
+        colorButtonsIsVisible(false);
 
-    // get current model name and step
-    let mName = currentModel.metadata.modelName;
-    let nextStep = currentModel.metadata.numOfBlocks + 1;
+        // get current model name and step
+        let mName = currentModel.metadata.modelName;
+        let nextStep = currentModel.metadata.numOfBlocks + 1;
 
-    const nexstDataLine = currentSession.trainingModelData
-        .filter(el => (el.step == nextStep) && (el.modelName == mName))[0];
+        const nexstDataLine = currentSession.trainingModelData
+            .filter(el => (el.step == nextStep) && (el.modelName == mName))[0];
 
-    if (nexstDataLine) {
-        let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
-        let newColor = colorName2Vector(nexstDataLine.color);
-        menuBlock.material.diffuseColor = newColor;
-    }
-        //---------
-        const initialData = {
-            action: 'autoColorClick',
-            userId: this.userId,
-            startAutoColor: this.startAutoColor,
-            firstColorState: "auto"
-        };
-        /// replaced WebSocket send with REST call
-        postDataFuncURL(coupleURL, initialData);
+        if (nexstDataLine) {
+            let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
+            let newColor = colorName2Vector(nexstDataLine.color);
+            menuBlock.material.diffuseColor = newColor;
+        }
+
+        this.hideColorChooseButtons();
+        console.log("in handleAutoColorClick part: " + currentSession.part);
+        console.log("cuurentScreen: " + this.currentScreen);
+        if (this.currentScreen == "part2_2") {
+            console.log("in handleAutoColorClick part: " + currentSession.part);
+            console.log("cuurentScreen: " + this.currentScreen);
+            this.textField.text = "לחץ המשך והתחל בבנייה"
+            this.showNextButton();
+            const initialData = {
+                action: 'autoColorClick',
+                userId: this.userId,
+                startAutoColor: this.startAutoColor,
+                secondColorState: "auto"
+            };
+            postDataFuncURL(coupleURL, initialData);
+        } else {
+            const initialData = {
+                action: 'autoColorClick',
+                userId: this.userId,
+                startAutoColor: this.startAutoColor,
+                firstColorState: "auto"
+            };
+            postDataFuncURL(coupleURL, initialData);
+            this.textField.text = "ניתן להתחיל בבנייה"
+        }
     }
 
     handleManualColorClick() {
@@ -719,6 +758,16 @@ handleAutoColorClick() {
         };
         /// replaced WebSocket send with REST call
         postDataFuncURL(coupleURL, initialData);
+        this.hideColorChooseButtons();
+
+        if (currentSession.currentScreen == "part2_2") {
+            console.log("in handleAutoColorClick part: " + currentSession.part);
+            console.log("cuurentScreen: " + this.currentScreen);
+            this.textField.text = "לחץ המשך והתחל בבנייה"
+            this.showNextButton();
+        } else {
+            this.textField.text = "ניתן להתחיל בבנייה"
+        }
     }
 
 
