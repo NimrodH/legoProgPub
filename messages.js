@@ -38,6 +38,121 @@ class Messages {
 
         this.addColorChooseButtons();
 
+        this.text_part1_autoColor = `
+                    
+                    
+
+        
+                    לפניך שני בסיסים לבנייה מימין ומשמאל
+
+
+ובהמשך יופיעו עוד שני בסיסים מאחורי אבני הבניין .  בחר האם
+
+
+תרצה שהמערכת תבחר עבורך את צבעי החלקים באופן אוטומטי
+
+
+אבל תתווסף לתוצאה שלך תוספת זמן של 3 דקות.  לדוגמא
+
+
+אם תסיים את שלב ב' תוך 9 דקות, הזמן שייחשב לציון הסופי
+
+
+יהיה 12 דקות. או או שתבחר את הצבעים בעצמך, כמו בתרגול
+
+
+ואז הזמן שיירשם הוא הזמן המדויק שתבצע בפועל, ללא תוספות
+
+`
+        this.text_part1_manualColor = `
+
+
+
+
+לפניך שני בסיסים לבנייה מימין ומשמאל
+
+
+ובהמשך יופיעו עוד שני בסיסים מאחורי אבני הבניין.
+
+
+.בשלב זה עליך לבחור את הצבעים בעצמך כמו בתרגול
+
+
+
+ניתן להתחיל בבנייה  עכשיו
+`
+        this.text_part2_manualColor_1 = `
+
+ביצעת את המשימה ללא היכולת שהמערכת תבחר עבורך את הצבע
+
+
+באפשרותך להמשיך כפי שפעלת עד כה ולבצע את בחירת הצבעים בעצמך
+
+
+או לשנות את ההחלטה ולקבל את היכולת שהמערכת תבצע עבורך 
+
+
+את בחירת הצבעים באופן אוטומטי
+`
+        this.text_part2_manualColor_2 = `
+        
+אם תבחר/י לרכוש את היכולת שהמערכת תבצע עבורך 
+
+
+את בחירת הצבעים באופן אוטומטי,  תתווסף באופן אוטומטי
+
+
+.תוספת של 2 דקות לזמן הביצוע שלך כפי שיירשם במערכת
+
+
+אם תבחר לבצע את הבחירה בעצמך, ההמשך יתבצע כמו בתרגול
+
+
+.והזמן שיירשם יהיה זמן מדויק, ללא תוספת 
+
+
+
+בחר את הדרך שבה ברצונך להמשיך:
+
+`
+
+        this.text_part2_autoColor_1 = `
+
+
+השתמשת ביכולת שהמערכת בחרה עבורך את הצבעים באופן אוטומטי 
+
+ .ובשל כך נוספו לזמן שלך 3 דקות
+
+כעת, תוכל לבחור אם להמשיך להשתמש ביכולת האוטומטית לבחירת הצבע
+
+.או לבצע את שלב ב' ללא תמיכה אוטומטית ולבחור את הצבעים בעצמך
+
+
+
+(לחץ המשך)
+
+`
+
+        this.text_part2_autoColor_2 = `
+
+
+אם תבחר להמשיך עם היכולת
+
+תתווסף הפעם תוספת של 2 דקות לזמן הביצוע שלך.
+
+אם תבחר לבצע את הבחירה בעצמך, שלב ב' יתבצע כמו בתרגול
+
+והזמן שיירשם יהיה זמן מדויק, ללא תוספת. 
+
+
+
+
+
+
+בחר את הדרך שבה ברצונך להמשיך:
+
+`
+
 
         const initialText = "במסך זה יופיעו הנחיות" + "\n" + "\n" +
             "מאחוריך מספר לבנים לבניית המודל" + "\n" + "\n" +
@@ -476,9 +591,9 @@ class Messages {
                 console.log("in showConnect B, part: " + currentSession.part);
                 if (currentSession.startAutoColor == "Allowed to choose") {
                     this.showColorChooseButtons();
-                    this.textField.text = "אתה יכול לבחור אם המערכת תבחר עבורך את הצבעים"
+                    this.textField.text = this.text_part1_autoColor;
                 } else {
-                    this.textField.text = "אתה חייב לבחור את הצבעים בעצמך. ניתן להתחיל"
+                    this.textField.text = this.text_part1_manualColor;
                     this.hideNextButton();
                 }
                 /*
@@ -512,34 +627,15 @@ class Messages {
         this.currentScreen = "part2_1";
         let timeToShow = Math.floor((currentSession.timer.currTime - currentSession.timer.firstTime) / 1000);
         //console.log("currentSession.timer.firstTime: " + currentSession.timer.firstTime);
-        //console.log("timeToShow: " + timeToShow);
+        console.log("showPart2_1 currentSession.currAutoColor: " + currentSession.currAutoColor);
         let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
-        if (currentSession.startAutoColor == "Forced to manual") { ///קונה
+        if (currentSession.currAutoColor == "NO") { ///קונה
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
-            const initialText = firstLine + "\n" + "\n" +
-                "לבן זוג שלך לניסוי המערכת בחרה בכל צעד את הצבע לחלק באופן" + "\n" + "\n" +
-                "אוטומטי. כעת אתה עובר לשלב המבחן, שכולל גם הוא 22 צעדים" + "\n" + "\n" +
-                "כזכור, הנבדק שיסיים את שלב המבחן במספר הדקות הכי נמוך בכל" + "\n" + "\n" +
-                "קבוצה יזכה בבונוס נוסף" + "\n" + "\n" +
-                "אתה יכול להציע לבן הזוג שלך לקנות ממנו את היכולת שיש לו," + "\n" + "\n" +
-                "שהמערכת בוחרת את הצבע לחלק באופן אוטומטי. זאת תמורת מספר " + "\n" + "\n" +
-                "דקות שיתווספו לזמן שלך בשלב המבחן לצורך חישוב הבונוס" + "\n" + "\n" +
-                "בן הזוג שלך מבקש עבור עסקה זו מספר דקות שירדו מהזמן שלו" + "\n" + "\n" +
-                "בשלב המבחן (לחץ המשך)"
+            const initialText = firstLine + this.text_part2_manualColor_1
             this.textField.text = initialText///to take it out we need declare initialText before as variable
         } else {/// מוכר
             const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
-            const initialText = "\n" + firstLine + "\n" + "\n" +
-                "לבן זוג שלך לניסוי לא הייתה את היכולת שהמערכת בוחרת את הצבע" + "\n" + "\n" +
-                "לחלק באופן אוטומטי ועליו היה לבחור את הצבע לחלק בכל צעד. כעת" + "\n" + "\n" +
-                "אתה עובר לשלב המבחן, שכולל גם הוא 22 צעדים. כזכור, הנבדק" + "\n" + "\n" +
-                " שיסיים את שלב המבחן במספר הדקות הכי נמוך בכל קבוצה יזכה" + "\n" + "\n" +
-                "בבונוס נוסף" + "\n" + "\n" +
-                "אתה יכול לוותר על היכולת שלך ולהציע אותה לבן הזוג שלך תמורת" + "\n" + "\n" +
-                "מספר דקות שירדו מהזמן שלך בזמן המבחן לצורך חישוב הבונוס ולבצע" + "\n" + "\n" +
-                "את 22 הצעדים הבאים עם הצורך לבחור צבע לכל חלק. בן הזוג שלך" + "\n" + "\n" +
-                "מציע עבור עסקה זו מספר דקות שיתווספו לזמן שלו בשלב המבחן" + "\n" + "\n" +
-                "(לחץ המשך)"
+            const initialText = "\n" + firstLine + this.text_part2_autoColor_1
             this.textField.text = initialText
         }
 
@@ -570,22 +666,12 @@ class Messages {
 
     showPart2_2() {
         this.currentScreen = "part2_2";
-
-        if (currentSession.startAutoColor == "Forced to manual") {///קונה
-            const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים ללא צורך" + "\n" + "\n" +
-                "לבחור צבע לחלקים. אם תציע ערך נמוך ממה שיבקש בן הזוג, לא" + "\n" + "\n" +
-                "תתבצע העסקה. לדוגמא: אם תציע לבן זוג שלך לקנות ממנו את" + "\n" + "\n" +
-                "היכולת ב-5 דקות, והעסקה תתקבל, ותבצע את שלב המבחן" + "\n" + "\n" +
-                "ב-18 דקות, הזמן הסופי שלך לצורך חישוב הבונוס יהיה 23 דקות" + "\n" + "\n" +
-                "רשום בכמה דקות תהיה מוכן לקנות את היכולת הזאת"
+        console.log("showPart2_2 currentSession.currAutoColor: " + currentSession.currAutoColor);
+        if (currentSession.currAutoColor == "NO") {///קונה
+            const initialText = this.text_part2_manualColor_2
             this.textField.text = initialText;///to take it out we need declare initialText before as variable
         } else {///מוכר
-            const initialText = "אם העסקה תצא לפועל, תבצע את 22 הצעדים הבאים כאשר עליך גם" + "\n" + "\n" +
-                "לבחור צבע לחלקים. אם תבקש ערך גבוה ממה שיציע בן הזוג, לא " + "\n" + "\n" +
-                "תתבצע העסקה. לדוגמא: אם תציע לבן הזוג שלך לקנות ממך את היכולת" + "\n" + "\n" +
-                " ב-5 דקות, והעסקה תתקבל, ותבצע  את שלב המבחן ב-23 דקות, הזמן" + "\n" + "\n" +
-                "הסופי שלך לצורך חישוב הבונוס יהיה 18 דקות" + "\n" + "\n" +
-                "רשום בכמה דקות תהיה מוכן למכור את היכולת הזאת"
+            const initialText = this.text_part2_autoColor_2
             this.textField.text = initialText;
         }
 
