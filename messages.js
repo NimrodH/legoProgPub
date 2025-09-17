@@ -815,18 +815,20 @@ class Messages {
             this.showNextButton();
             const initialData = {
                 action: 'autoColorClick',
-                userId: this.userId,
-                startAutoColor: this.startAutoColor,
+                userId: currentSession.userId,
+                startAutoColor: currentSession.startAutoColor,
                 secondColorState: "auto"
             };
-            postDataFuncURL(coupleURL, initialData);
+             postDataFuncURL(coupleURL, initialData);
         } else {
             const initialData = {
                 action: 'autoColorClick',
-                userId: this.userId,
-                startAutoColor: this.startAutoColor,
+                userId: currentSession.userId,
+                startAutoColor: currentSession.startAutoColor,
                 firstColorState: "auto"
             };
+            console.log(" initialData: " + initialData);
+            console.log(" coupleURL: " + coupleURL);
             postDataFuncURL(coupleURL, initialData);
             this.textField.text = "ניתן להתחיל בבנייה"
         }
@@ -838,8 +840,8 @@ class Messages {
         colorButtonsIsVisible(true)
         const initialData = {
             action: 'autoColorClick',
-            userId: this.userId,
-            startAutoColor: this.startAutoColor,
+            userId: currentSession.userId,
+            startAutoColor: currentSession.startAutoColor,
             firstColorState: "manual"
         };
         /// replaced WebSocket send with REST call
