@@ -641,7 +641,7 @@ class Messages {
 
         this.showNextButton();
 
-        //this.nextButton.isEnabled = true;
+        this.nextButton.isEnabled = true;
         /*
                 let inputTextArea = new BABYLON.GUI.InputText('time4Buy', "");
                 inputTextArea.height = "40px";
