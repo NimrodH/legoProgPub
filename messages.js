@@ -819,7 +819,7 @@ class Messages {
                 startAutoColor: currentSession.startAutoColor,
                 secondColorState: "auto"
             };
-             postDataFuncURL(coupleURL, initialData);
+            postDataFuncURL(coupleURL, initialData);
         } else {
             const initialData = {
                 action: 'autoColorClick',
@@ -838,22 +838,32 @@ class Messages {
         //console.log("in handleManualColorClick part: " + currentSession.part);
         currentSession.currAutoColor = "NO";
         colorButtonsIsVisible(true)
-        const initialData = {
-            action: 'autoColorClick',
-            userId: currentSession.userId,
-            startAutoColor: currentSession.startAutoColor,
-            firstColorState: "manual"
-        };
-        /// replaced WebSocket send with REST call
-        postDataFuncURL(coupleURL, initialData);
         this.hideColorChooseButtons();
 
-        if (currentSession.currentScreen == "part2_2") {
+        if (this.currentScreen == "part2_2") {
             console.log("in handleAutoColorClick part: " + currentSession.part);
             console.log("cuurentScreen: " + this.currentScreen);
+            const initialData = {
+                action: 'autoColorClick',
+                userId: currentSession.userId,
+                startAutoColor: currentSession.startAutoColor,
+                secondColorState: "manual"
+            };
+            /// replaced WebSocket send with REST call
+            postDataFuncURL(coupleURL, initialData);
+
             this.textField.text = "לחץ המשך והתחל בבנייה"
             this.showNextButton();
         } else {
+            const initialData = {
+                action: 'autoColorClick',
+                userId: currentSession.userId,
+                startAutoColor: currentSession.startAutoColor,
+                firstColorState: "manual"
+            };
+            /// replaced WebSocket send with REST call
+            postDataFuncURL(coupleURL, initialData);
+
             this.textField.text = "ניתן להתחיל בבנייה"
         }
     }
