@@ -58,9 +58,9 @@ class Session {
     constructor(id) {
         const firstChar = id.charAt(0);
         if (firstChar == "9") { 
-            id = id.slice(1);
-            reRunningSession = true;
-            enforceTraining = false;
+            //id = id.slice(1);
+            //reRunningSession = true;
+            //enforceTraining = false;
         }
         this.userId = id;
         var number;
